@@ -25,12 +25,14 @@ namespace FCE
 			void setSize(core::dimension2df sizeMin, core::dimension2df sizeMax);
 			void setAge(float minAge, float maxAge);
 			void setID(int id);
+			void setEmitterSize(core::aabbox3d<f32> size);
 			int getID();
 		private:
 			video::SColor color1, color2;
 			core::vector3df dir;
 			float rateMin, rateMax;
 			float minAge, maxAge;
+			core::aabbox3d<f32> size;
 			core::dimension2df sizeMin, sizeMax;
 			scene::IParticleSystemSceneNode* ps;
 			scene::IParticleEmitter* em;

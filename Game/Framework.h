@@ -10,6 +10,8 @@
 #define SCREENHEIGHT 800
 #define BUILD "2.1.0.1"
 #define PLAT "Win32"
+//TODO:create compressed filesystem
+
 //TODO: Comment codebase
 using namespace irr;
 namespace FCE

@@ -4,7 +4,6 @@ using namespace FCE;
 
 OBJECT::OBJECT()
 {
-	hasScript = false;
 }
 
 OBJECT::~OBJECT()

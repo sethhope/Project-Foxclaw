@@ -7,6 +7,16 @@ PARTICLE::PARTICLE(IrrlichtDevice* device, LOGGER* log)
 	ps = device->getSceneManager()->addParticleSystemSceneNode(true);
 	this->device = device;
 	this->log = log;
+	size = core::aabbox3d<f32>(-1, 0, -1, 1, 1, 1);
+	dir = core::vector3df(0, 0.1, 0);
+	rateMin = 100;
+	rateMax = 200;
+	minAge = 500;
+	maxAge = 1000;
+	sizeMin = core::dimension2df(10, 10);
+	sizeMax = core::dimension2df(20, 20);
+	color1 = video::SColor(0,255,255,255);
+	color2 = video::SColor(0,255,255,255);
 	log->debugData("Instantiated particle system");
 }
 
@@ -18,7 +28,7 @@ PARTICLE::~PARTICLE()
 void PARTICLE::onInit()
 {
 	log->logData("Initiating particle system", id);
-	scene::IParticleEmitter* em = ps->createBoxEmitter(core::aabbox3d<f32>(-1, 0, -1, 1, 1, 1), dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
+	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
 	ps->setPosition(this->position);

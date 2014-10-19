@@ -31,6 +31,8 @@ void SCENE::init()
 		log->logData("Failed to create sound device");
 		return;
 	}
+	addSound("jingle.mp3", core::vector3df(0, 0, 0), false);
+	//TODO:add splash screen
 	log->logData("Setting initial values");
 	cameraPos = vec3df(0, 0, 0);
 	cameraRot = vec3df(0, 0, 1);
@@ -63,10 +65,15 @@ void SCENE::update()
 	sound->setListenerPosition( manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
 	for(std::vector<SFX>::iterator it = sfx.begin(); it < sfx.end(); it++)
 	{
-		it->s->setPosition(it->pos);
+		
 		if(it->s->isFinished())
 		{
 			it->s->drop();
+			
+			it=sfx.erase(it);
+		}else
+		{
+			it->s->setPosition(it->pos);
 		}
 	}
 	for(std::vector<MESH *>::iterator it = meshs.begin(); it < meshs.end(); it++)

@@ -2,7 +2,6 @@
 #define _FOBJECT_H_
 #include "stdafx.h"
 #include "node.h"
-#include "Misc/Script.h"
 #include "Irrlicht.h"
 using namespace irr;
 namespace FCE
@@ -24,4 +23,4 @@ namespace FCE
 			core::vector3df scale;
 	};
 }
-#endif //_JOBJECT_H_
+#endif //_FOBJECT_H_

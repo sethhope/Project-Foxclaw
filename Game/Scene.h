@@ -24,7 +24,7 @@ namespace FCE
 		int id;
 		float minDistance;
 	} SFX;
-	
+	//TODO:add scene loading from XML
 	class SCENE
 	{
 		public:
