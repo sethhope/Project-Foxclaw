@@ -23,37 +23,6 @@ int FRAMEWORK::init()
 	log->logData("Engine build", BUILD);
 	log->logData("Platform", PLAT);
 	log->logData("Creating Graphics Driver");
-/*
-	SIrrlichtCreationParameters para;
-	para.DriverType = video::EDT_DIRECT3D9;
-	para.HighPrecisionFPU = true;
-	para.WindowSize = core::dimension2d<u32>(SCREENWIDTH, SCREENHEIGHT);
-	log->logData("Trying Direct3D 9");
-	device = createDeviceEx(para);
-	if(device == 0)
-	{
-		log->logData("Trying Direct3D 8");
-		para.DriverType = video::EDT_DIRECT3D8;
-		device = createDeviceEx(para);
-		if(device == 0)
-		{
-			log->logData("Trying OPENGL");
-			para.DriverType = video::EDT_OPENGL;
-			device = createDeviceEx(para);
-			if(device == 0)
-			{
-				log->logData("Trying Software Renderer");
-				para.DriverType = video::EDT_SOFTWARE;
-				device = createDeviceEx(para);
-				if(device == 0)
-				{
-					log->logData("Failed to create driver");
-					return 1;
-				}
-			}
-		}
-	}
-*/
 	log->logData("Trying OpenGL");
 	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(800, 600), 32, false, true);
 	if(!device)

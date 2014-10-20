@@ -17,6 +17,7 @@ using namespace irrklang;
 namespace FCE
 {
 	
+	//TODO: create sound type as OBJECT*
 	typedef struct
 	{
 		ISound* s;
@@ -24,6 +25,7 @@ namespace FCE
 		int id;
 		float minDistance;
 	} SFX;
+	
 	//TODO:add scene loading from XML
 	class SCENE
 	{
@@ -66,6 +68,7 @@ namespace FCE
 			
 			SCRIPT* mainScript;
 			
+			//TODO: Store things as OBJECT* rather than their respective types.
 			std::vector<SFX> sfx;
 			std::vector<MESH*> meshs;
 			std::vector<LIGHT*> lights;

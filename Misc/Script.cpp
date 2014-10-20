@@ -43,6 +43,8 @@ void SCRIPT::onInit()
 		{"SSLog", Scene_SSlog},
 		{"addMesh", Scene_addMesh},
 		{"getMesh", Scene_getMesh},
+		{"addParticle", Scene_addParticle},
+		{"getParticle", Scene_getParticle},
 		{NULL, NULL}
 	};
 	static luaL_Reg Mesh_metatable[] =
@@ -52,11 +54,24 @@ void SCRIPT::onInit()
 		{"setScale", Mesh_setScale},
 		{NULL, NULL}
 	};
+	static luaL_Reg Particle_metatable[] =
+	{
+		{"setAge", Particle_setAge},
+		{"setColors", Particle_setColors},
+		{"setDirection", Particle_setDirection},
+		{"setEmitterSize", Particle_setEmitterSize},
+		{"setPosition", Particle_setPosition},
+		{"setScale", Particle_setScale},
+		{"setRate", Particle_setRate},
+		{"setSize", Particle_setSize},
+		{NULL, NULL}
+	};
 	static luaL_Reg Empty_table[] =
 	{
 		{NULL, NULL}
 	};
 	
+	luaW_register<PARTICLE>(L, "PARTICLE", Empty_table, Particle_metatable, Particle_new);
 	luaW_register<MESH>(L, "MESH", Empty_table, Mesh_metatable, Mesh_new);
 	luaW_register<SCENE>(L, "SCENE", Empty_table, Scene_metatable, Scene_new);
 

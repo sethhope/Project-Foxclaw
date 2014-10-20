@@ -50,11 +50,14 @@ void SCENE::init()
 	mainScript->run("Scripts/startup.lua");
 	log->logData("Loading scene objects");
 	manager->setAmbientLight(video::SColor(0.5f, 0.5f, 0.5f, 0.5f));
-	/*scene::ISceneNode* bil = manager->addBillboardSceneNode(temp->getNode(), core::dimension2d<f32>(5, 5));
+	scene::ISceneNode* bil = manager->addBillboardSceneNode(0, core::dimension2d<f32>(5, 5));
 	bil->setMaterialFlag(video::EMF_LIGHTING, false);
 	bil->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
+	bil->setPosition(core::vector3df(0, 10, 0));
 	bil->setMaterialTexture(0, device->getVideoDriver()->getTexture("media/particlewhite.bmp"));
-	*/
+
+	int l = addLight(core::vector3df(0, 10, 0), core::vector3df(0, 0, 0), core::vector3df(1,1,1), video::ELT_POINT);
+	editLight(l)->setDropoff(100000);
 	mainScript->runInit();
 	log->logData("Loaded scene objects");
 	log->logData("Finished initializing");
@@ -152,6 +155,7 @@ bool SCENE::isPlaying(int id)
 
 int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vector3df scale, std::string filename)
 {
+	log->debugData("Creating new particle system");
 	PARTICLE* system1;
 	system1 = new PARTICLE(device, log);
 	system1->setID(partID);
@@ -163,21 +167,24 @@ int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vec
 	system1->setSize(core::dimension2df(1,1), core::dimension2df(2, 2));
 	system1->setAge(200, 300);
 	system1->loadTexture(filename);
-	
 	partID++;
 	system1->init();
 	particles.push_back(system1);
+	log->debugData("Particle system added", partID-1);
 	return partID-1;
 }
 PARTICLE* SCENE::editParticleSystem(int id)
 {
+	log->debugData("Getting particle system", id);
 	for(std::vector<PARTICLE*>::iterator it = particles.begin(); it < particles.end(); it++)
 	{
 		if((*it)->getID()==id)
 		{
+			log->debugData("Found particle system", id);
 			return (*it);
 		}
 	}
+	log->logData("Particle system doesn't exist. ID", id);
 	return NULL;
 }
 int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale)
@@ -186,7 +193,7 @@ int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 	tmp->load(filename);
 	tmp->setID(meshID);
 	tmp->getNode()->setMaterialFlag(video::EMF_LIGHTING, true);
-	tmp->getNode()->setMaterialType(video::EMT_NORMAL_MAP_SOLID);
+	tmp->getNode()->setMaterialType(video::EMT_SOLID);
 	tmp->setCoords(pos);
 	tmp->setRotation(rot);
 	tmp->setScale(scale);
@@ -217,16 +224,20 @@ int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df sc
 	temp->setID(lightID);
 	lightID++;
 	temp->init();
+	lights.push_back(temp);
 	return lightID-1;
 }
 LIGHT* SCENE::editLight(int id)
 {
+	log->debugData("Checking for light", id);
 	for(std::vector<LIGHT*>::iterator it = lights.begin(); it < lights.end(); it++)
 	{
 		if((*it)->getID()==id)
 		{
+			log->debugData("Found light", id);
 			return (*it);
 		}
 	}
+	log->logData("Light not found. ID", id);
 	return NULL;
 }
