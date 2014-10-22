@@ -18,16 +18,6 @@ namespace FCE
 			
 			int load(std::string filename);
 			
-			vector3df getCoords();
-			void setCoords(float x, float y, float z);
-			void setCoords(vector3df coords);
-			
-			vector3df getRotation();
-			void setRotation(float x, float y, float z);
-			void setRotation(vector3df rotation);
-			
-			void setScale(vector3df scale);
-			
 			scene::IAnimatedMesh* getMesh();
 			scene::IAnimatedMeshSceneNode* getNode();
 			

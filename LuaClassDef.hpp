@@ -70,6 +70,12 @@ int Scene_SSlog(lua_State* L)
 	s->getLog()->logData(luaL_checkstring(L, 2), luaL_checkstring(L, 3));
 	return 0;
 }
+int Scene_setDebug(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->getLog()->setDebug(luaL_checknumber(L, 2));
+	return 0;
+}
 int Scene_addMesh(lua_State* L)
 {
 	SCENE* s = luaW_check<SCENE>(L, 1);
@@ -103,7 +109,7 @@ MESH* Mesh_new(lua_State* L)
 int Mesh_setPos(lua_State* L)
 {
 	MESH* m = luaW_check<MESH>(L, 1);
-	m->setCoords(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L,3), luaL_checknumber(L, 4)));
+	m->setPosition(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L,3), luaL_checknumber(L, 4)));
 	return 0;
 }
 int Mesh_setRot(lua_State* L)
@@ -116,6 +122,37 @@ int Mesh_setScale(lua_State* L)
 {
 	MESH* m = luaW_check<MESH>(L, 1);
 	m->setScale(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L,3), luaL_checknumber(L,4)));
+	return 0;
+}
+
+int Mesh_setMaterial(lua_State* L)
+{
+	MESH* m = luaW_check<MESH>(L, 1);
+	std::string type = luaL_checkstring(L, 2);
+	if(type == "solid")
+	{
+		m->getNode()->setMaterialType(video::EMT_SOLID);
+	}
+	if(type == "solid2")
+	{
+		m->getNode()->setMaterialType(video::EMT_SOLID_2_LAYER);
+	}
+	if(type == "lightmap")
+	{
+		m->getNode()->setMaterialType(video::EMT_LIGHTMAP);
+	}
+	if(type == "lightmaplight")
+	{
+		m->getNode()->setMaterialType(video::EMT_LIGHTMAP_LIGHTING);
+	}
+	if(type == "normalmap_solid")
+	{
+		m->getNode()->setMaterialType(video::EMT_NORMAL_MAP_SOLID);
+	}
+	if(type == "parallax_solid")
+	{
+		m->getNode()->setMaterialType(video::EMT_PARALLAX_MAP_SOLID);
+	}
 	return 0;
 }
 
@@ -178,4 +215,5 @@ int Particle_setSize(lua_State* L)
 	p->setSize(core::dimension2d<f32>(luaL_checknumber(L, 2), luaL_checknumber(L, 2)), core::dimension2d<f32>(luaL_checknumber(L, 3), luaL_checknumber(L, 3)));
 	return 0;
 }
+
 #endif

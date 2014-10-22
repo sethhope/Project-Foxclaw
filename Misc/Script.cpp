@@ -41,6 +41,7 @@ void SCRIPT::onInit()
 		{"SLog", Scene_Slog},
 		{"SNLog", Scene_SNlog},
 		{"SSLog", Scene_SSlog},
+		{"setDebug", Scene_setDebug},
 		{"addMesh", Scene_addMesh},
 		{"getMesh", Scene_getMesh},
 		{"addParticle", Scene_addParticle},
@@ -52,6 +53,7 @@ void SCRIPT::onInit()
 		{"setPos", Mesh_setPos},
 		{"setRot", Mesh_setRot},
 		{"setScale", Mesh_setScale},
+		{"setMaterial", Mesh_setMaterial},
 		{NULL, NULL}
 	};
 	static luaL_Reg Particle_metatable[] =
@@ -64,6 +66,7 @@ void SCRIPT::onInit()
 		{"setScale", Particle_setScale},
 		{"setRate", Particle_setRate},
 		{"setSize", Particle_setSize},
+		{"addAffector", Particle_addAffector},
 		{NULL, NULL}
 	};
 	static luaL_Reg Empty_table[] =
@@ -116,7 +119,7 @@ lua_State* SCRIPT::runInit()
 void SCRIPT::onUpdate()
 {
 	lua_getglobal(L, "update");
-	if(!lua_pcall(L, 0, 0, 0)!=0)
+	if(lua_pcall(L, 0, 0, 0)!=0)
 	{
 		log->logData("Failed to run update function", lua_tostring(L, -1));
 		return;
@@ -125,7 +128,7 @@ void SCRIPT::onUpdate()
 void SCRIPT::onRender()
 {
 	lua_getglobal(L, "render");
-	if(!lua_pcall(L, 0, 0, 0)!=0)
+	if(lua_pcall(L, 0, 0, 0)!=0)
 	{
 		log->logData("Failed to run render function", lua_tostring(L, -1));
 		return;

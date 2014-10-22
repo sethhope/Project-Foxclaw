@@ -14,9 +14,6 @@ namespace FCE
 			void onInit();
 			void onUpdate();
 			void onRender();
-			void setPosition(core::vector3df position);
-			void setRotation(core::vector3df rotation);
-			void setScale(core::vector3df scale);
 			void setColor(video::SColorf color);
 			void setDropoff(float dropoff);
 			void setType(video::E_LIGHT_TYPE type);

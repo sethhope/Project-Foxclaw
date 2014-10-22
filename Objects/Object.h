@@ -17,10 +17,16 @@ namespace FCE
 			void init();
 			void update();
 			void render();
+			void setPosition(core::vector3df pos);
+			void setRotation(core::vector3df rot);
+			void setScale(core::vector3df scale);
 		protected:
-			core::vector3df position;
-			core::vector3df rotation;
-			core::vector3df scale;
+			core::vector3df localPosition;
+			core::vector3df globalPosition;
+			core::vector3df localRotation;
+			core::vector3df globalRotation;
+			core::vector3df localScale;
+			core::vector3df globalScale;
 	};
 }
 #endif //_FOBJECT_H_

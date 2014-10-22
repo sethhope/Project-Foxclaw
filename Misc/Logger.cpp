@@ -126,3 +126,7 @@ void LOGGER::debugData(std::string data1, char* data2)
 		backlog[0] = tmp.str();
 	}
 }
+void LOGGER::setDebug(bool debug)
+{
+	this->debug = debug;
+}

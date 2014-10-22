@@ -9,7 +9,13 @@
 #define SCREENWIDTH 1024
 #define SCREENHEIGHT 800
 #define BUILD "2.1.0.1"
-#define PLAT "Win32"
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+	#define PLAT "Win32"
+#elif defined(__APPLE__)
+	#define PLAT "Apple"
+#else
+	#define PLAT "Other"
+#endif
 //TODO:create compressed filesystem
 
 //TODO: Comment codebase
@@ -25,13 +31,18 @@ namespace FCE
 			int update();
 			int render();
 			bool run;
+			
 		private:
+			//Custom classes
 			LOGGER* log;
+			SCENE* scene;
+			
+			//Irrlicht classes
  			IrrlichtDevice *device;
 			video::IVideoDriver* driver;
 			gui::IGUIEnvironment* gui;
 			scene::ISceneManager* manager;
-			SCENE* scene;
+			
 	};
 }
-#endif //_FRAMEWORK_H_
+#endif //_FFRAMEWORK_H_

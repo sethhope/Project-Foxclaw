@@ -4,35 +4,44 @@ using namespace FCE;
 
 SCENE::SCENE()
 {
-	
+	//Should never be used
 }
 
 SCENE::SCENE(LOGGER* log, IrrlichtDevice* device)
 {
+	//Set init variables from constructor
 	this->log = log;
  	this->device = device;
 	gui = device->getGUIEnvironment();
 	manager = device->getSceneManager();
+	
 }
 
 SCENE::~SCENE()
 {
+	//drop the sound driver
 	sound->drop();
 }
 
 void SCENE::init()
 {
 	
+	//begin scene initialization
 	log->logData("Initiating Scene");
 	log->logData("Initializing Sound Engine");
+	//create sound driver
 	sound = createIrrKlangDevice();
 	if(!sound)
 	{
+		//if driver fails to create, log it and return from initialization
 		log->logData("Failed to create sound device");
 		return;
 	}
+	//play test sound to test sound engine
 	addSound("jingle.mp3", core::vector3df(0, 0, 0), false);
 	//TODO:add splash screen
+	
+	//set initial values
 	log->logData("Setting initial values");
 	cameraPos = vec3df(0, 0, 0);
 	cameraRot = vec3df(0, 0, 1);
@@ -42,22 +51,21 @@ void SCENE::init()
 	partID = 0;
 	lightID = 0;
 	manager->setShadowColor(video::SColor(150, 0, 0, 0));
+	
+	//load startup lua script
 	log->logData("Loading startup script");
+	//create new script
 	mainScript = new SCRIPT(log);
+	//set initial script values
 	mainScript->init();
+	//push the current scene as "MainScene" for use in lua
 	luaW_push<SCENE>(mainScript->L, this);
 	lua_setglobal(mainScript->L, "MainScene");
+	//run mainScript
 	mainScript->run("Scripts/startup.lua");
 	log->logData("Loading scene objects");
 	manager->setAmbientLight(video::SColor(0.5f, 0.5f, 0.5f, 0.5f));
-	scene::ISceneNode* bil = manager->addBillboardSceneNode(0, core::dimension2d<f32>(5, 5));
-	bil->setMaterialFlag(video::EMF_LIGHTING, false);
-	bil->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
-	bil->setPosition(core::vector3df(0, 10, 0));
-	bil->setMaterialTexture(0, device->getVideoDriver()->getTexture("media/particlewhite.bmp"));
-
-	int l = addLight(core::vector3df(0, 10, 0), core::vector3df(0, 0, 0), core::vector3df(1,1,1), video::ELT_POINT);
-	editLight(l)->setDropoff(100000);
+	//run the init function within the startup script
 	mainScript->runInit();
 	log->logData("Loaded scene objects");
 	log->logData("Finished initializing");
@@ -65,7 +73,10 @@ void SCENE::init()
 
 void SCENE::update()
 {
+	//set listener position for the sound manager
 	sound->setListenerPosition( manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
+	
+	//CRAZY LOOPS ARE TO BE FIXED SOON. DISREGARD THESE FOR LOOPS
 	for(std::vector<SFX>::iterator it = sfx.begin(); it < sfx.end(); it++)
 	{
 		
@@ -91,15 +102,21 @@ void SCENE::update()
 	{
 		(*it)->update();
 	}
+	//run the update function within the main script
+	mainScript->update();
+	//update the sound driver
 	sound->update();
 }
 
 void SCENE::render()
 {
+	//draw all things in the manager and GUI.
 	manager->drawAll();
 	gui->drawAll();
+	//run the render function in the main script
+	mainScript->render();
 }
-
+//misc functions
 LOGGER* SCENE::getLog()
 {
 	return log;
@@ -110,6 +127,7 @@ IrrlichtDevice* SCENE::getDevice()
 	return device;
 }
 
+//
 int SCENE::addSound(std::string filename, vec3df pos, bool loop)
 {
 	ISound* temp = sound->play3D(filename.c_str(), pos, loop, false, true);
@@ -175,12 +193,12 @@ int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vec
 }
 PARTICLE* SCENE::editParticleSystem(int id)
 {
-	log->debugData("Getting particle system", id);
+	//log->debugData("Getting particle system", id);
 	for(std::vector<PARTICLE*>::iterator it = particles.begin(); it < particles.end(); it++)
 	{
 		if((*it)->getID()==id)
 		{
-			log->debugData("Found particle system", id);
+			//log->debugData("Found particle system", id);
 			return (*it);
 		}
 	}
@@ -194,7 +212,7 @@ int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 	tmp->setID(meshID);
 	tmp->getNode()->setMaterialFlag(video::EMF_LIGHTING, true);
 	tmp->getNode()->setMaterialType(video::EMT_SOLID);
-	tmp->setCoords(pos);
+	tmp->setPosition(pos);
 	tmp->setRotation(rot);
 	tmp->setScale(scale);
 	meshID++;
@@ -203,13 +221,16 @@ int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 }
 MESH* SCENE::editMesh(int id)
 {
+	//log->debugData("Getting mesh", id);
 	for(std::vector<MESH*>::iterator it = meshs.begin(); it < meshs.end(); it++)
 	{
 		if((*it)->getID()==id)
 		{
+			//log->debugData("Got mesh", id);
 			return (*it);
 		}
 	}
+	log->logData("Couldn't find mesh");
 	return NULL;
 }
 int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, video::E_LIGHT_TYPE type)
@@ -229,12 +250,12 @@ int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df sc
 }
 LIGHT* SCENE::editLight(int id)
 {
-	log->debugData("Checking for light", id);
+	//log->debugData("Checking for light", id);
 	for(std::vector<LIGHT*>::iterator it = lights.begin(); it < lights.end(); it++)
 	{
 		if((*it)->getID()==id)
 		{
-			log->debugData("Found light", id);
+			//log->debugData("Found light", id);
 			return (*it);
 		}
 	}

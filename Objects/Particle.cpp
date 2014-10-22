@@ -31,8 +31,8 @@ void PARTICLE::onInit()
 	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
-	ps->setPosition(this->position);
-	ps->setScale(scale);
+	ps->setPosition(this->globalPosition);
+	ps->setScale(globalScale);
 	ps->setMaterialFlag(video::EMF_LIGHTING, false);
 	ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
 	ps->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
@@ -41,7 +41,9 @@ void PARTICLE::onInit()
 
 void PARTICLE::onUpdate()
 {
-	ps->setPosition(position);
+	ps->setPosition(globalPosition);
+	ps->setRotation(globalRotation);
+	ps->setScale(globalScale);
 }
 
 void PARTICLE::onRender()
@@ -69,13 +71,13 @@ void PARTICLE::setColors(video::SColor color1, video::SColor color2)
 void PARTICLE::setPosition(core::vector3df position)
 {
 	log->debugData("Setting position of particle system", id);
-	this->position = position;
+	this->localPosition = position;
 	log->debugData("Position set");
 }
 void PARTICLE::setScale(core::vector3df scale)
 {
 	log->debugData("Setting scale for particle system", id);
-	this->scale = scale;
+	this->localScale = scale;
 	ps->setScale(scale);
 	log->debugData("Scale set");
 }
