@@ -36,8 +36,7 @@ void SCRIPT::onInit()
 	static luaL_Reg Scene_metatable[] =
 	{
 		{"addSound", Scene_addSound},
-		{"stopSound", Scene_stopSound},
-		{"isPlaying", Scene_isPlaying},
+		{"getSound", Scene_getSound},
 		{"SLog", Scene_Slog},
 		{"SNLog", Scene_SNlog},
 		{"SSLog", Scene_SSlog},
@@ -69,11 +68,32 @@ void SCRIPT::onInit()
 		{"addAffector", Particle_addAffector},
 		{NULL, NULL}
 	};
+	static luaL_Reg Sound_metatable[] =
+	{
+		{"load", Sound_load},
+		{"stop", Sound_stop},
+		{"isPlaying", Sound_isPlaying},
+		{"setVolume", Sound_setVolume},
+		{"setPosition", Sound_setPosition},
+		{"setDropoff", Sound_setDropoff},
+		{"enableChorus", Sound_enableChorus},
+		{"disableChorus", Sound_disableChorus},
+		{"enableCompressor", Sound_enableCompressor},
+		{"disableCompressor", Sound_disableCompressor},
+		{"enableDistortion", Sound_enableDistortion},
+		{"disableDistortion", Sound_disableDistortion},
+		{"enableEcho", Sound_enableEcho},
+		{"disableEcho", Sound_disableEcho},
+		{"enableReverb", Sound_enableReverb},
+		{"disableReverb", Sound_disableReverb},
+		{NULL, NULL}
+	};
 	static luaL_Reg Empty_table[] =
 	{
 		{NULL, NULL}
 	};
 	
+	luaW_register<SOUND>(L, "SOUND", Empty_table, Sound_metatable, Sound_new);
 	luaW_register<PARTICLE>(L, "PARTICLE", Empty_table, Particle_metatable, Particle_new);
 	luaW_register<MESH>(L, "MESH", Empty_table, Mesh_metatable, Mesh_new);
 	luaW_register<SCENE>(L, "SCENE", Empty_table, Scene_metatable, Scene_new);

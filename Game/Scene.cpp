@@ -73,20 +73,6 @@ void SCENE::update()
 	//set listener position for the sound manager
 	sound->setListenerPosition( manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
 	
-	//CRAZY LOOPS ARE TO BE FIXED SOON. DISREGARD THESE FOR LOOPS
-	for(std::vector<SFX>::iterator it = sfx.begin(); it < sfx.end(); it++)
-	{
-		
-		if(it->s->isFinished())
-		{
-			it->s->drop();
-			
-			it=sfx.erase(it);
-		}else
-		{
-			it->s->setPosition(it->pos);
-		}
-	}
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
 		(*it)->update();
@@ -117,41 +103,53 @@ IrrlichtDevice* SCENE::getDevice()
 }
 
 //
-int SCENE::addSound(std::string filename, vec3df pos, bool loop)
+int SCENE::addSound(std::string filename, core::vector3df pos, bool loop)
 {
-	ISound* temp = sound->play3D(filename.c_str(), pos, loop, false, true);
-	if(temp)
+	SOUND* temp = new SOUND(sound);
+	temp->load(filename, loop);
+	temp->setPosition(pos);
+	temp->setVolume(1.0f);
+	temp->setID(lastID);
+	if(!temp->getSound()->getSoundEffectControl())
 	{
-		SFX tmp;
-		tmp.s = temp;
-		tmp.pos = pos;
-		tmp.minDistance = 1.0f;
-		tmp.id = soundID;
-		soundID++;
-		sfx.push_back(tmp);
-		return soundID-1;
+		log->logData("Effects not supported!");
+		
 	}
-	return -1;
+	lastID++;
+	objects.push_back(temp);
+	return lastID-1;
 }
 
 void SCENE::stopSound(int id)
 {
-	for(std::vector<SFX>::iterator it = sfx.begin(); it < sfx.end(); it++)
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
-		if(it->id == id)
+		if(((SOUND*)(*it))->getID() == id)
 		{
-			it->s->stop();
+			((SOUND*)(*it))->getSound()->stop();
 		}
 	}
 }
 
+SOUND* SCENE::editSound(int id)
+{
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if(((SOUND*)(*it))->getID()==id)
+		{
+			return ((SOUND*)(*it));
+		}
+	}
+	log->logData("Sound doesn't exist. ID", id);
+	return NULL;
+}
 bool SCENE::isPlaying(int id)
 {
-	for(std::vector<SFX>::iterator it = sfx.begin(); it < sfx.end(); it++)
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
-		if(it->id == id)
+		if(((SOUND*)(*it))->getID() == id)
 		{
-			if(!it->s->isFinished())
+			if(!((SOUND*)(*it))->getSound()->isFinished())
 			{
 				return true;
 			}

@@ -30,27 +30,12 @@ int Scene_addSound(lua_State* L)
 	return 1;
 }
 
-int Scene_stopSound(lua_State* L)
+int Scene_getSound(lua_State* L)
 {
 	SCENE* s = luaW_check<SCENE>(L, 1);
-	s->stopSound(luaL_checknumber(L, 2));
-	return 0;
-}
-
-int Scene_isPlaying(lua_State* L)
-{
-	SCENE* s = luaW_check<SCENE>(L, 1);
-	bool i = s->isPlaying(luaL_checknumber(L, 2));
-	if(i)
-	{
-		lua_pushnumber(L, 1);
-	}else
-	{
-		lua_pushnumber(L, 0);
-	}
+	luaW_push<SOUND>(L, s->editSound(luaL_checknumber(L, 2)));
 	return 1;
 }
-
 int Scene_Slog(lua_State* L)
 {
 	SCENE* s = luaW_check<SCENE>(L, 1);
@@ -216,4 +201,128 @@ int Particle_setSize(lua_State* L)
 	return 0;
 }
 
+SOUND* Sound_new(lua_State* L)
+{
+	SOUND* s = new SOUND();
+	//SHOULD NEVER BE EXECUTED FROM LUA!
+	return s;
+}
+
+int Sound_load(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	bool loop;
+	if(luaL_checknumber(L, 3)==1)
+	{
+		loop = true;
+	}else
+	{
+		loop = false;
+	}
+	s->load(luaL_checkstring(L, 2), loop);
+	return 0;
+}
+int Sound_stop(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	s->getSound()->stop();
+	return 0;
+}
+int Sound_isPlaying(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	if(s->getSound()->isFinished() == true)
+	{
+		lua_pushnumber(L, 1);
+	}else
+	{
+		lua_pushnumber(L, 0);
+	}
+	return 1;
+}
+int Sound_setVolume(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	s->setVolume(luaL_checknumber(L, 2));
+	return 0;
+}
+int Sound_setPosition(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	s->setPosition(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+	return 0;
+}
+int Sound_setDropoff(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	s->getSound()->setMinDistance(luaL_checknumber(L, 2));
+	s->getSound()->setMaxDistance(luaL_checknumber(L, 3));
+	return 0;
+}
+int Sound_enableChorus(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	ISoundEffectControl* fx = s->getSound()->getSoundEffectControl();
+	fx->enableChorusSoundEffect(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5));
+	return 0;
+}
+int Sound_disableChorus(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	ISoundEffectControl* fx = s->getSound()->getSoundEffectControl();
+	fx->disableChorusSoundEffect();
+	return 0;
+}
+int Sound_enableCompressor(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	ISoundEffectControl* fx = s->getSound()->getSoundEffectControl();
+	fx->enableCompressorSoundEffect(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4));
+	return 0;
+}
+int Sound_disableCompressor(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	s->getSound()->getSoundEffectControl()->disableCompressorSoundEffect();
+	return 0;
+}
+int Sound_enableDistortion(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	ISoundEffectControl* fx = s->getSound()->getSoundEffectControl();
+	fx->enableDistortionSoundEffect(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5), luaL_checknumber(L, 6));
+	return 0;
+}
+int Sound_disableDistortion(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	s->getSound()->getSoundEffectControl()->disableDistortionSoundEffect();
+	return 0;
+}
+int Sound_enableEcho(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	ISoundEffectControl* fx = s->getSound()->getSoundEffectControl();
+	fx->enableEchoSoundEffect(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5), luaL_checknumber(L, 6));
+	return 0;
+}
+int Sound_disableEcho(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	s->getSound()->getSoundEffectControl()->disableEchoSoundEffect();
+	return 0;
+}
+int Sound_enableReverb(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	ISoundEffectControl* fx = s->getSound()->getSoundEffectControl();
+	fx->enableWavesReverbSoundEffect(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5));
+	return 0;
+}
+int Sound_disableReverb(lua_State* L)
+{
+	SOUND* s = luaW_check<SOUND>(L, 1);
+	s->getSound()->getSoundEffectControl()->disableWavesReverbSoundEffect();
+	return 0;
+}
 #endif

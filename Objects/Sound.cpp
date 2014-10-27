@@ -33,7 +33,7 @@ void SOUND::onRender()
 
 void SOUND::load(std::string filename, bool loop)
 {
-	s = engine->play3D(filename.c_str(), globalPosition, loop, false, true);
+	s = engine->play3D(filename.c_str(), globalPosition, loop, false, true, ESM_AUTO_DETECT, true);
 }
 
 void SOUND::setVolume(float volume)
@@ -44,4 +44,12 @@ ISound* SOUND::getSound()
 {
 	return s;
 }
+void SOUND::setID(int id)
+{
+	this->id = id;
+}
 
+int SOUND::getID()
+{
+	return id;
+}

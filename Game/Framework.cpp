@@ -20,7 +20,7 @@ int FRAMEWORK::init()
 	
 	//initialize the logger to EngineLog.txt
 	log->init("EngineLog.txt");
-	log->setDebug(false);
+	log->setDebug(true);
 	//log header data.
 	log->debugData("Logger initialized");
 	log->logData("Fox Claw Engine by Jcam Technologies");

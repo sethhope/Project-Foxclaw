@@ -8,6 +8,7 @@
 #include "Objects/Mesh.h"
 #include "Objects/Light.h"
 #include "Objects/Particle.h"
+#include "Objects/Sound.h"
 #include "Irrlicht.h"
 #include "irrKlang.h"
 
@@ -39,7 +40,8 @@ namespace FCE
 			
 			int addParticleSystem(core::vector3df pos, core::vector3df dir, core::vector3df scale, std::string filename);
 			PARTICLE* editParticleSystem(int id);
-			int addSound(std::string filename, vec3df pos, bool loop);
+			int addSound(std::string filename, core::vector3df pos, bool loop);
+			SOUND* editSound(int id);
 			void stopSound(int id);
 			bool isPlaying(int id);
 			
@@ -69,7 +71,6 @@ namespace FCE
 			SCRIPT* mainScript;
 			
 			//TODO: Save sounds as objects rather than SFX structs
-			std::vector<SFX> sfx;
 			std::vector<OBJECT*> objects;
 
 			
