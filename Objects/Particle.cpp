@@ -17,6 +17,7 @@ PARTICLE::PARTICLE(IrrlichtDevice* device, LOGGER* log)
 	sizeMax = core::dimension2df(20, 20);
 	color1 = video::SColor(0,255,255,255);
 	color2 = video::SColor(0,255,255,255);
+	name = "LIGHT";
 	log->debugData("Instantiated particle system");
 }
 
@@ -63,7 +64,7 @@ void PARTICLE::setColors(video::SColor color1, video::SColor color2)
 	log->debugData("Setting color of particle system", id);
 	this->color1 = color1;
 	this->color2 = color2;
-	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
+	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
 	log->debugData("Color set");
@@ -85,7 +86,7 @@ void PARTICLE::setDirection(core::vector3df dir)
 {
 	log->debugData("Setting direction of", id);
 	this->dir = dir;
-	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
+	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
 	log->debugData("Direction set");
@@ -123,7 +124,7 @@ void PARTICLE::setAge(float minAge, float maxAge)
 	log->debugData("Setting age of particle system", id);
 	this->minAge = minAge;
 	this->maxAge = maxAge;
-	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
+	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
 	log->debugData("Age set");
@@ -133,7 +134,7 @@ void PARTICLE::setRate(float rateMin, float rateMax)
 	log->debugData("Setting rate of particle system", id);
 	this->rateMin = rateMin;
 	this->rateMax = rateMax;
-	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
+	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
 	log->debugData("Set rate");
@@ -143,7 +144,7 @@ void PARTICLE::setSize(core::dimension2df sizeMin, core::dimension2df sizeMax)
 	log->debugData("Setting size of particle system", id);
 	this->sizeMin = sizeMin;
 	this->sizeMax = sizeMax;
-	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
+	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
 	log->debugData("Size set");
@@ -162,7 +163,7 @@ void PARTICLE::setEmitterSize(core::aabbox3d<f32> size)
 {
 	log->debugData("Setting emitter size of particle system", id);
 	this->size = size;
-	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
+	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
 	log->debugData("Emitter size set");

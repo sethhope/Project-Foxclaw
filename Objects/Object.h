@@ -20,6 +20,8 @@ namespace FCE
 			void setPosition(core::vector3df pos);
 			void setRotation(core::vector3df rot);
 			void setScale(core::vector3df scale);
+			void setName(std::string name);
+			std::string getName();
 		protected:
 			core::vector3df localPosition;
 			core::vector3df globalPosition;
@@ -27,6 +29,7 @@ namespace FCE
 			core::vector3df globalRotation;
 			core::vector3df localScale;
 			core::vector3df globalScale;
+			std::string name;
 	};
 }
 #endif //_FOBJECT_H_

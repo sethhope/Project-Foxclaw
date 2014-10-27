@@ -61,3 +61,13 @@ void OBJECT::setScale(core::vector3df scale)
 {
 	localScale = scale;
 }
+
+void OBJECT::setName(std::string name)
+{
+	this->name = name;
+}
+
+std::string OBJECT::getName()
+{
+	return name;
+}

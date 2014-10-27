@@ -21,14 +21,11 @@ namespace FCE
 			scene::IAnimatedMesh* getMesh();
 			scene::IAnimatedMeshSceneNode* getNode();
 			
-			std::string getName();
 			int getID();
 			void setID(int id);
-			void setName(std::string name);
 			
 		private:
 			int id;
-			std::string name;
 			LOGGER* log;
 			
 			scene::IAnimatedMesh* mesh;

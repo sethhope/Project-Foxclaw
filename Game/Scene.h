@@ -68,17 +68,13 @@ namespace FCE
 			
 			SCRIPT* mainScript;
 			
-			//TODO: Store things as OBJECT* rather than their respective types.
+			//TODO: Save sounds as objects rather than SFX structs
 			std::vector<SFX> sfx;
-			std::vector<MESH*> meshs;
-			std::vector<LIGHT*> lights;
-			std::vector<PARTICLE*> particles;
+			std::vector<OBJECT*> objects;
 
 			
 			int soundID;
-			int meshID;
-			int partID;
-			int lightID;
+			int lastID;
 	};
 }
 #endif // _SCENE_H_

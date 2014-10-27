@@ -18,11 +18,6 @@ int MESH::getID()
 {
 	return id;
 }
-
-std::string MESH::getName()
-{
-	return name;
-}
 scene::IAnimatedMeshSceneNode* MESH::getNode()
 {
 	return node;
@@ -46,10 +41,6 @@ void MESH::setID(int id)
 	this->id = id;
 }
 
-void MESH::setName(std::string name)
-{
-	this->name = name;
-}
 void MESH::onInit()
 {
 }

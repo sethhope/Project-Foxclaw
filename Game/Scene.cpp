@@ -46,10 +46,8 @@ void SCENE::init()
 	cameraPos = vec3df(0, 0, 0);
 	cameraRot = vec3df(0, 0, 1);
 	node = 0;
-	meshID = 0;
+	lastID = 0;
 	soundID = 0;
-	partID = 0;
-	lightID = 0;
 	manager->setShadowColor(video::SColor(150, 0, 0, 0));
 	
 	//load startup lua script
@@ -64,7 +62,6 @@ void SCENE::init()
 	//run mainScript
 	mainScript->run("Scripts/startup.lua");
 	log->logData("Loading scene objects");
-	manager->setAmbientLight(video::SColor(0.5f, 0.5f, 0.5f, 0.5f));
 	//run the init function within the startup script
 	mainScript->runInit();
 	log->logData("Loaded scene objects");
@@ -90,15 +87,7 @@ void SCENE::update()
 			it->s->setPosition(it->pos);
 		}
 	}
-	for(std::vector<MESH *>::iterator it = meshs.begin(); it < meshs.end(); it++)
-	{
-		(*it)->update();
-	}
-	for(std::vector<LIGHT*>::iterator it = lights.begin(); it < lights.end(); it++)
-	{
-		(*it)->update();
-	}
-	for(std::vector<PARTICLE*>::iterator it = particles.begin(); it < particles.end();  it++)
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
 		(*it)->update();
 	}
@@ -176,7 +165,8 @@ int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vec
 	log->debugData("Creating new particle system");
 	PARTICLE* system1;
 	system1 = new PARTICLE(device, log);
-	system1->setID(partID);
+	system1->setID(lastID);
+	system1->setName("PARTICLE");
 	system1->setColors(video::SColor(0, 200, 200, 200), video::SColor(0, 255, 255, 255));
 	system1->setDirection(dir);
 	system1->setPosition(pos);
@@ -185,21 +175,21 @@ int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vec
 	system1->setSize(core::dimension2df(1,1), core::dimension2df(2, 2));
 	system1->setAge(200, 300);
 	system1->loadTexture(filename);
-	partID++;
+	lastID++;
 	system1->init();
-	particles.push_back(system1);
-	log->debugData("Particle system added", partID-1);
-	return partID-1;
+	objects.push_back(system1);
+	log->debugData("Particle system added", lastID-1);
+	return lastID-1;
 }
 PARTICLE* SCENE::editParticleSystem(int id)
 {
 	//log->debugData("Getting particle system", id);
-	for(std::vector<PARTICLE*>::iterator it = particles.begin(); it < particles.end(); it++)
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
-		if((*it)->getID()==id)
+		if(((PARTICLE*)(*it))->getID()==id)
 		{
 			//log->debugData("Found particle system", id);
-			return (*it);
+			return ((PARTICLE*)(*it));
 		}
 	}
 	log->logData("Particle system doesn't exist. ID", id);
@@ -209,25 +199,26 @@ int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 {
 	MESH* tmp = new MESH(manager, node, log);
 	tmp->load(filename);
-	tmp->setID(meshID);
+	tmp->setID(lastID);
+	tmp->setName("MESH");
 	tmp->getNode()->setMaterialFlag(video::EMF_LIGHTING, true);
 	tmp->getNode()->setMaterialType(video::EMT_SOLID);
 	tmp->setPosition(pos);
 	tmp->setRotation(rot);
 	tmp->setScale(scale);
-	meshID++;
-	meshs.push_back(tmp);
-	return meshID-1;
+	lastID++;
+	objects.push_back(tmp);
+	return lastID-1;
 }
 MESH* SCENE::editMesh(int id)
 {
 	//log->debugData("Getting mesh", id);
-	for(std::vector<MESH*>::iterator it = meshs.begin(); it < meshs.end(); it++)
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
-		if((*it)->getID()==id)
+		if(((MESH*)(*it))->getID()==id)
 		{
 			//log->debugData("Got mesh", id);
-			return (*it);
+			return ((MESH*)(*it));
 		}
 	}
 	log->logData("Couldn't find mesh");
@@ -242,21 +233,22 @@ int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df sc
 	temp->setRotation(rot);
 	temp->setType(type);
 	temp->setDropoff(1000);
-	temp->setID(lightID);
-	lightID++;
+	temp->setID(lastID);
+	temp->setName("LIGHT");
+	lastID++;
 	temp->init();
-	lights.push_back(temp);
-	return lightID-1;
+	objects.push_back(temp);
+	return lastID-1;
 }
 LIGHT* SCENE::editLight(int id)
 {
 	//log->debugData("Checking for light", id);
-	for(std::vector<LIGHT*>::iterator it = lights.begin(); it < lights.end(); it++)
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
-		if((*it)->getID()==id)
+		if(((LIGHT*)(*it))->getID()==id)
 		{
 			//log->debugData("Found light", id);
-			return (*it);
+			return ((LIGHT*)(*it));
 		}
 	}
 	log->logData("Light not found. ID", id);
