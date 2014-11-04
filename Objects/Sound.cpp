@@ -5,10 +5,11 @@ SOUND::SOUND()
 {
 	
 }
-SOUND::SOUND(ISoundEngine* engine)
+SOUND::SOUND(ISoundEngine* engine, LOGGER* log)
 {
 	this->engine = engine;
-	volume = 1;
+	this->log = log;
+	volume = 1.0f;
 }
 SOUND::~SOUND()
 {
@@ -33,11 +34,21 @@ void SOUND::onRender()
 
 void SOUND::load(std::string filename, bool loop)
 {
+	log->debugData("Loading sound", filename);
 	s = engine->play3D(filename.c_str(), globalPosition, loop, false, true, ESM_AUTO_DETECT, true);
+	if(!s)
+	{
+		log->logData("Failed to load sound", filename);
+	}else
+	{
+		log->debugData("Sound loaded");
+	}
 }
 
 void SOUND::setVolume(float volume)
 {
+	log->debugData("Setting volume of", this->id);
+	log->debugData("Setting to", volume);
 	this->volume = volume;
 }
 ISound* SOUND::getSound()

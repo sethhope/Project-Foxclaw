@@ -105,11 +105,12 @@ IrrlichtDevice* SCENE::getDevice()
 //
 int SCENE::addSound(std::string filename, core::vector3df pos, bool loop)
 {
-	SOUND* temp = new SOUND(sound);
+	SOUND* temp = new SOUND(sound, log);
+	temp->setID(lastID);
 	temp->load(filename, loop);
 	temp->setPosition(pos);
 	temp->setVolume(1.0f);
-	temp->setID(lastID);
+	
 	if(!temp->getSound()->getSoundEffectControl())
 	{
 		log->logData("Effects not supported!");
@@ -196,8 +197,8 @@ PARTICLE* SCENE::editParticleSystem(int id)
 int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale)
 {
 	MESH* tmp = new MESH(manager, node, log);
-	tmp->load(filename);
 	tmp->setID(lastID);
+	tmp->load(filename);
 	tmp->setName("MESH");
 	tmp->getNode()->setMaterialFlag(video::EMF_LIGHTING, true);
 	tmp->getNode()->setMaterialType(video::EMT_SOLID);

@@ -29,7 +29,7 @@ void LOGGER::logData(std::string data)
 	backlog[0] = data;
 }
 
-void LOGGER::logData(std::string data, int num)
+void LOGGER::logData(std::string data, float num)
 {
 	file << data << " : " << num << std::endl << std::flush;
 	std::cout  << data << " : " << num << std::endl << std::flush;
@@ -80,7 +80,7 @@ void LOGGER::debugData(std::string data)
 	}
 }
 
-void LOGGER::debugData(std::string data, int num)
+void LOGGER::debugData(std::string data, float num)
 {
 	if(debug)
 	{

@@ -18,15 +18,6 @@ using namespace irrklang;
 namespace FCE
 {
 	
-	//TODO: create sound type as OBJECT*
-	typedef struct
-	{
-		ISound* s;
-		vec3df pos;
-		int id;
-		float minDistance;
-	} SFX;
-	
 	//TODO:add scene loading from XML
 	class SCENE
 	{
@@ -70,7 +61,6 @@ namespace FCE
 			
 			SCRIPT* mainScript;
 			
-			//TODO: Save sounds as objects rather than SFX structs
 			std::vector<OBJECT*> objects;
 
 			

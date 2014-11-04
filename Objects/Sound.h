@@ -2,6 +2,7 @@
 #define _FSOUND_H_
 #include "stdafx.h"
 #include "Object.h"
+#include "Misc/Logger.h"
 #include "Irrlicht.h"
 #include "irrKlang.h"
 using namespace irr;
@@ -12,7 +13,7 @@ namespace FCE
 	{
 		public:
 			SOUND();
-			SOUND(ISoundEngine* engine);
+			SOUND(ISoundEngine* engine, LOGGER* log);
 			~SOUND();
 			void onInit();
 			void onUpdate();
@@ -26,6 +27,7 @@ namespace FCE
 			ISoundEngine* engine;
 			ISound* s;
 			int id;
+			LOGGER* log;
 			float volume;
 	};
 }

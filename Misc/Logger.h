@@ -15,11 +15,11 @@ namespace FCE
 			~LOGGER();
 			int init(std::string filename);
 			void logData(std::string data);
-			void logData(std::string data, int num);
+			void logData(std::string data, float num);
 			void logData(std::string data1, std::string data2);
 			void logData(std::string data1, char* data2);
 			void debugData(std::string data);
-			void debugData(std::string data, int num);
+			void debugData(std::string data, float num);
 			void debugData(std::string data1, std::string data2);
 			void debugData(std::string data1, char* data2);
 			void setDebug(bool debug);
