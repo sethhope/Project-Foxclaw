@@ -77,6 +77,12 @@ void SCENE::update()
 	{
 		(*it)->update();
 	}
+	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().X);
+	lua_setglobal(mainScript->L, "CAM_X");
+	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().Y);
+	lua_setglobal(mainScript->L, "CAM_Y");
+	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().Z);
+	lua_setglobal(mainScript->L, "CAM_Z");
 	//run the update function within the main script
 	mainScript->update();
 	//update the sound driver
