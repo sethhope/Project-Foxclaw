@@ -1,5 +1,4 @@
 #include "Scene.h"
-
 using namespace FCE;
 
 SCENE::SCENE()
@@ -28,6 +27,18 @@ void SCENE::init()
 	
 	//begin scene initialization
 	log->logData("Initiating Scene");
+	log->logData("Initializing Physics World");
+	world = createIrrBulletWorld(device, true, false);
+	if(!world)
+	{
+		log->logData("Failed to create world");
+		return;
+	}
+	std::stringstream bulVer;
+	bulVer << IRRBULLET_VER_MAJOR << "." << IRRBULLET_VER_MINOR << "." << IRRBULLET_VER_MICRO;
+	std::string bulVer_ = bulVer.str();
+	log->debugData("Initialized Physics version", bulVer_);
+	world->setGravity(core::vector3df(0, -10, 0));
 	log->logData("Initializing Sound Engine");
 	//create sound driver
 	sound = createIrrKlangDevice();
@@ -37,6 +48,7 @@ void SCENE::init()
 		log->logData("Failed to create sound device");
 		return;
 	}
+	log->debugData("Initialized Sound Engine Version", IRR_KLANG_VERSION);
 	//play test sound to test sound engine
 	addSound("jingle.mp3", core::vector3df(0, 0, 0), false);
 	//TODO:add splash screen

@@ -11,6 +11,7 @@
 #include "Objects/Sound.h"
 #include "Irrlicht.h"
 #include "irrKlang.h"
+#include "irrBullet.h"
 
 using namespace irr;
 using namespace irrklang;
@@ -63,7 +64,7 @@ namespace FCE
 			
 			std::vector<OBJECT*> objects;
 
-			
+			irrBulletWorld *world;
 			int soundID;
 			int lastID;
 	};
