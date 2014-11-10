@@ -23,12 +23,9 @@ namespace FCE
 			void setName(std::string name);
 			std::string getName();
 		protected:
-			core::vector3df localPosition;
-			core::vector3df globalPosition;
-			core::vector3df localRotation;
-			core::vector3df globalRotation;
-			core::vector3df localScale;
-			core::vector3df globalScale;
+			core::vector3df rotation;
+			core::vector3df position;
+			core::vector3df scale;
 			std::string name;
 
 	};
