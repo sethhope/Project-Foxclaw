@@ -23,7 +23,7 @@ void SOUND::onInit()
 
 void SOUND::onUpdate()
 {
-	s->setPosition(position);
+	s->setPosition(globalPosition);
 	s->setVolume(volume);
 }
 
@@ -34,21 +34,21 @@ void SOUND::onRender()
 
 void SOUND::load(std::string filename, bool loop)
 {
-	log->debugData(MINOR, "Loading sound", filename);
-	s = engine->play3D(filename.c_str(), position, loop, false, true, ESM_AUTO_DETECT, true);
+	log->debugData("Loading sound", filename);
+	s = engine->play3D(filename.c_str(), globalPosition, loop, false, true, ESM_AUTO_DETECT, true);
 	if(!s)
 	{
 		log->logData("Failed to load sound", filename);
 	}else
 	{
-		log->debugData(MAJOR, "Sound loaded");
+		log->debugData("Sound loaded");
 	}
 }
 
 void SOUND::setVolume(float volume)
 {
-	log->debugData(MINOR, "Setting volume of", this->id);
-	log->debugData(MAJOR, "Setting to", volume);
+	log->debugData("Setting volume of", this->id);
+	log->debugData("Setting to", volume);
 	this->volume = volume;
 }
 ISound* SOUND::getSound()

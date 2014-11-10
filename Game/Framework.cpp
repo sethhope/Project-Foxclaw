@@ -20,9 +20,9 @@ int FRAMEWORK::init()
 	
 	//initialize the logger to EngineLog.txt
 	log->init("EngineLog.txt");
-	log->setDebug(ALL);
+	log->setDebug(true);
 	//log header data.
-	log->debugData(MINOR, "Logger initialized");
+	log->debugData("Logger initialized");
 	log->logData("Fox Claw Engine by Jcam Technologies");
 	log->logData("Engine build", BUILD);
 	log->logData("Platform", PLAT);
@@ -54,12 +54,12 @@ int FRAMEWORK::init()
 	log->logData("Getting GUI");
 	gui = manager->getGUIEnvironment();
 	log->logData("Creating scene");
-	//TODO: Add real camera control beyond debug
-	manager->addCameraSceneNodeFPS(0, 100.0f, 0.01f);
 	//Create a new scene object and initialize
 	scene = new SCENE(log, device);
 	scene->init();
 	//add debug camera.
+	//TODO: Add real camera control beyond debug
+	manager->addCameraSceneNodeFPS(0, 100.0f, 0.01f);
 	log->logData("Scene created");
 	return 0;
 }

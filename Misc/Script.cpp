@@ -28,9 +28,9 @@ void SCRIPT::onInit()
 		log->logData("Failed to create luastate");
 		return;
 	}
-	log->debugData(MINOR, "Opening libraries");
+	log->debugData("Opening libraries");
 	luaL_openlibs(L);
-	log->debugData(MINOR, "Opened libraries");
+	log->debugData("Opened libraries");
 	//TODO: add functions and classes
 
 	static luaL_Reg Scene_metatable[] =
@@ -102,7 +102,7 @@ void SCRIPT::onInit()
 
 lua_State* SCRIPT::run(std::string filename)
 {
-	log->debugData(MINOR, "Attempting to run script", filename);
+	log->debugData("Attempting to run script", filename);
 	lua_State* tmp = L;
 	this->filename = filename;
 	if(luaL_loadfile(tmp, filename.c_str()))
@@ -118,13 +118,13 @@ lua_State* SCRIPT::run(std::string filename)
 		return NULL;
 	}
 	L = tmp;
-	log->debugData(MINOR, "Successfully ran", filename);
+	log->debugData("Successfully ran", filename);
 	return L;
 }
 
 lua_State* SCRIPT::runInit()
 {
-	log->debugData(MAJOR, "Running init function");
+	log->debugData("Running init function");
 	lua_getglobal(L, "init");
 	int er = lua_pcall(L, 0, 0, 0);
 	if(er != 0)
@@ -132,7 +132,7 @@ lua_State* SCRIPT::runInit()
 		log->logData("Failed to run init function", lua_tostring(L, -1));
 		return L;
 	}
-	log->debugData(MAJOR, "Ran init function");
+	log->debugData("Ran init function");
 	return L;
 }
 

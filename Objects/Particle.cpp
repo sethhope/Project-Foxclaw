@@ -17,8 +17,8 @@ PARTICLE::PARTICLE(IrrlichtDevice* device, LOGGER* log)
 	sizeMax = core::dimension2df(20, 20);
 	color1 = video::SColor(0,255,255,255);
 	color2 = video::SColor(0,255,255,255);
-	name = "PARTICLE";
-	log->debugData(MAJOR, "Instantiated particle system");
+	name = "LIGHT";
+	log->debugData("Instantiated particle system");
 }
 
 PARTICLE::~PARTICLE()
@@ -32,19 +32,19 @@ void PARTICLE::onInit()
 	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
-	ps->setPosition(position);
-	ps->setScale(scale);
+	ps->setPosition(this->globalPosition);
+	ps->setScale(globalScale);
 	ps->setMaterialFlag(video::EMF_LIGHTING, false);
 	ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
 	ps->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
-	log->debugData(MAJOR, "Created particle system");
+	log->debugData("Created particle system");
 }
 
 void PARTICLE::onUpdate()
 {
-	ps->setPosition(position);
-	ps->setRotation(rotation);
-	ps->setScale(scale);
+	ps->setPosition(globalPosition);
+	ps->setRotation(globalRotation);
+	ps->setScale(globalScale);
 }
 
 void PARTICLE::onRender()
@@ -54,47 +54,47 @@ void PARTICLE::onRender()
 
 void PARTICLE::loadTexture(std::string filename)
 {
-	log->debugData(MINOR, "Setting particle texture for", id);
-	log->debugData(MAJOR, "Set to", filename);
+	log->debugData("Setting particle texture for", id);
+	log->debugData("Set to", filename);
 	ps->setMaterialTexture(0, device->getVideoDriver()->getTexture(filename.c_str()));
-	log->debugData(MAJOR, "Texture set");
+	log->debugData("Texture set");
 }
 void PARTICLE::setColors(video::SColor color1, video::SColor color2)
 {
-	log->debugData(MINOR, "Setting color of particle system", id);
+	log->debugData("Setting color of particle system", id);
 	this->color1 = color1;
 	this->color2 = color2;
 	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
-	log->debugData(MAJOR, "Color set");
+	log->debugData("Color set");
 }
 void PARTICLE::setPosition(core::vector3df position)
 {
-	log->debugData(MINOR, "Setting position of particle system", id);
-	this->position = position;
-	log->debugData(MAJOR, "Position set");
+	log->debugData("Setting position of particle system", id);
+	this->localPosition = position;
+	log->debugData("Position set");
 }
 void PARTICLE::setScale(core::vector3df scale)
 {
-	log->debugData(MINOR, "Setting scale for particle system", id);
-	this->scale = scale;
+	log->debugData("Setting scale for particle system", id);
+	this->localScale = scale;
 	ps->setScale(scale);
-	log->debugData(MAJOR, "Scale set");
+	log->debugData("Scale set");
 }
 void PARTICLE::setDirection(core::vector3df dir)
 {
-	log->debugData(MINOR, "Setting direction of", id);
+	log->debugData("Setting direction of", id);
 	this->dir = dir;
 	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
-	log->debugData(MAJOR, "Direction set");
+	log->debugData("Direction set");
 }
 void PARTICLE::addAffector(std::string type)
 {
-	log->debugData(MINOR, "Adding affector to", id);
-	log->debugData(MAJOR, "Affector type", type);
+	log->debugData("Adding affector to", id);
+	log->debugData("Affector type", type);
 	if(type == "fade")
 	{
 		scene::IParticleAffector* paf = ps->createFadeOutParticleAffector();
@@ -114,46 +114,46 @@ void PARTICLE::addAffector(std::string type)
 		paf->drop();
 	}else
 	{
-		log->debugData(MINOR, "Invalid affector type");
+		log->debugData("Invalid affector type");
 		return;
 	}
-	log->debugData(MAJOR, "Affector added");
+	log->debugData("Affector added");
 }
 void PARTICLE::setAge(float minAge, float maxAge)
 {
-	log->debugData(MINOR, "Setting age of particle system", id);
+	log->debugData("Setting age of particle system", id);
 	this->minAge = minAge;
 	this->maxAge = maxAge;
 	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
-	log->debugData(MAJOR, "Age set");
+	log->debugData("Age set");
 }
 void PARTICLE::setRate(float rateMin, float rateMax)
 {
-	log->debugData(MINOR, "Setting rate of particle system", id);
+	log->debugData("Setting rate of particle system", id);
 	this->rateMin = rateMin;
 	this->rateMax = rateMax;
 	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
-	log->debugData(MAJOR, "Set rate");
+	log->debugData("Set rate");
 }
 void PARTICLE::setSize(core::dimension2df sizeMin, core::dimension2df sizeMax)
 {
-	log->debugData(MINOR, "Setting size of particle system", id);
+	log->debugData("Setting size of particle system", id);
 	this->sizeMin = sizeMin;
 	this->sizeMax = sizeMax;
 	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
-	log->debugData(MAJOR, "Size set");
+	log->debugData("Size set");
 }
 void PARTICLE::setID(int id)
 {
-	log->debugData(MINOR, "Setting ID of particle system to", id);
+	log->debugData("Setting ID of particle system to", id);
 	this->id = id;
-	log->debugData(MAJOR, "ID set");
+	log->debugData("ID set");
 }
 int PARTICLE::getID()
 {
@@ -161,10 +161,10 @@ int PARTICLE::getID()
 }
 void PARTICLE::setEmitterSize(core::aabbox3d<f32> size)
 {
-	log->debugData(MINOR, "Setting emitter size of particle system", id);
+	log->debugData("Setting emitter size of particle system", id);
 	this->size = size;
 	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1, color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
-	log->debugData(MAJOR, "Emitter size set");
+	log->debugData("Emitter size set");
 }

@@ -33,14 +33,12 @@ NODE::~NODE()
 void NODE::attach(NODE* node)
 {
 	parent = node->getLastChild();
-	thisNode->setParent(parent->getIrrNode());
 	node->getLastChild()->child = this;
 }
 
 void NODE::detach()
 {
 	parent->child = NULL;
-	parent->getIrrNode()->removeChild(thisNode);
 	parent = NULL;
 }
 
