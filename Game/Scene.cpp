@@ -37,7 +37,7 @@ void SCENE::init()
 	std::stringstream bulVer;
 	bulVer << IRRBULLET_VER_MAJOR << "." << IRRBULLET_VER_MINOR << "." << IRRBULLET_VER_MICRO;
 	std::string bulVer_ = bulVer.str();
-	log->debugData("Initialized Physics version", bulVer_);
+	log->debugData(MINOR, "Initialized Physics version", bulVer_);
 	world->setGravity(core::vector3df(0, -10, 0));
 	log->logData("Initializing Sound Engine");
 	//create sound driver
@@ -48,7 +48,7 @@ void SCENE::init()
 		log->logData("Failed to create sound device");
 		return;
 	}
-	log->debugData("Initialized Sound Engine Version", IRR_KLANG_VERSION);
+	log->debugData(MINOR, "Initialized Sound Engine Version", IRR_KLANG_VERSION);
 	//play test sound to test sound engine
 	addSound("jingle.mp3", core::vector3df(0, 0, 0), false);
 	//TODO:add splash screen
@@ -82,21 +82,27 @@ void SCENE::init()
 
 void SCENE::update()
 {
+	log->debugData(EXTRA, "Starting scene update");
+	log->debugData(EXTRA, "Setting listener position");
 	//set listener position for the sound manager
 	sound->setListenerPosition( manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
 	
+	log->debugData(EXTRA, "Updating objects");
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
 		(*it)->update();
 	}
+	log->debugData(EXTRA, "Adding camera constants");
 	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().X);
 	lua_setglobal(mainScript->L, "CAM_X");
 	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().Y);
 	lua_setglobal(mainScript->L, "CAM_Y");
 	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().Z);
 	lua_setglobal(mainScript->L, "CAM_Z");
+	log->debugData(EXTRA, "Updating script");
 	//run the update function within the main script
 	mainScript->update();
+	log->debugData(EXTRA, "updating sound");
 	//update the sound driver
 	sound->update();
 }
@@ -179,7 +185,7 @@ bool SCENE::isPlaying(int id)
 
 int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vector3df scale, std::string filename)
 {
-	log->debugData("Creating new particle system");
+	log->debugData(MAJOR, "Creating new particle system");
 	PARTICLE* system1;
 	system1 = new PARTICLE(device, log);
 	system1->setID(lastID);
@@ -195,7 +201,7 @@ int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vec
 	lastID++;
 	system1->init();
 	objects.push_back(system1);
-	log->debugData("Particle system added", lastID-1);
+	log->debugData(MAJOR, "Particle system added", lastID-1);
 	return lastID-1;
 }
 PARTICLE* SCENE::editParticleSystem(int id)

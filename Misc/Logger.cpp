@@ -66,12 +66,12 @@ void LOGGER::logData(std::string data1, char* data2)
 	tmp << data1 << " : " << data2;
 	backlog[0] = tmp.str();
 }
-void LOGGER::debugData(std::string data)
+void LOGGER::debugData(int level, std::string data)
 {
-	if(debug)
+	if(debug >= level)
 	{
-		file <<"DEBUG: " << data << std::endl << std::flush;
-		std::cout <<"DEBUG: " << data << std::endl << std::flush;
+		file <<"DEBUG LV."<< level << " : " << data << std::endl << std::flush;
+		std::cout <<"DEBUG LV."<< level << " : " << data << std::endl << std::flush;
 		for(int i = 1; i < 10; i++)
 		{
 			backlog[i] = backlog[i-1];
@@ -80,12 +80,12 @@ void LOGGER::debugData(std::string data)
 	}
 }
 
-void LOGGER::debugData(std::string data, float num)
+void LOGGER::debugData(int level, std::string data, float num)
 {
-	if(debug)
+	if(debug >= level)
 	{
-		file <<"DEBUG: "<< data << " : " << num << std::endl << std::flush;
-		std::cout <<"DEBUG: " << data << " : " << num << std::endl << std::flush;
+		file <<"DEBUG LV."<< level << " : " << data << " : " << num << std::endl << std::flush;
+		std::cout <<"DEBUG LV."<< level << " : "  << data << " : " << num << std::endl << std::flush;
 		for(int i = 1; i < 10; i++)
 		{
 			backlog[i] = backlog[i-1];
@@ -96,12 +96,12 @@ void LOGGER::debugData(std::string data, float num)
 	}
 }
 
-void LOGGER::debugData(std::string data1, std::string data2)
+void LOGGER::debugData(int level, std::string data1, std::string data2)
 {
-	if(debug)
+	if(debug >= level)
 	{
-		file << "DEBUG: " << data1 << " : " << data2 << std::endl << std::flush;
-		std::cout << "DEBUG: " << data1 << " : " << data2 << std::endl << std::flush;
+		file << "DEBUG LV."<< level << " : "  << data1 << " : " << data2 << std::endl << std::flush;
+		std::cout << "DEBUG LV."<< level << " : "  << data1 << " : " << data2 << std::endl << std::flush;
 		for(int i = 1; i < 10; i++)
 		{
 			backlog[i] = backlog[i-1];
@@ -111,12 +111,12 @@ void LOGGER::debugData(std::string data1, std::string data2)
 		backlog[0] = tmp.str();
 	}
 }
-void LOGGER::debugData(std::string data1, char* data2)
+void LOGGER::debugData(int level, std::string data1, char* data2)
 {
-	if(debug)
+	if(debug >= level)
 	{
-		file << "DEBUG: " << data1 << " : " << data2 << std::endl << std::flush;
-		std::cout << "DEBUG: " << data1 << " : " << data2 << std::endl << std::flush;
+		file << "DEBUG LV."<< level << " : "  << data1 << " : " << data2 << std::endl << std::flush;
+		std::cout << "DEBUG LV."<< level << " : "  << data1 << " : " << data2 << std::endl << std::flush;
 		for(int i = 1; i < 10; i++)
 		{
 			backlog[i] = backlog[i-1];
@@ -126,7 +126,7 @@ void LOGGER::debugData(std::string data1, char* data2)
 		backlog[0] = tmp.str();
 	}
 }
-void LOGGER::setDebug(bool debug)
+void LOGGER::setDebug(int debug)
 {
 	this->debug = debug;
 }

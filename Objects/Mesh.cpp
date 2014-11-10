@@ -30,7 +30,7 @@ int MESH::load(std::string filename)
 	scene::IAnimatedMeshSceneNode* node = manager->addAnimatedMeshSceneNode(mesh);
 	if(node)
 	{
-		log->debugData("Loaded mesh");
+		log->debugData(MAJOR, "Loaded mesh");
 		thisNode = node;
 		return 0;
 	}
@@ -48,9 +48,6 @@ void MESH::onInit()
 
 void MESH::onUpdate()
 {
-	thisNode->setPosition(globalPosition);
-	thisNode->setRotation(globalRotation);
-	thisNode->setScale(globalScale);
 }
 void MESH::onRender()
 {

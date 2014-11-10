@@ -6,6 +6,11 @@
 #include <time.h>
 #include <stdio.h>
 #include <sstream>
+#define CLEAN 0
+#define MINOR 1
+#define MAJOR 2
+#define EXTRA 3
+#define ALL 3
 namespace FCE
 {
 	class LOGGER
@@ -18,14 +23,14 @@ namespace FCE
 			void logData(std::string data, float num);
 			void logData(std::string data1, std::string data2);
 			void logData(std::string data1, char* data2);
-			void debugData(std::string data);
-			void debugData(std::string data, float num);
-			void debugData(std::string data1, std::string data2);
-			void debugData(std::string data1, char* data2);
-			void setDebug(bool debug);
+			void debugData(int level, std::string data);
+			void debugData(int level, std::string data, float num);
+			void debugData(int level, std::string data1, std::string data2);
+			void debugData(int level, std::string data1, char* data2);
+			void setDebug(int debug);
 			std::string backlog[10];
 		private:
-			bool debug;
+			int debug;
 			std::ofstream file;
 			
 			

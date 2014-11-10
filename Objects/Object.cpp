@@ -5,6 +5,9 @@ using namespace FCE;
 OBJECT::OBJECT()
 {
 	name = "UNNAMED_OBJECT";
+	position = core::vector3df(0, 0, 0);
+	rotation = core::vector3df(0, 0, 0);
+	scale = core::vector3df(1, 1, 1);
 }
 
 OBJECT::~OBJECT()
@@ -19,20 +22,10 @@ void OBJECT::init()
 
 void OBJECT::update()
 {
-	if(getParent())
-	{
-		
-		globalPosition = ((OBJECT*)getParent())->globalPosition + localPosition;
-		globalRotation = ((OBJECT*)getParent())->globalRotation + localRotation;
-		globalScale = ((OBJECT*)getParent())->globalScale * localScale;
-	}
-	else
-	{
-		globalPosition = localPosition;
-		globalRotation = localRotation;
-		globalScale = localScale;
-	}
 	onUpdate();
+	this->getIrrNode()->setPosition(position);
+	this->getIrrNode()->setRotation(rotation);
+	this->getIrrNode()->setScale(scale);
 	if(getChild())
 	{
 		((OBJECT*)getChild())->update();
@@ -50,17 +43,17 @@ void OBJECT::render()
 
 void OBJECT::setPosition(core::vector3df pos)
 {
-	localPosition = pos;
+	position = pos;
 }
 
 void OBJECT::setRotation(core::vector3df rot)
 {
-	localRotation = rot;
+	rotation = rot;
 }
 
 void OBJECT::setScale(core::vector3df scale)
 {
-	localScale = scale;
+	scale = scale;
 }
 
 void OBJECT::setName(std::string name)
