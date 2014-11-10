@@ -218,8 +218,8 @@ int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 	tmp->setID(lastID);
 	tmp->load(filename);
 	tmp->setName("MESH");
-	tmp->getNode()->setMaterialFlag(video::EMF_LIGHTING, true);
-	tmp->getNode()->setMaterialType(video::EMT_SOLID);
+	tmp->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, true);
+	tmp->getIrrNode()->setMaterialType(video::EMT_SOLID);
 	tmp->setPosition(pos);
 	tmp->setRotation(rot);
 	tmp->setScale(scale);
@@ -243,7 +243,7 @@ MESH* SCENE::editMesh(int id)
 }
 int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, video::E_LIGHT_TYPE type)
 {
-	LIGHT* temp = new LIGHT(manager, node, log);
+	LIGHT* temp = new LIGHT(manager, log);
 	temp->setColor(video::SColor(0, 1, 1, 1));
 	temp->setPosition(pos);
 	temp->setScale(scale);

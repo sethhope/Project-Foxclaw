@@ -4,6 +4,7 @@ using namespace FCE;
 
 OBJECT::OBJECT()
 {
+	name = "UNNAMED_OBJECT";
 }
 
 OBJECT::~OBJECT()

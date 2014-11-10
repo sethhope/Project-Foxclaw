@@ -19,7 +19,7 @@ namespace FCE
 			int load(std::string filename);
 			
 			scene::IAnimatedMesh* getMesh();
-			scene::IAnimatedMeshSceneNode* getNode();
+			//scene::IAnimatedMeshSceneNode* getNode();
 			
 			int getID();
 			void setID(int id);
@@ -29,7 +29,6 @@ namespace FCE
 			LOGGER* log;
 			
 			scene::IAnimatedMesh* mesh;
-			scene::IAnimatedMeshSceneNode* node;
 			scene::ISceneManager* manager;
 	};
 }

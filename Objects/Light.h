@@ -9,7 +9,7 @@ namespace FCE
 	class LIGHT : public OBJECT
 	{
 		public:
-			LIGHT(scene::ISceneManager* manager, scene::ISceneNode* node, LOGGER* log);
+			LIGHT(scene::ISceneManager* manager, LOGGER* log);
 			~LIGHT();
 			void onInit();
 			void onUpdate();
@@ -25,7 +25,7 @@ namespace FCE
 			core::vector3df position;
 			core::vector3df scale;
 			video::SColorf color;
-			scene::ISceneNode* node;
+			//scene::ISceneNode* node;
 			scene::ISceneManager* manager;
 			video::E_LIGHT_TYPE type;
 			float dropoff;

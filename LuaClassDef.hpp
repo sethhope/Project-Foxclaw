@@ -116,27 +116,27 @@ int Mesh_setMaterial(lua_State* L)
 	std::string type = luaL_checkstring(L, 2);
 	if(type == "solid")
 	{
-		m->getNode()->setMaterialType(video::EMT_SOLID);
+		m->getIrrNode()->setMaterialType(video::EMT_SOLID);
 	}
 	if(type == "solid2")
 	{
-		m->getNode()->setMaterialType(video::EMT_SOLID_2_LAYER);
+		m->getIrrNode()->setMaterialType(video::EMT_SOLID_2_LAYER);
 	}
 	if(type == "lightmap")
 	{
-		m->getNode()->setMaterialType(video::EMT_LIGHTMAP);
+		m->getIrrNode()->setMaterialType(video::EMT_LIGHTMAP);
 	}
 	if(type == "lightmaplight")
 	{
-		m->getNode()->setMaterialType(video::EMT_LIGHTMAP_LIGHTING);
+		m->getIrrNode()->setMaterialType(video::EMT_LIGHTMAP_LIGHTING);
 	}
 	if(type == "normalmap_solid")
 	{
-		m->getNode()->setMaterialType(video::EMT_NORMAL_MAP_SOLID);
+		m->getIrrNode()->setMaterialType(video::EMT_NORMAL_MAP_SOLID);
 	}
 	if(type == "parallax_solid")
 	{
-		m->getNode()->setMaterialType(video::EMT_PARALLAX_MAP_SOLID);
+		m->getIrrNode()->setMaterialType(video::EMT_PARALLAX_MAP_SOLID);
 	}
 	return 0;
 }

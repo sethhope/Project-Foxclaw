@@ -1,10 +1,9 @@
 #include "Light.h"
 using namespace FCE;
-LIGHT::LIGHT(scene::ISceneManager* manager, scene::ISceneNode* node, LOGGER* log)
+LIGHT::LIGHT(scene::ISceneManager* manager, LOGGER* log)
 {
 	this->manager = manager;
 	this->log = log;
-	this->node = node;
 	localPosition = core::vector3df(0, 0, 0);
 	localRotation = core::vector3df(0, 0, 0);
 	scale = core::vector3df(1, 1, 1);
@@ -19,9 +18,9 @@ LIGHT::~LIGHT()
 
 void LIGHT::onUpdate()
 {
-	node->setPosition(globalPosition);
-	node->setScale(globalScale);
-	node->setRotation(globalRotation);
+	thisNode->setPosition(globalPosition);
+	thisNode->setScale(globalScale);
+	thisNode->setRotation(globalRotation);
 }
 
 void LIGHT::onRender()
@@ -36,7 +35,7 @@ void LIGHT::setColor(video::SColorf color)
 
 scene::ISceneNode* LIGHT::getNode()
 {
-	return node;
+	return thisNode;
 }
 void LIGHT::setDropoff(float dropoff)
 {
@@ -48,9 +47,9 @@ void LIGHT::onInit()
 	scene::ILightSceneNode* tmp;
 	tmp = manager->addLightSceneNode(NULL, globalPosition, color, dropoff);
 	tmp->getLightData().Type = type;
-	node = tmp;
-	node->setScale(globalScale);
-	if(!node)
+	thisNode = tmp;
+	thisNode->setScale(globalScale);
+	if(!thisNode)
 	{
 		log->logData("Light creation failed");
 		return;

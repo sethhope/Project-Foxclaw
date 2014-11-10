@@ -1,6 +1,7 @@
 #include "NODE.h"
 
 using namespace FCE;
+using namespace irr;
 
 NODE::NODE()
 {
@@ -104,4 +105,8 @@ NODE* NODE::getFirstParent()
 	}
 }
 
+scene::ISceneNode* NODE::getIrrNode()
+{
+	return thisNode;
+}
 

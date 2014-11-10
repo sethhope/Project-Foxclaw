@@ -30,6 +30,7 @@ namespace FCE
 			core::vector3df localScale;
 			core::vector3df globalScale;
 			std::string name;
+
 	};
 }
 #endif //_FOBJECT_H_
