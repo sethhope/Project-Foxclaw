@@ -6,8 +6,10 @@
 #include "Objects/Mesh.h"
 #include "Misc/Script.h"
 #include "Irrlicht.h"
+
 #define SCREENWIDTH 1024
 #define SCREENHEIGHT 800
+
 #define BUILD "2.1.0.1"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 	#define PLAT "Win32"
