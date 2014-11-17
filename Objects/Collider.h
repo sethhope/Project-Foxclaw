@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "Node.h"
 #include "Object.h"
 #include "Misc/Logger.h"
 #include "Irrlicht.h"
@@ -8,8 +7,6 @@
 #define COL_CUBE 0
 #define COL_SPHERE 1
 #define COL_MESH 2
-
-#define MAX_TYPE 2
 using namespace irr;
 namespace FCE
 {
@@ -17,7 +14,7 @@ namespace FCE
 	class COLLIDER : public OBJECT
 	{
 		public:
-			COLLIDER(NODE* parent, LOGGER* log, int type);
+			COLLIDER(scene::ISceneNode* parent, LOGGER* log);
 			~COLLIDER();
 			
 			void onInit();
@@ -28,7 +25,7 @@ namespace FCE
 			void setMass(float mass);
 			void setVelocity(core::vector3df velocity);
 			void setFriction(float friction);
-			void setDamping(float lDamping, float aDamping);
+			void setDamping(float damping);
 			
 		private:
 			int type;
