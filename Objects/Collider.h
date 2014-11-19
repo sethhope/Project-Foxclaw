@@ -1,3 +1,5 @@
+#ifndef _COLLIDER_H_
+#define _COLLIDER_H_
 #include "stdafx.h"
 #include "Node.h"
 #include "Object.h"
@@ -17,7 +19,7 @@ namespace FCE
 	class COLLIDER : public OBJECT
 	{
 		public:
-			COLLIDER(NODE* parent, LOGGER* log, int type);
+			COLLIDER(NODE* parent, irrBulletWorld* world, LOGGER* log, int type);
 			~COLLIDER();
 			
 			void onInit();
@@ -29,12 +31,18 @@ namespace FCE
 			void setVelocity(core::vector3df velocity);
 			void setFriction(float friction);
 			void setDamping(float lDamping, float aDamping);
-			
+			void setMesh(scene::IMesh* colMesh);
+			void setID(int id);
+			int getID();
 		private:
 			int type;
+			int id;
 			float friction, mass, damping;
 			float rad;
 			LOGGER* log;
+			irrBulletWorld *world;
+			scene::IMesh* colMesh;
 			IRigidBody* body;
 	};
 }
+#endif

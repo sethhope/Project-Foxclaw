@@ -1,7 +1,7 @@
 #include "Mesh.h"
 using namespace FCE;
 
-MESH::MESH(scene::ISceneManager* manager, scene::ISceneNode* node, LOGGER* log)
+MESH::MESH(scene::ISceneManager* manager,  LOGGER* log)
 {
 	this->manager = manager;
 	this->log = log;
@@ -53,3 +53,7 @@ void MESH::onRender()
 {
 }
 
+scene::IAnimatedMesh* MESH::getMesh()
+{
+	return mesh;
+}

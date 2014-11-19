@@ -24,7 +24,8 @@ SCENE::~SCENE()
 
 void SCENE::init()
 {
-	
+	deltaTime = 0;
+	timeStamp = device->getTimer()->getTime();
 	//begin scene initialization
 	log->logData("Initiating Scene");
 	log->logData("Initializing Physics World");
@@ -76,6 +77,27 @@ void SCENE::init()
 	log->logData("Loading scene objects");
 	//run the init function within the startup script
 	mainScript->runInit();
+	int m = addMesh("sibenik/sibenik.obj", core::vector3df(0, 0, 0), core::vector3df(0, 0, 0), core::vector3df(1,1,1));
+	log->debugData(EXTRA, "Adding collider");
+	COLLIDER* c = new COLLIDER((NODE*)editMesh(m), world, log, COL_MESH);
+	c->setMesh(editMesh(m)->getMesh());
+	c->init();
+	c->setDamping(1, 1);
+	c->setFriction(0.5);
+	c->setMass(0);
+	c->setID(lastID);
+	lastID++;
+	objects.push_back(c);
+	int b = addMesh("sibenik/sibenik.obj", core::vector3df(0, 10, 0), core::vector3df(0, 0, 0), core::vector3df(0.1, 0.1, 0.1));
+	COLLIDER* c1 = new COLLIDER((NODE*)editMesh(b), world, log, COL_MESH);
+	c1->setMesh(editMesh(b)->getMesh());
+	c1->init();
+	c1->setDamping(1, 1);
+	c1->setFriction(0.5);
+	c1->setMass(2);
+	c1->setID(lastID);
+	lastID++;
+	objects.push_back(c1);
 	log->logData("Loaded scene objects");
 	log->logData("Finished initializing");
 }
@@ -83,9 +105,17 @@ void SCENE::init()
 void SCENE::update()
 {
 	log->debugData(EXTRA, "Starting scene update");
+	log->debugData(EXTRA, "Calculating deltaTime");
+	deltaTime = device->getTimer()->getTime() - timeStamp;
+	timeStamp = device->getTimer()->getTime();
 	log->debugData(EXTRA, "Setting listener position");
 	//set listener position for the sound manager
 	sound->setListenerPosition( manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
+	log->debugData(EXTRA, "Updating Physics");
+	world->stepSimulation(deltaTime*0.001f, 120);
+	
+	world->debugDrawWorld(true);
+	world->debugDrawProperties(true);
 	
 	log->debugData(EXTRA, "Updating objects");
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
@@ -220,7 +250,7 @@ PARTICLE* SCENE::editParticleSystem(int id)
 }
 int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale)
 {
-	MESH* tmp = new MESH(manager, node, log);
+	MESH* tmp = new MESH(manager, log);
 	tmp->setID(lastID);
 	tmp->load(filename);
 	tmp->setName("MESH");

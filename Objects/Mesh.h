@@ -10,7 +10,7 @@ namespace FCE
 	class MESH : public OBJECT
 	{
 		public:
-			MESH(scene::ISceneManager* manager, scene::ISceneNode* node, LOGGER* log);
+			MESH(scene::ISceneManager* manager, LOGGER* log);
 			~MESH();
 			void onInit();
 			void onUpdate();

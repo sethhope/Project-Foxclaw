@@ -9,6 +9,7 @@
 #include "Objects/Light.h"
 #include "Objects/Particle.h"
 #include "Objects/Sound.h"
+#include "Objects/Collider.h"
 #include "Irrlicht.h"
 #include "irrKlang.h"
 #include "irrBullet.h"
@@ -65,6 +66,9 @@ namespace FCE
 			std::vector<OBJECT*> objects;
 
 			irrBulletWorld *world;
+			
+			float timeStamp;
+			float deltaTime;
 			int soundID;
 			int lastID;
 	};
