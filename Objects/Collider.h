@@ -19,7 +19,7 @@ namespace FCE
 	class COLLIDER : public OBJECT
 	{
 		public:
-			COLLIDER(NODE* parent, irrBulletWorld* world, LOGGER* log, int type);
+			COLLIDER(NODE* parent, scene::ISceneManager* manager, irrBulletWorld* world, LOGGER* log, float mass, int type);
 			~COLLIDER();
 			
 			void onInit();

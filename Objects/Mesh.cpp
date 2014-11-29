@@ -7,6 +7,9 @@ MESH::MESH(scene::ISceneManager* manager,  LOGGER* log)
 	this->log = log;
 	id = -1;
 	name = "MESH";
+	position = core::vector3df(0, 0, 0);
+	rotation = core::vector3df(0, 0, 0);
+	scale = core::vector3df(1, 1, 1);
 }
 
 MESH::~MESH()
@@ -26,7 +29,7 @@ int MESH::getID()
 int MESH::load(std::string filename)
 {
 	log->logData("Loading mesh", filename);
-	scene::IAnimatedMesh* mesh = manager->getMesh(filename.c_str());
+	mesh = manager->getMesh(filename.c_str());
 	scene::IAnimatedMeshSceneNode* node = manager->addAnimatedMeshSceneNode(mesh);
 	if(node)
 	{

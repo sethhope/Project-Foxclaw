@@ -7,6 +7,9 @@ SCRIPT::SCRIPT(LOGGER* log)
 {
 	this->log = log;
 	L = NULL;
+	position = core::vector3df(0, 0, 0);
+	rotation = core::vector3df(0, 0, 0);
+	scale = core::vector3df(1, 1, 1);
 }
 SCRIPT::SCRIPT(lua_State* L, LOGGER* log)
 {

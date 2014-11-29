@@ -10,6 +10,10 @@ SOUND::SOUND(ISoundEngine* engine, LOGGER* log)
 	this->engine = engine;
 	this->log = log;
 	volume = 1.0f;
+	name = "SOUND_EMITTER";
+	position = core::vector3df(0, 0, 0);
+	rotation = core::vector3df(0, 0, 0);
+	scale = core::vector3df(1, 1, 1);
 }
 SOUND::~SOUND()
 {

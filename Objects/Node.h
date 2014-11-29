@@ -1,7 +1,7 @@
 #ifndef _FNODE_H_
 #define _FNODE_H_
 #include "stdafx.h"
-#include "irrlicht.h"
+#include "Irrlicht.h"
 using namespace irr;
 namespace FCE
 {
@@ -25,7 +25,7 @@ namespace FCE
 			NODE* child;
 			NODE* nextNode;
 			NODE* prevNode;
-		protected:
+  protected:
 			scene::ISceneNode* thisNode;
 	};
 }

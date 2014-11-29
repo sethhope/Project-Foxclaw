@@ -41,6 +41,9 @@ namespace FCE
 			int addMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
 			MESH* editMesh(int id);
 			
+			int addCollider(OBJECT* parent, int type, float lDamping, float aDamping, float friction, float mass);
+			COLLIDER* editCollider(int id);
+			
 			int addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, video::E_LIGHT_TYPE type);
 			LIGHT* editLight(int id);
 			

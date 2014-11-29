@@ -1,11 +1,11 @@
 #include "Collider.h"
 using namespace FCE;
 
-COLLIDER::COLLIDER(NODE* parent, irrBulletWorld* world, LOGGER* log, int type)
+COLLIDER::COLLIDER(NODE* parent, scene::ISceneManager* manager, irrBulletWorld* world, LOGGER* log, float mass, int type)
 {
 	this->log = log;
 	log->debugData(EXTRA, "Constructing collider");
-	if(type >= MAX_TYPE)
+	if(type <= MAX_TYPE)
 	{
 		this->type = type;
 	}
@@ -16,7 +16,13 @@ COLLIDER::COLLIDER(NODE* parent, irrBulletWorld* world, LOGGER* log, int type)
 	this->world = world;
 	//TODO: FIX THIS THING THAT DOES A THING WHEN ATTACHING!
 	log->debugData(EXTRA, "Attaching node");
- 	parent->attach((NODE*)this);
+	thisNode = manager->;
+	parent->getFirstParent()->attach(this);
+	//attach(parent->getFirstParent());
+	log->logData("Position Y", ((OBJECT*)parent)->getPosition().Y);
+	setPosition(((OBJECT*)parent)->getPosition());
+	setRotation(((OBJECT*)parent)->getRotation());
+	setScale(((OBJECT*)parent)->getScale());
 	log->debugData(EXTRA, "Attached");
 }
 
@@ -30,19 +36,24 @@ void COLLIDER::onInit()
 	log->debugData(EXTRA, "Beginning collider init");
 	if(type == COL_CUBE)
 	{
-		ICollisionShape* shape = new IBoxShape(thisNode, mass);
+		log->debugData(EXTRA, "Creating Box collider");
+		ICollisionShape* shape = new IBoxShape(getChild()->getIrrNode(), mass);
+		log->logData("PosY Other", position.Y);
 		body = world->addRigidBody(shape);
 	}
 	if(type == COL_SPHERE)
 	{
-		ICollisionShape* shape = new ISphereShape(thisNode, mass);
+		log->debugData(EXTRA, "Creating Sphere Collider");
+		ICollisionShape* shape = new ISphereShape(getChild()->getIrrNode(), mass);
 		body = world->addRigidBody(shape);
 	}
 	if(type == COL_MESH)
 	{
-		ICollisionShape* shape = new IConvexHullShape(thisNode, colMesh, mass);
+		log->debugData(EXTRA, "Creating Mesh Collider");
+		ICollisionShape* shape = new IGImpactMeshShape(getChild()->getIrrNode(), colMesh, mass);
 		body = world->addRigidBody(shape);
 	}
+	//body->setActivationState(EAS_DISABLE_DEACTIVATION);
 	log->debugData(EXTRA, "Finished collider init");
 }
 

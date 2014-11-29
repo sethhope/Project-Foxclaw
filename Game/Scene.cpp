@@ -29,7 +29,8 @@ void SCENE::init()
 	//begin scene initialization
 	log->logData("Initiating Scene");
 	log->logData("Initializing Physics World");
-	world = createIrrBulletWorld(device, true, false);
+	world = createIrrBulletWorld(device, true, true);
+	world->setDebugMode(EPDM_DrawAabb);
 	if(!world)
 	{
 		log->logData("Failed to create world");
@@ -40,6 +41,8 @@ void SCENE::init()
 	std::string bulVer_ = bulVer.str();
 	log->debugData(MINOR, "Initialized Physics version", bulVer_);
 	world->setGravity(core::vector3df(0, -10, 0));
+	world->debugDrawWorld(true);
+	world->debugDrawProperties(true, video::SColor(255, 0, 255, 0));
 	log->logData("Initializing Sound Engine");
 	//create sound driver
 	sound = createIrrKlangDevice();
@@ -77,27 +80,13 @@ void SCENE::init()
 	log->logData("Loading scene objects");
 	//run the init function within the startup script
 	mainScript->runInit();
-	int m = addMesh("sibenik/sibenik.obj", core::vector3df(0, 0, 0), core::vector3df(0, 0, 0), core::vector3df(1,1,1));
+	int m = addMesh("sibenik/sibenik.obj", core::vector3df(0, -50, 0), core::vector3df(0, 0, 0), core::vector3df(5,5,5));
 	log->debugData(EXTRA, "Adding collider");
-	COLLIDER* c = new COLLIDER((NODE*)editMesh(m), world, log, COL_MESH);
-	c->setMesh(editMesh(m)->getMesh());
-	c->init();
-	c->setDamping(1, 1);
-	c->setFriction(0.5);
-	c->setMass(0);
-	c->setID(lastID);
-	lastID++;
-	objects.push_back(c);
-	int b = addMesh("sibenik/sibenik.obj", core::vector3df(0, 10, 0), core::vector3df(0, 0, 0), core::vector3df(0.1, 0.1, 0.1));
-	COLLIDER* c1 = new COLLIDER((NODE*)editMesh(b), world, log, COL_MESH);
-	c1->setMesh(editMesh(b)->getMesh());
-	c1->init();
-	c1->setDamping(1, 1);
-	c1->setFriction(0.5);
-	c1->setMass(2);
-	c1->setID(lastID);
-	lastID++;
-	objects.push_back(c1);
+	int c = addCollider((OBJECT*)editMesh(m), COL_CUBE, 0.1, 0.1, 0.5, 0);
+	int b = addMesh("sibenik/sibenik.obj", core::vector3df(0, 70, 0), core::vector3df(0, 0, 0), core::vector3df(1, 1, 1));
+	int d = addCollider((OBJECT*)editMesh(b), COL_CUBE, 0.1, 0.1, 0.5, 1);
+	editCollider(d)->setVelocity(core::vector3df(0, 10, 0));
+	int l = addLight(core::vector3df(0, 0, 0), core::vector3df(0, 0, 0), core::vector3df(200, 200, 200), video::ELT_POINT);
 	log->logData("Loaded scene objects");
 	log->logData("Finished initializing");
 }
@@ -120,6 +109,7 @@ void SCENE::update()
 	log->debugData(EXTRA, "Updating objects");
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
+		log->debugData(EXTRA, (*it)->getName());
 		(*it)->update();
 	}
 	log->debugData(EXTRA, "Adding camera constants");
@@ -140,6 +130,8 @@ void SCENE::update()
 void SCENE::render()
 {
 	//draw all things in the manager and GUI.
+	world->debugDrawWorld(true);
+	world->debugDrawProperties(true);
 	manager->drawAll();
 	gui->drawAll();
 	//run the render function in the main script
@@ -305,5 +297,41 @@ LIGHT* SCENE::editLight(int id)
 		}
 	}
 	log->logData("Light not found. ID", id);
+	return NULL;
+}
+
+int SCENE::addCollider(OBJECT* parent, int type, float lDamping, float aDamping, float friction, float mass)
+{
+	COLLIDER* c = new COLLIDER((NODE*)parent, manager, world, log, mass, type);
+	if(type == COL_MESH)
+	{
+		if(((MESH*)parent)->getMesh())
+		{
+			c->setMesh(((MESH*)parent)->getMesh());
+		}
+	}
+	c->init();
+	c->setDamping(lDamping, aDamping);
+	c->setFriction(friction);
+	
+	
+	c->setID(lastID);
+	lastID++;
+	objects.push_back(c);
+	return lastID - 1 ;
+}
+
+COLLIDER* SCENE::editCollider(int id)
+{
+	//log->debugData("Checking for light", id);
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if(((COLLIDER*)(*it))->getID()==id)
+		{
+			//log->debugData("Found light", id);
+			return ((COLLIDER*)(*it));
+		}
+	}
+	log->logData("Collider not found. ID", id);
 	return NULL;
 }

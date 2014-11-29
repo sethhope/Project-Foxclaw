@@ -6,6 +6,9 @@ LIGHT::LIGHT(scene::ISceneManager* manager, LOGGER* log)
 	this->log = log;
 	type = video::ELT_POINT;
 	name = "LIGHT";
+	position = core::vector3df(0, 0, 0);
+	rotation = core::vector3df(0, 0, 0);
+	scale = core::vector3df(1, 1, 1);
 }
 
 LIGHT::~LIGHT()

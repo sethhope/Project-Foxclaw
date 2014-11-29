@@ -20,6 +20,11 @@ namespace FCE
 			void setPosition(core::vector3df pos);
 			void setRotation(core::vector3df rot);
 			void setScale(core::vector3df scale);
+			
+			core::vector3df getPosition();
+			core::vector3df getRotation();
+			core::vector3df getScale();
+			
 			void setName(std::string name);
 			std::string getName();
 		protected:
@@ -27,6 +32,8 @@ namespace FCE
 			core::vector3df position;
 			core::vector3df scale;
 			std::string name;
+		private:
+			bool uDa;
 
 	};
 }

@@ -18,6 +18,9 @@ PARTICLE::PARTICLE(IrrlichtDevice* device, LOGGER* log)
 	color1 = video::SColor(0,255,255,255);
 	color2 = video::SColor(0,255,255,255);
 	name = "PARTICLE";
+	position = core::vector3df(0, 0, 0);
+	rotation = core::vector3df(0, 0, 0);
+	scale = core::vector3df(1, 1, 1);
 	log->debugData(MAJOR, "Instantiated particle system");
 }
 
@@ -37,6 +40,7 @@ void PARTICLE::onInit()
 	ps->setMaterialFlag(video::EMF_LIGHTING, false);
 	ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
 	ps->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
+	thisNode = ps;
 	log->debugData(MAJOR, "Created particle system");
 }
 
