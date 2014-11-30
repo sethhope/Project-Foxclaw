@@ -30,10 +30,6 @@ void LIGHT::setColor(video::SColorf color)
 	this->color = color;
 }
 
-scene::ISceneNode* LIGHT::getNode()
-{
-	return thisNode;
-}
 void LIGHT::setDropoff(float dropoff)
 {
 	this->dropoff = dropoff;

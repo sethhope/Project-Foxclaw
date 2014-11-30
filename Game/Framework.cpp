@@ -55,7 +55,7 @@ int FRAMEWORK::init()
 	gui = manager->getGUIEnvironment();
 	log->logData("Creating scene");
 	//TODO: Add real camera control beyond debug
-	manager->addCameraSceneNodeFPS(0, 100.0f, 0.01f);
+	manager->addCameraSceneNodeFPS(0, 100.0f, 0.5f);
 	//Create a new scene object and initialize
 	scene = new SCENE(log, device);
 	scene->init();

@@ -2,7 +2,9 @@
 #define _FOBJECT_H_
 #include "stdafx.h"
 #include "node.h"
+#include "Collider.h"
 #include "Irrlicht.h"
+#include "irrBullet.h"
 using namespace irr;
 namespace FCE
 {
@@ -20,7 +22,9 @@ namespace FCE
 			void setPosition(core::vector3df pos);
 			void setRotation(core::vector3df rot);
 			void setScale(core::vector3df scale);
-			
+			void addCollider(int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass);
+			void addCollider(int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass, scene::IMesh* colMesh);
+			COLLIDER* getCollider();
 			core::vector3df getPosition();
 			core::vector3df getRotation();
 			core::vector3df getScale();
@@ -32,8 +36,10 @@ namespace FCE
 			core::vector3df position;
 			core::vector3df scale;
 			std::string name;
+			COLLIDER* collider;
 		private:
 			bool uDa;
+			bool hasCollider;
 
 	};
 }

@@ -22,49 +22,52 @@ void LOGGER::logData(std::string data)
 {
 	file  << data << std::endl << std::flush;
 	std::cout  << data << std::endl << std::flush;
-	for(int i = 1; i < 10; i++)
+	for(int i = 0; i < 9; i++)
 	{
-		backlog[i] = backlog[i-1];
+		backlog[i]=backlog[i+1];
 	}
-	backlog[0] = data;
+	std::stringstream tmp;
+	tmp << data;
+	backlog[9] = tmp.str();
+	
 }
 
 void LOGGER::logData(std::string data, float num)
 {
 	file << data << " : " << num << std::endl << std::flush;
 	std::cout  << data << " : " << num << std::endl << std::flush;
-	for(int i = 1; i < 10; i++)
+	for(int i = 0; i < 9; i++)
 	{
-		backlog[i] = backlog[i-1];
+		backlog[i]=backlog[i+1];
 	}
 	std::stringstream tmp;
 	tmp << data << " : " << num;
-	backlog[0] = tmp.str();
+	backlog[9] = tmp.str();
 }
 
 void LOGGER::logData(std::string data1, std::string data2)
 {
 	file  << data1 << " : " << data2 << std::endl << std::flush;
 	std::cout  << data1 << " : " << data2 << std::endl << std::flush;
-	for(int i = 1; i < 10; i++)
+	for(int i = 0; i < 9; i++)
 	{
-		backlog[i] = backlog[i-1];
+		backlog[i]=backlog[i+1];
 	}
 	std::stringstream tmp;
 	tmp << data1 << " : " << data2;
-	backlog[0] = tmp.str();
+	backlog[9] = tmp.str();
 }
 void LOGGER::logData(std::string data1, char* data2)
 {
 	file  << data1 << " : " << data2 << std::endl << std::flush;
 	std::cout  << data1 << " : " << data2 << std::endl << std::flush;
-	for(int i = 1; i < 10; i++)
+	for(int i = 0; i < 9; i++)
 	{
-		backlog[i] = backlog[i-1];
+		backlog[i]=backlog[i+1];
 	}
 	std::stringstream tmp;
 	tmp << data1 << " : " << data2;
-	backlog[0] = tmp.str();
+	backlog[9] = tmp.str();
 }
 void LOGGER::debugData(int level, std::string data)
 {
@@ -72,11 +75,13 @@ void LOGGER::debugData(int level, std::string data)
 	{
 		file <<"DEBUG LV."<< level << " : " << data << std::endl << std::flush;
 		std::cout <<"DEBUG LV."<< level << " : " << data << std::endl << std::flush;
-		for(int i = 1; i < 10; i++)
+		for(int i = 0; i < 9; i++)
 		{
-			backlog[i] = backlog[i-1];
+			backlog[i]=backlog[i+1];
 		}
-		backlog[0] = data;
+		std::stringstream tmp;
+		tmp << "DEBUG LV."<<level<<" : "<<data;
+		backlog[9] = tmp.str();
 	}
 }
 
@@ -86,13 +91,13 @@ void LOGGER::debugData(int level, std::string data, float num)
 	{
 		file <<"DEBUG LV."<< level << " : " << data << " : " << num << std::endl << std::flush;
 		std::cout <<"DEBUG LV."<< level << " : "  << data << " : " << num << std::endl << std::flush;
-		for(int i = 1; i < 10; i++)
+  for(int i = 0; i < 9; i++)
 		{
-			backlog[i] = backlog[i-1];
+			backlog[i]=backlog[i+1];
 		}
-		std::stringstream tmp;
-		tmp << data << " : " << num;
-		backlog[0] = tmp.str();
+  std::stringstream tmp;
+		tmp <<"DEBUG LV."<< level << " : " << data << " : " << num;
+		backlog[9] = tmp.str();
 	}
 }
 
@@ -102,13 +107,13 @@ void LOGGER::debugData(int level, std::string data1, std::string data2)
 	{
 		file << "DEBUG LV."<< level << " : "  << data1 << " : " << data2 << std::endl << std::flush;
 		std::cout << "DEBUG LV."<< level << " : "  << data1 << " : " << data2 << std::endl << std::flush;
-		for(int i = 1; i < 10; i++)
+  for(int i = 0; i < 9; i++)
 		{
-			backlog[i] = backlog[i-1];
+			backlog[i]=backlog[i+1];
 		}
 		std::stringstream tmp;
-		tmp << data1 << " : " << data2;
-		backlog[0] = tmp.str();
+		tmp <<"DEBUG LV."<< level << " : " << data1 << " : " << data2;
+		backlog[9] = tmp.str();
 	}
 }
 void LOGGER::debugData(int level, std::string data1, char* data2)
@@ -117,13 +122,13 @@ void LOGGER::debugData(int level, std::string data1, char* data2)
 	{
 		file << "DEBUG LV."<< level << " : "  << data1 << " : " << data2 << std::endl << std::flush;
 		std::cout << "DEBUG LV."<< level << " : "  << data1 << " : " << data2 << std::endl << std::flush;
-		for(int i = 1; i < 10; i++)
+  for(int i = 0; i < 9; i++)
 		{
-			backlog[i] = backlog[i-1];
+			backlog[i]=backlog[i+1];
 		}
 		std::stringstream tmp;
-		tmp << data1 << " : " << data2;
-		backlog[0] = tmp.str();
+		tmp <<"DEBUG LV."<< level << " : " << data1 << " : " << data2;
+		backlog[9] = tmp.str();
 	}
 }
 void LOGGER::setDebug(int debug)

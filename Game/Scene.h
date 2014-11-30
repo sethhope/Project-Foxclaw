@@ -10,6 +10,7 @@
 #include "Objects/Particle.h"
 #include "Objects/Sound.h"
 #include "Objects/Collider.h"
+#include "Objects/EmptyObject.h"
 #include "Irrlicht.h"
 #include "irrKlang.h"
 #include "irrBullet.h"
@@ -41,12 +42,10 @@ namespace FCE
 			int addMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
 			MESH* editMesh(int id);
 			
-			int addCollider(OBJECT* parent, int type, float lDamping, float aDamping, float friction, float mass);
-			COLLIDER* editCollider(int id);
-			
-			int addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, video::E_LIGHT_TYPE type);
+			int addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, float dropoff, video::E_LIGHT_TYPE type);
 			LIGHT* editLight(int id);
 			
+			irrBulletWorld* getWorld();
 			IrrlichtDevice* getDevice();
 			LOGGER* getLog();
 		private:

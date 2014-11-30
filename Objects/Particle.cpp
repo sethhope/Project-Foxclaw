@@ -46,9 +46,10 @@ void PARTICLE::onInit()
 
 void PARTICLE::onUpdate()
 {
+ /*
 	ps->setPosition(position);
 	ps->setRotation(rotation);
-	ps->setScale(scale);
+	ps->setScale(scale);*/
 }
 
 void PARTICLE::onRender()

@@ -109,7 +109,6 @@ int Mesh_setScale(lua_State* L)
 	m->setScale(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L,3), luaL_checknumber(L,4)));
 	return 0;
 }
-
 int Mesh_setMaterial(lua_State* L)
 {
 	MESH* m = luaW_check<MESH>(L, 1);
@@ -137,6 +136,25 @@ int Mesh_setMaterial(lua_State* L)
 	if(type == "parallax_solid")
 	{
 		m->getIrrNode()->setMaterialType(video::EMT_PARALLAX_MAP_SOLID);
+	}
+	return 0;
+}
+int Mesh_addCollider(lua_State* L)
+{
+	MESH* m = luaW_check<MESH>(L, 1);
+	SCENE* s = luaW_check<SCENE>(L, 2);
+	std::string type = luaL_checkstring(L, 3);
+	if(type == "CUBE")
+	{
+		m->addCollider(COL_CUBE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+	}
+	if(type == "SPHERE")
+	{
+		m->addCollider(COL_SPHERE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+	}
+	if(type == "MESH")
+	{
+		m->addCollider(COL_MESH, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4), m->getMesh());
 	}
 	return 0;
 }

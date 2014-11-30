@@ -17,7 +17,6 @@ namespace FCE
 			void setColor(video::SColorf color);
 			void setDropoff(float dropoff);
 			void setType(video::E_LIGHT_TYPE type);
-			scene::ISceneNode* getNode();
 			int getID();
 			void setID(int id);
 		private:

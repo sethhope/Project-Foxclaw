@@ -30,7 +30,7 @@ void SCENE::init()
 	log->logData("Initiating Scene");
 	log->logData("Initializing Physics World");
 	world = createIrrBulletWorld(device, true, true);
-	world->setDebugMode(EPDM_DrawAabb);
+	world->setDebugMode(EPDM_DrawWireframe);
 	if(!world)
 	{
 		log->logData("Failed to create world");
@@ -80,13 +80,18 @@ void SCENE::init()
 	log->logData("Loading scene objects");
 	//run the init function within the startup script
 	mainScript->runInit();
-	int m = addMesh("sibenik/sibenik.obj", core::vector3df(0, -50, 0), core::vector3df(0, 0, 0), core::vector3df(5,5,5));
+	int m = addMesh("sibenik/sibenik.obj", core::vector3df(0, 0, 0), core::vector3df(0, 0, 0), core::vector3df(5,5,5));
 	log->debugData(EXTRA, "Adding collider");
-	int c = addCollider((OBJECT*)editMesh(m), COL_CUBE, 0.1, 0.1, 0.5, 0);
-	int b = addMesh("sibenik/sibenik.obj", core::vector3df(0, 70, 0), core::vector3df(0, 0, 0), core::vector3df(1, 1, 1));
-	int d = addCollider((OBJECT*)editMesh(b), COL_CUBE, 0.1, 0.1, 0.5, 1);
-	editCollider(d)->setVelocity(core::vector3df(0, 10, 0));
-	int l = addLight(core::vector3df(0, 0, 0), core::vector3df(0, 0, 0), core::vector3df(200, 200, 200), video::ELT_POINT);
+	editMesh(m)->update();
+	editMesh(m)->addCollider(COL_MESH, manager, world, 0.0f, editMesh(m)->getMesh());
+/*	int b = addMesh("sibenik/sibenik.obj", core::vector3df(0, -70, 0), core::vector3df(0, 0, 0), core::vector3df(1, 1, 1));
+	editMesh(b)->update();
+	editMesh(b)->addCollider(COL_SPHERE, manager, world, 0);
+	
+	int part = addParticleSystem(core::vector3df(0, 500, 5), core::vector3df(0, 0.01, 0), core::vector3df(1, 1, 1), "firetexture.jpg");
+	editParticleSystem(part)->update();
+	editParticleSystem(part)->addCollider(COL_SPHERE, manager, world, 1.0f);*/
+	int l = addLight(core::vector3df(0, 0, 0), core::vector3df(0, 0, 0), core::vector3df(200, 200, 200), 10000, video::ELT_POINT);
 	log->logData("Loaded scene objects");
 	log->logData("Finished initializing");
 }
@@ -101,7 +106,7 @@ void SCENE::update()
 	//set listener position for the sound manager
 	sound->setListenerPosition( manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
 	log->debugData(EXTRA, "Updating Physics");
-	world->stepSimulation(deltaTime*0.001f, 120);
+	world->stepSimulation(deltaTime*0.004f, 120);
 	
 	world->debugDrawWorld(true);
 	world->debugDrawProperties(true);
@@ -269,7 +274,7 @@ MESH* SCENE::editMesh(int id)
 	log->logData("Couldn't find mesh");
 	return NULL;
 }
-int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, video::E_LIGHT_TYPE type)
+int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, float dropoff, video::E_LIGHT_TYPE type)
 {
 	LIGHT* temp = new LIGHT(manager, log);
 	temp->setColor(video::SColor(0, 1, 1, 1));
@@ -277,7 +282,7 @@ int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df sc
 	temp->setScale(scale);
 	temp->setRotation(rot);
 	temp->setType(type);
-	temp->setDropoff(1000);
+	temp->setDropoff(dropoff);
 	temp->setID(lastID);
 	temp->setName("LIGHT");
 	lastID++;
@@ -300,38 +305,8 @@ LIGHT* SCENE::editLight(int id)
 	return NULL;
 }
 
-int SCENE::addCollider(OBJECT* parent, int type, float lDamping, float aDamping, float friction, float mass)
+irrBulletWorld SCENE::getWorld()
 {
-	COLLIDER* c = new COLLIDER((NODE*)parent, manager, world, log, mass, type);
-	if(type == COL_MESH)
-	{
-		if(((MESH*)parent)->getMesh())
-		{
-			c->setMesh(((MESH*)parent)->getMesh());
-		}
-	}
-	c->init();
-	c->setDamping(lDamping, aDamping);
-	c->setFriction(friction);
-	
-	
-	c->setID(lastID);
-	lastID++;
-	objects.push_back(c);
-	return lastID - 1 ;
+	return world;
 }
 
-COLLIDER* SCENE::editCollider(int id)
-{
-	//log->debugData("Checking for light", id);
-	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
-	{
-		if(((COLLIDER*)(*it))->getID()==id)
-		{
-			//log->debugData("Found light", id);
-			return ((COLLIDER*)(*it));
-		}
-	}
-	log->logData("Collider not found. ID", id);
-	return NULL;
-}

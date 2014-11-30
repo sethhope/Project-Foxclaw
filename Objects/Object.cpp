@@ -10,6 +10,7 @@ OBJECT::OBJECT()
 	scale = core::vector3df(1, 1, 1);
 	thisNode=NULL;
 	uDa = false;
+	hasCollider = false;
 }
 
 OBJECT::~OBJECT()
@@ -25,7 +26,7 @@ void OBJECT::init()
 void OBJECT::update()
 {
 	onUpdate();
-	if( this->getIrrNode() && !getParent())
+	if( this->getIrrNode() && !getParent() && !hasCollider)
 	{
 		getIrrNode()->setPosition(position);
 		getIrrNode()->setRotation(rotation);
@@ -69,7 +70,7 @@ void OBJECT::setRotation(core::vector3df rot)
 
 void OBJECT::setScale(core::vector3df scale)
 {
-	scale = scale;
+	this->scale = scale;
 	uDa = true;
 }
 
@@ -78,6 +79,25 @@ void OBJECT::setName(std::string name)
 	this->name = name;
 }
 
+void OBJECT::addCollider(int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass)
+{
+	collider = new COLLIDER(getIrrNode(), manager, world, type, mass);
+	collider->init();
+	hasCollider = true;
+}
+
+void OBJECT::addCollider(int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass, scene::IMesh* colMesh)
+{
+	collider = new COLLIDER(getIrrNode(), manager, world, type, mass);
+	collider->setMesh(colMesh);
+	collider->init();
+	hasCollider = true;
+}
+
+COLLIDER* OBJECT::getCollider()
+{
+	return collider;
+}
 std::string OBJECT::getName()
 {
 	return name;
