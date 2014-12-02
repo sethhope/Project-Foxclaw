@@ -6,11 +6,12 @@ SCENE::SCENE()
 	//Should never be used
 }
 
-SCENE::SCENE(LOGGER* log, IrrlichtDevice* device)
+SCENE::SCENE(LOGGER* log, IrrlichtDevice* device, FEventReceiver receiver)
 {
 	//Set init variables from constructor
 	this->log = log;
  	this->device = device;
+ 	this->receiver = receiver;
 	gui = device->getGUIEnvironment();
 	manager = device->getSceneManager();
 	
@@ -20,6 +21,11 @@ SCENE::~SCENE()
 {
 	//drop the sound driver
 	sound->drop();
+	
+	delete world;
+	objects.clear();
+	delete mainScript;
+	
 }
 
 void SCENE::init()
@@ -30,7 +36,7 @@ void SCENE::init()
 	log->logData("Initiating Scene");
 	log->logData("Initializing Physics World");
 	world = createIrrBulletWorld(device, true, true);
-	world->setDebugMode(EPDM_DrawWireframe);
+	world->setDebugMode(EPDM_DrawWireframe | EPDM_FastWireframe);
 	if(!world)
 	{
 		log->logData("Failed to create world");
@@ -59,13 +65,9 @@ void SCENE::init()
 	
 	//set initial values
 	log->logData("Setting initial values");
-	cameraPos = vec3df(0, 0, 0);
-	cameraRot = vec3df(0, 0, 1);
-	node = 0;
 	lastID = 0;
 	soundID = 0;
-	manager->setShadowColor(video::SColor(150, 0, 0, 0));
-	
+	camera = new CAMERA(manager, log);
 	//load startup lua script
 	log->logData("Loading startup script");
 	//create new script
@@ -80,19 +82,11 @@ void SCENE::init()
 	log->logData("Loading scene objects");
 	//run the init function within the startup script
 	mainScript->runInit();
-	int m = addMesh("sibenik/sibenik.obj", core::vector3df(0, 0, 0), core::vector3df(0, 0, 0), core::vector3df(5,5,5));
-	log->debugData(EXTRA, "Adding collider");
-	editMesh(m)->update();
-	editMesh(m)->addCollider(COL_MESH, manager, world, 0.0f, editMesh(m)->getMesh());
-/*	int b = addMesh("sibenik/sibenik.obj", core::vector3df(0, -70, 0), core::vector3df(0, 0, 0), core::vector3df(1, 1, 1));
-	editMesh(b)->update();
-	editMesh(b)->addCollider(COL_SPHERE, manager, world, 0);
-	
-	int part = addParticleSystem(core::vector3df(0, 500, 5), core::vector3df(0, 0.01, 0), core::vector3df(1, 1, 1), "firetexture.jpg");
-	editParticleSystem(part)->update();
-	editParticleSystem(part)->addCollider(COL_SPHERE, manager, world, 1.0f);*/
-	int l = addLight(core::vector3df(0, 0, 0), core::vector3df(0, 0, 0), core::vector3df(200, 200, 200), 10000, video::ELT_POINT);
+	int l = addLight(core::vector3df(0, 0, 0), core::vector3df(0, 0, 0), core::vector3df(1, 1, 1), 10000, video::ELT_POINT);
 	log->logData("Loaded scene objects");
+	camera->setType(FCAM_FPS);
+	camera->init();
+	
 	log->logData("Finished initializing");
 }
 
@@ -117,6 +111,8 @@ void SCENE::update()
 		log->debugData(EXTRA, (*it)->getName());
 		(*it)->update();
 	}
+	log->debugData(EXTRA, "updating camera");
+	camera->update();
 	log->debugData(EXTRA, "Adding camera constants");
 	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().X);
 	lua_setglobal(mainScript->L, "CAM_X");
@@ -172,17 +168,6 @@ int SCENE::addSound(std::string filename, core::vector3df pos, bool loop)
 	return lastID-1;
 }
 
-void SCENE::stopSound(int id)
-{
-	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
-	{
-		if(((SOUND*)(*it))->getID() == id)
-		{
-			((SOUND*)(*it))->getSound()->stop();
-		}
-	}
-}
-
 SOUND* SCENE::editSound(int id)
 {
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
@@ -194,20 +179,6 @@ SOUND* SCENE::editSound(int id)
 	}
 	log->logData("Sound doesn't exist. ID", id);
 	return NULL;
-}
-bool SCENE::isPlaying(int id)
-{
-	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
-	{
-		if(((SOUND*)(*it))->getID() == id)
-		{
-			if(!((SOUND*)(*it))->getSound()->isFinished())
-			{
-				return true;
-			}
-		}
-	}
-	return false;
 }
 
 int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vector3df scale, std::string filename)
@@ -229,6 +200,7 @@ int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vec
 	system1->init();
 	objects.push_back(system1);
 	log->debugData(MAJOR, "Particle system added", lastID-1);
+	system1->update();
 	return lastID-1;
 }
 PARTICLE* SCENE::editParticleSystem(int id)
@@ -258,6 +230,7 @@ int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 	tmp->setScale(scale);
 	lastID++;
 	objects.push_back(tmp);
+	tmp->update();
 	return lastID-1;
 }
 MESH* SCENE::editMesh(int id)
@@ -288,6 +261,7 @@ int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df sc
 	lastID++;
 	temp->init();
 	objects.push_back(temp);
+	temp->update();
 	return lastID-1;
 }
 LIGHT* SCENE::editLight(int id)
@@ -305,8 +279,40 @@ LIGHT* SCENE::editLight(int id)
 	return NULL;
 }
 
-irrBulletWorld SCENE::getWorld()
+int SCENE::addEmptyObject(core::vector3df pos, core::vector3df rot, core::vector3df scale)
+{
+	EMPTYOBJECT* e = new EMPTYOBJECT(manager);
+	e->setPosition(pos);
+	e->setRotation(rot);
+	e->setScale(scale);
+	e->setName("EMPTY");
+	e->setID(lastID);
+	lastID++;
+	e->init();
+	e->update();
+	objects.push_back(e);
+	return lastID-1;
+}
+
+EMPTYOBJECT* SCENE::editEmpty(int id)
+{
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if(((EMPTYOBJECT*)(*it))->getID()==id)
+		{
+			return ((EMPTYOBJECT*)(*it));
+		}
+	}
+	log->logData("EmptyObject not found. ID", id);
+	return NULL;
+}
+
+irrBulletWorld* SCENE::getWorld()
 {
 	return world;
 }
 
+bool SCENE::keyDown(EKEY_CODE keycode)
+{
+	return receiver.KeyDown(keycode);
+}

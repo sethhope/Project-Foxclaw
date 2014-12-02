@@ -9,7 +9,8 @@ FRAMEWORK::FRAMEWORK()
 FRAMEWORK::~FRAMEWORK()
 {
 	log->logData("Framework Closed");
-	device->drop(); //Drop the irrlicht device
+	//device->drop(); //Drop the irrlicht device
+	delete scene;
 	delete log;
 }
 
@@ -30,12 +31,12 @@ int FRAMEWORK::init()
 	//Create graphics driver
 	//Check for opengl (Only OpenGL and software for now. DirectX may come later)
 	log->logData("Trying OpenGL");
-	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(SCREENWIDTH, SCREENHEIGHT), 32, false, true);
+	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(SCREENWIDTH, SCREENHEIGHT), 32, false, true, true, &receiver);
 	if(!device)
 	{
 		//OpenGL failed. Try software renderer
 		log->logData("Trying Software Renderer");
-		device = createDevice(video::EDT_SOFTWARE, core::dimension2d<u32>(SCREENWIDTH, SCREENHEIGHT), 32, false, false);
+		device = createDevice(video::EDT_SOFTWARE, core::dimension2d<u32>(SCREENWIDTH, SCREENHEIGHT), 16, false, false, false, &receiver);
 		if(!device)
 		{
 			//Failed to create driver
@@ -54,10 +55,8 @@ int FRAMEWORK::init()
 	log->logData("Getting GUI");
 	gui = manager->getGUIEnvironment();
 	log->logData("Creating scene");
-	//TODO: Add real camera control beyond debug
-	manager->addCameraSceneNodeFPS(0, 100.0f, 0.5f);
 	//Create a new scene object and initialize
-	scene = new SCENE(log, device);
+	scene = new SCENE(log, device, receiver);
 	scene->init();
 	//add debug camera.
 	log->logData("Scene created");
@@ -84,7 +83,10 @@ int FRAMEWORK::render()
 		scene->render();
 		//finish rendering
 		driver->endScene();
-		
+		if(receiver.KeyDown(irr::KEY_ESCAPE))
+		{
+			run = false;
+		}
 		//This last block is adding the FPS to the window header.
 		int fps = driver->getFPS();
         core::stringw str = L"FoxClaw Engine by Jcam Technologies [";

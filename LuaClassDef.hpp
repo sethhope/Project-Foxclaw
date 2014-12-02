@@ -11,9 +11,11 @@
 #include "Objects/Mesh.h"
 #include "Objects/Light.h"
 #include "Objects/Particle.h"
+#include "Objects/EmptyObject.h"
 
 #include "Misc/Logger.h"
 #include "Game/Scene.h"
+
 using namespace irr;
 using namespace FCE;
 
@@ -87,6 +89,20 @@ int Scene_getParticle(lua_State* L)
 	luaW_push<PARTICLE>(L, s->editParticleSystem(luaL_checknumber(L, 2)));
 	return 1;
 }
+int Scene_addEmpty(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	int id = s->addEmptyObject(core::vector3df(luaL_checknumber(L,2),luaL_checknumber(L,3),luaL_checknumber(L,4)), core::vector3df(luaL_checknumber(L,5),luaL_checknumber(L,6),luaL_checknumber(L,7)),core::vector3df(luaL_checknumber(L,8),luaL_checknumber(L,9),luaL_checknumber(L,10)));
+	lua_pushnumber(L, id);
+	return 1;
+}
+int Scene_getEmpty(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	luaW_push<EMPTYOBJECT>(L, s->editEmpty(luaL_checknumber(L, 2)));
+	return 1;
+}
+
 MESH* Mesh_new(lua_State* L)
 {
 	return 0;
@@ -146,15 +162,15 @@ int Mesh_addCollider(lua_State* L)
 	std::string type = luaL_checkstring(L, 3);
 	if(type == "CUBE")
 	{
-		m->addCollider(COL_CUBE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+		m->addCollider(s->getLog(), COL_CUBE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
 	}
 	if(type == "SPHERE")
 	{
-		m->addCollider(COL_SPHERE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+		m->addCollider(s->getLog(), COL_SPHERE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
 	}
 	if(type == "MESH")
 	{
-		m->addCollider(COL_MESH, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4), m->getMesh());
+		m->addCollider(s->getLog(), COL_MESH, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4), m->getMesh());
 	}
 	return 0;
 }
@@ -216,6 +232,21 @@ int Particle_setSize(lua_State* L)
 {
 	PARTICLE* p = luaW_check<PARTICLE>(L, 1);
 	p->setSize(core::dimension2d<f32>(luaL_checknumber(L, 2), luaL_checknumber(L, 2)), core::dimension2d<f32>(luaL_checknumber(L, 3), luaL_checknumber(L, 3)));
+	return 0;
+}
+int Particle_addCollider(lua_State* L)
+{
+	PARTICLE* m = luaW_check<PARTICLE>(L, 1);
+	SCENE* s = luaW_check<SCENE>(L, 2);
+	std::string type = luaL_checkstring(L, 3);
+	if(type == "CUBE")
+	{
+		m->addCollider(s->getLog(), COL_CUBE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+	}
+	if(type == "SPHERE")
+	{
+		m->addCollider(s->getLog(), COL_SPHERE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+	}
 	return 0;
 }
 
@@ -343,4 +374,47 @@ int Sound_disableReverb(lua_State* L)
 	s->getSound()->getSoundEffectControl()->disableWavesReverbSoundEffect();
 	return 0;
 }
+
+EMPTYOBJECT* Empty_new(lua_State* L)
+{
+	//EMPTYOBJECT* e = new EMPTYOBJECT();
+	//return e;
+}
+
+int Empty_setPosition(lua_State* L)
+{
+	EMPTYOBJECT* e = luaW_check<EMPTYOBJECT>(L, 1);
+	e->setPosition(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+	return 0;
+}
+
+int Empty_setRotation(lua_State* L)
+{
+	EMPTYOBJECT* e = luaW_check<EMPTYOBJECT>(L, 1);
+	e->setRotation(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+	return 0;
+}
+
+int Empty_setScale(lua_State* L)
+{
+	EMPTYOBJECT* e = luaW_check<EMPTYOBJECT>(L, 1);
+	e->setScale(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+	return 0;
+}
+int Empty_addCollider(lua_State* L)
+{
+	EMPTYOBJECT* m = luaW_check<EMPTYOBJECT>(L, 1);
+	SCENE* s = luaW_check<SCENE>(L, 2);
+	std::string type = luaL_checkstring(L, 3);
+	if(type == "CUBE")
+	{
+		m->addCollider(s->getLog(), COL_CUBE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+	}
+	if(type == "SPHERE")
+	{
+		m->addCollider(s->getLog(), COL_SPHERE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+	}
+	return 0;
+}
+
 #endif

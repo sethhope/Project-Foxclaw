@@ -17,7 +17,7 @@ namespace FCE
 	class COLLIDER
 	{
 		public:
-			COLLIDER(scene::ISceneNode* parent, scene::ISceneManager* manager, irrBulletWorld* world, int type, float mass);
+			COLLIDER(scene::ISceneNode* parent, scene::ISceneManager* manager, irrBulletWorld* world, int type, float mass, LOGGER* log);
 			~COLLIDER();
 			void init();
 			void setType(int type);
@@ -33,6 +33,7 @@ namespace FCE
 			irrBulletWorld *world;
 			scene::IMesh* colMesh;
 			IRigidBody* body;
+			LOGGER* log;
 			scene::ISceneNode* node;
 	};
 }

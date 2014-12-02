@@ -1,6 +1,7 @@
 #include "Script.h"
 #include "LuaClassDef.hpp"
 #include "Game/Scene.h"
+
 using namespace FCE;
 
 SCRIPT::SCRIPT(LOGGER* log)
@@ -48,6 +49,8 @@ void SCRIPT::onInit()
 		{"getMesh", Scene_getMesh},
 		{"addParticle", Scene_addParticle},
 		{"getParticle", Scene_getParticle},
+		{"addEmpty", Scene_addEmpty},
+		{"getEmpty", Scene_getEmpty},
 		{NULL, NULL}
 	};
 	static luaL_Reg Mesh_metatable[] =
@@ -56,6 +59,7 @@ void SCRIPT::onInit()
 		{"setRot", Mesh_setRot},
 		{"setScale", Mesh_setScale},
 		{"setMaterial", Mesh_setMaterial},
+		{"addCollider", Mesh_addCollider},
 		{NULL, NULL}
 	};
 	static luaL_Reg Particle_metatable[] =
@@ -69,6 +73,7 @@ void SCRIPT::onInit()
 		{"setRate", Particle_setRate},
 		{"setSize", Particle_setSize},
 		{"addAffector", Particle_addAffector},
+		{"addCollider", Particle_addCollider},
 		{NULL, NULL}
 	};
 	static luaL_Reg Sound_metatable[] =
@@ -91,11 +96,20 @@ void SCRIPT::onInit()
 		{"disableReverb", Sound_disableReverb},
 		{NULL, NULL}
 	};
+	static luaL_Reg EmptyObject_metatable[] =
+	{
+		{"setPosition", Empty_setPosition},
+		{"setRotation", Empty_setRotation},
+		{"setScale", Empty_setScale},
+		{"addCollider", Empty_addCollider},
+		{NULL, NULL}
+	};
 	static luaL_Reg Empty_table[] =
 	{
 		{NULL, NULL}
 	};
 	
+	luaW_register<EMPTYOBJECT>(L, "EMPTY", Empty_table, EmptyObject_metatable, Empty_new);
 	luaW_register<SOUND>(L, "SOUND", Empty_table, Sound_metatable, Sound_new);
 	luaW_register<PARTICLE>(L, "PARTICLE", Empty_table, Particle_metatable, Particle_new);
 	luaW_register<MESH>(L, "MESH", Empty_table, Mesh_metatable, Mesh_new);

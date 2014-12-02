@@ -5,6 +5,7 @@
 #include "Collider.h"
 #include "Irrlicht.h"
 #include "irrBullet.h"
+#include "Misc/Logger.h"
 using namespace irr;
 namespace FCE
 {
@@ -22,8 +23,12 @@ namespace FCE
 			void setPosition(core::vector3df pos);
 			void setRotation(core::vector3df rot);
 			void setScale(core::vector3df scale);
-			void addCollider(int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass);
-			void addCollider(int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass, scene::IMesh* colMesh);
+			void addCollider(LOGGER* log, int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass);
+			void addCollider(LOGGER* log, int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass, scene::IMesh* colMesh);
+			
+			void setID(int id);
+			int getID();
+			
 			COLLIDER* getCollider();
 			core::vector3df getPosition();
 			core::vector3df getRotation();
@@ -37,8 +42,10 @@ namespace FCE
 			core::vector3df scale;
 			std::string name;
 			COLLIDER* collider;
-		private:
 			bool uDa;
+		private:
+			int id;
+			
 			bool hasCollider;
 
 	};

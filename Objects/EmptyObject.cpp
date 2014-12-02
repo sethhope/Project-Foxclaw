@@ -1,9 +1,9 @@
-#include "EmtpyObject.h"
+#include "EmptyObject.h"
 using namespace FCE;
 
-EMPTYOBJECT::EMPTYOBJECT()
+EMPTYOBJECT::EMPTYOBJECT(scene::ISceneManager* manager)
 {
-	
+	thisNode = manager->addEmptySceneNode();
 }
 
 EMPTYOBJECT::~EMPTYOBJECT()

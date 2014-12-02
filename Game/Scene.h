@@ -11,6 +11,8 @@
 #include "Objects/Sound.h"
 #include "Objects/Collider.h"
 #include "Objects/EmptyObject.h"
+#include "Objects/Camera.h"
+#include "EventReceiver.h"
 #include "Irrlicht.h"
 #include "irrKlang.h"
 #include "irrBullet.h"
@@ -26,53 +28,56 @@ namespace FCE
 	{
 		public:
 			SCENE();
-			SCENE(LOGGER* log, IrrlichtDevice* device);
+			SCENE(LOGGER* log, IrrlichtDevice* device, FEventReceiver receiver);
 			~SCENE();
 			void init();
 			void update();
 			void render();
-			
 			int addParticleSystem(core::vector3df pos, core::vector3df dir, core::vector3df scale, std::string filename);
 			PARTICLE* editParticleSystem(int id);
 			int addSound(std::string filename, core::vector3df pos, bool loop);
 			SOUND* editSound(int id);
-			void stopSound(int id);
-			bool isPlaying(int id);
-			
 			int addMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
 			MESH* editMesh(int id);
-			
 			int addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, float dropoff, video::E_LIGHT_TYPE type);
 			LIGHT* editLight(int id);
+			int addEmptyObject(core::vector3df pos, core::vector3df rot, core::vector3df scale);
+			EMPTYOBJECT* editEmpty(int id);
 			
+			bool keyDown(EKEY_CODE keycode);
 			irrBulletWorld* getWorld();
 			IrrlichtDevice* getDevice();
 			LOGGER* getLog();
 		private:
 			
-			lua_State* L;
-			LOGGER* log;
-			
-			IrrlichtDevice* device;
-			gui::IGUIEnvironment* gui;
-			scene::ISceneManager* manager;
-			
-			ISoundEngine* sound;
-			scene::ISceneNode* node;
-			
-			vec3df cameraPos;
-			vec3df cameraRot;
-			
-			SCRIPT* mainScript;
-			
-			std::vector<OBJECT*> objects;
-
-			irrBulletWorld *world;
-			
+			//Standard variables
 			float timeStamp;
 			float deltaTime;
 			int soundID;
 			int lastID;
+			
+			//Irrlicht Classes
+			IrrlichtDevice* device;
+			gui::IGUIEnvironment* gui;
+			scene::ISceneManager* manager;
+			ISoundEngine* sound;
+			irrBulletWorld *world;
+			
+			//Custom Classes
+			LOGGER* log;
+			SCRIPT* mainScript;
+			CAMERA* camera;
+			std::vector<OBJECT*> objects;
+			FEventReceiver receiver;
+			
+			//Other
+			lua_State* L;
+			
+			
+			
+
+			
+
 	};
 }
 #endif // _SCENE_H_

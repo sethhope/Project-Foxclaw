@@ -8,7 +8,7 @@ namespace FCE
 	class EMPTYOBJECT : public OBJECT
 	{
 		public:
-			EMPTYOBJECT();
+			EMPTYOBJECT(scene::ISceneManager* manager);
 			~EMPTYOBJECT();
 			
 			void onInit();

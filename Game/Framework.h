@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "Objects/Mesh.h"
 #include "Misc/Script.h"
+#include "EventReceiver.h"
 #include "Irrlicht.h"
 
 #define SCREENWIDTH 1024
@@ -38,7 +39,7 @@ namespace FCE
 			//Custom classes
 			LOGGER* log;
 			SCENE* scene;
-			
+			FEventReceiver receiver;
 			//Irrlicht classes
  			IrrlichtDevice *device;
 			video::IVideoDriver* driver;

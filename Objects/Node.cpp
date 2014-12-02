@@ -39,9 +39,12 @@ void NODE::attach(NODE* node)
 
 void NODE::detach()
 {
-	parent->child = NULL;
-	parent->getIrrNode()->removeChild(thisNode);
-	parent = NULL;
+	if(parent)
+	{
+		parent->child = NULL;
+		parent->getIrrNode()->removeChild(thisNode);
+		parent = NULL;
+	}
 }
 
 void NODE::addSibling(NODE* node)
