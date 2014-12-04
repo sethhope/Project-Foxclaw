@@ -21,22 +21,19 @@ namespace FCE
 			void setDirection(core::vector3df dir);
 			void setColors(video::SColor color1, video::SColor color2);
 			void addAffector(std::string type);
-			void setRate(float rateMin, float rateMax);
+			void setRate(int rateMin, int rateMax);
 			void setSize(core::dimension2df sizeMin, core::dimension2df sizeMax);
-			void setAge(float minAge, float maxAge);
-			void setID(int id);
+			void setAge(int minAge, int maxAge);
 			void setEmitterSize(core::aabbox3d<f32> size);
-			int getID();
 		private:
 			video::SColor color1, color2;
 			core::vector3df dir;
-			float rateMin, rateMax;
-			float minAge, maxAge;
+			int rateMin, rateMax;
+			int minAge, maxAge;
 			core::aabbox3d<f32> size;
 			core::dimension2df sizeMin, sizeMax;
 			scene::IParticleSystemSceneNode* ps;
 			scene::IParticleEmitter* em;
-			int id;
 			IrrlichtDevice* device;
 			LOGGER* log;
 	};

@@ -20,13 +20,10 @@ namespace FCE
 			void onRender();
 			void load(std::string filename, bool loop);
 			void setVolume(float volume);
-			void setID(int id);
-			int getID();
 			ISound* getSound();
 		private:
 			ISoundEngine* engine;
 			ISound* s;
-			int id;
 			LOGGER* log;
 			float volume;
 	};

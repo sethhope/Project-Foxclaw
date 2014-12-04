@@ -47,10 +47,19 @@ void SCRIPT::onInit()
 		{"setDebug", Scene_setDebug},
 		{"addMesh", Scene_addMesh},
 		{"getMesh", Scene_getMesh},
+		{"addAnimatedMesh", Scene_addAnimatedMesh},
+		{"getAnimatedMesh", Scene_getAnimatedMesh},
 		{"addParticle", Scene_addParticle},
 		{"getParticle", Scene_getParticle},
 		{"addEmpty", Scene_addEmpty},
 		{"getEmpty", Scene_getEmpty},
+		{"addCamera", Scene_addCamera},
+		{"getCamera", Scene_getCamera},
+		{"getKey", Scene_getKey},
+		{"createCharacter", Scene_createCharacter},
+		{"modifyCharacter", Scene_modifyCharacter},
+		{"characterData", Scene_getCharacterData},
+		{"moveCharacter", Scene_moveCharacter},
 		{NULL, NULL}
 	};
 	static luaL_Reg Mesh_metatable[] =
@@ -60,6 +69,19 @@ void SCRIPT::onInit()
 		{"setScale", Mesh_setScale},
 		{"setMaterial", Mesh_setMaterial},
 		{"addCollider", Mesh_addCollider},
+		{"toObject", Mesh_toObject},
+		{NULL, NULL}
+	};
+	static luaL_Reg AnimatedMesh_metatable[] =
+	{
+		{"setPos", AnimatedMesh_setPos},
+		{"setRot", AnimatedMesh_setRot},
+		{"setScale", AnimatedMesh_setScale},
+		{"setMaterial", AnimatedMesh_setMaterial},
+		{"addCollider", AnimatedMesh_addCollider},
+		{"setFrameLoop", AnimatedMesh_setFrameLoop},
+		{"setSpeed", AnimatedMesh_setSpeed},
+		{"toObject", AnimatedMesh_toObject},
 		{NULL, NULL}
 	};
 	static luaL_Reg Particle_metatable[] =
@@ -74,6 +96,7 @@ void SCRIPT::onInit()
 		{"setSize", Particle_setSize},
 		{"addAffector", Particle_addAffector},
 		{"addCollider", Particle_addCollider},
+		{"toObject", Particle_toObject},
 		{NULL, NULL}
 	};
 	static luaL_Reg Sound_metatable[] =
@@ -96,23 +119,37 @@ void SCRIPT::onInit()
 		{"disableReverb", Sound_disableReverb},
 		{NULL, NULL}
 	};
+	static luaL_Reg Camera_metatable[] =
+	{
+		{"setFOV", Camera_setFOV},
+		{"getFOV", Camera_getFOV},
+		{"setClipping", Camera_setClipping},
+		{"getClipping", Camera_getClipping},
+		{"setTarget", Camera_setTarget},
+		{"setAspect", Camera_setAspect},
+		{"setOffset", Camera_setOffset},
+		{NULL, NULL}
+	};
 	static luaL_Reg EmptyObject_metatable[] =
 	{
 		{"setPosition", Empty_setPosition},
 		{"setRotation", Empty_setRotation},
 		{"setScale", Empty_setScale},
 		{"addCollider", Empty_addCollider},
+		{"toObject", Empty_toObject},
 		{NULL, NULL}
 	};
 	static luaL_Reg Empty_table[] =
 	{
 		{NULL, NULL}
 	};
-	
+	luaW_register<OBJECT>(L, "OBJECT", Empty_table, Empty_table, Object_new);
+	luaW_register<CAMERA>(L, "CAMERA", Empty_table, Camera_metatable, Camera_new);
 	luaW_register<EMPTYOBJECT>(L, "EMPTY", Empty_table, EmptyObject_metatable, Empty_new);
 	luaW_register<SOUND>(L, "SOUND", Empty_table, Sound_metatable, Sound_new);
 	luaW_register<PARTICLE>(L, "PARTICLE", Empty_table, Particle_metatable, Particle_new);
 	luaW_register<MESH>(L, "MESH", Empty_table, Mesh_metatable, Mesh_new);
+	luaW_register<ANIMATEDMESH>(L, "ANIMATEDMESH", Empty_table, AnimatedMesh_metatable, AnimatedMesh_new);
 	luaW_register<SCENE>(L, "SCENE", Empty_table, Scene_metatable, Scene_new);
 
 }

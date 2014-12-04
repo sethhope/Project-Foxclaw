@@ -26,6 +26,7 @@ namespace FCE
 			int getType();
 			void setTarget(OBJECT* target);
 			void setTarget(core::vector3df pos);
+			void setOffset(core::vector3df offset);
 			void setUpVector(core::vector3df pos);
 			void setFOV(float fov);
 			void setFarClipping(float clip);
@@ -38,6 +39,7 @@ namespace FCE
 			scene::ICameraSceneNode* getCamNode();
 		private:
 			int type;
+			core::vector3df offset;
 			scene::ICameraSceneNode* camNode;
 			LOGGER* log;
 			scene::ISceneManager* manager;

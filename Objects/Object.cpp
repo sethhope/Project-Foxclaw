@@ -11,6 +11,7 @@ OBJECT::OBJECT()
 	thisNode=NULL;
 	uDa = true;
 	hasCollider = false;
+	initialized = false;
 }
 
 OBJECT::~OBJECT()
@@ -21,6 +22,7 @@ OBJECT::~OBJECT()
 void OBJECT::init()
 {
 	onInit();
+	initialized = true;
 }
 
 void OBJECT::update()
@@ -50,18 +52,30 @@ void OBJECT::render()
 void OBJECT::setPosition(core::vector3df pos)
 {
 	position = pos;
+	if(initialized)
+	{
+		getIrrNode()->setPosition(pos);
+	}
 	uDa = true;
 }
 
 void OBJECT::setRotation(core::vector3df rot)
 {
 	rotation = rot;
+	if(initialized)
+	{
+		getIrrNode()->setRotation(rot);
+	}
 	uDa = true;
 }
 
 void OBJECT::setScale(core::vector3df scale)
 {
 	this->scale = scale;
+	 if(initialized)
+	 {
+	 	getIrrNode()->setScale(scale);
+	 }
 	uDa = true;
 }
 

@@ -6,12 +6,11 @@ SCENE::SCENE()
 	//Should never be used
 }
 
-SCENE::SCENE(LOGGER* log, IrrlichtDevice* device, FEventReceiver receiver)
+SCENE::SCENE(LOGGER* log, IrrlichtDevice* device)
 {
 	//Set init variables from constructor
 	this->log = log;
  	this->device = device;
- 	this->receiver = receiver;
 	gui = device->getGUIEnvironment();
 	manager = device->getSceneManager();
 	
@@ -35,7 +34,8 @@ void SCENE::init()
 	//begin scene initialization
 	log->logData("Initiating Scene");
 	log->logData("Initializing Physics World");
-	world = createIrrBulletWorld(device, true, true);
+	world = createIrrBulletWorld(device, true, false);
+	
 	world->setDebugMode(EPDM_DrawWireframe | EPDM_FastWireframe);
 	if(!world)
 	{
@@ -47,8 +47,6 @@ void SCENE::init()
 	std::string bulVer_ = bulVer.str();
 	log->debugData(MINOR, "Initialized Physics version", bulVer_);
 	world->setGravity(core::vector3df(0, -10, 0));
-	world->debugDrawWorld(true);
-	world->debugDrawProperties(true, video::SColor(255, 0, 255, 0));
 	log->logData("Initializing Sound Engine");
 	//create sound driver
 	sound = createIrrKlangDevice();
@@ -82,35 +80,25 @@ void SCENE::init()
 	log->logData("Loading scene objects");
 	//run the init function within the startup script
 	mainScript->runInit();
-	int l = addLight(core::vector3df(0, 0, 0), core::vector3df(0, 0, 0), core::vector3df(1, 1, 1), 10000, video::ELT_POINT);
+	manager->setAmbientLight(video::SColorf(0.2,0.2, 0.2, 1));
+	int l = addLight(core::vector3df(1, 1, 0), core::vector3df(50, 0, 0), core::vector3df(1, 1, 1), 10000, video::ELT_DIRECTIONAL);
 	log->logData("Loaded scene objects");
-	camera->setType(FCAM_FPS);
-	camera->init();
-	
+	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture("media/skydome.jpg"), 32, 16, 0.95, 2.0);
 	log->logData("Finished initializing");
 }
 
-void SCENE::update()
+void SCENE::update(FEventReceiver receiver)
 {
 	log->debugData(EXTRA, "Starting scene update");
+	this->receiver = receiver;
 	log->debugData(EXTRA, "Calculating deltaTime");
 	deltaTime = device->getTimer()->getTime() - timeStamp;
 	timeStamp = device->getTimer()->getTime();
 	log->debugData(EXTRA, "Setting listener position");
 	//set listener position for the sound manager
-	sound->setListenerPosition( manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
+	sound->setListenerPosition(manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
 	log->debugData(EXTRA, "Updating Physics");
-	world->stepSimulation(deltaTime*0.004f, 120);
-	
-	world->debugDrawWorld(true);
-	world->debugDrawProperties(true);
-	
-	log->debugData(EXTRA, "Updating objects");
-	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
-	{
-		log->debugData(EXTRA, (*it)->getName());
-		(*it)->update();
-	}
+	world->stepSimulation(deltaTime*0.004, 10);
 	log->debugData(EXTRA, "updating camera");
 	camera->update();
 	log->debugData(EXTRA, "Adding camera constants");
@@ -120,9 +108,23 @@ void SCENE::update()
 	lua_setglobal(mainScript->L, "CAM_Y");
 	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().Z);
 	lua_setglobal(mainScript->L, "CAM_Z");
+	lua_pushnumber(mainScript->L, deltaTime);
+	lua_setglobal(mainScript->L, "deltaTime");
+	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getRotation().X);
+	lua_setglobal(mainScript->L, "CAM_ROT_X");
+	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getRotation().Y);
+	lua_setglobal(mainScript->L, "CAM_ROT_Y");
+	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getRotation().Z);
+	lua_setglobal(mainScript->L, "CAM_ROT_Z");
 	log->debugData(EXTRA, "Updating script");
 	//run the update function within the main script
 	mainScript->update();
+	log->debugData(EXTRA, "Updating objects");
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		log->debugData(EXTRA, (*it)->getName());
+		(*it)->update();
+	}
 	log->debugData(EXTRA, "updating sound");
 	//update the sound driver
 	sound->update();
@@ -131,8 +133,8 @@ void SCENE::update()
 void SCENE::render()
 {
 	//draw all things in the manager and GUI.
-	world->debugDrawWorld(true);
-	world->debugDrawProperties(true);
+	//world->debugDrawWorld(true);
+	//world->debugDrawProperties(true);
 	manager->drawAll();
 	gui->drawAll();
 	//run the render function in the main script
@@ -184,37 +186,38 @@ SOUND* SCENE::editSound(int id)
 int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vector3df scale, std::string filename)
 {
 	log->debugData(MAJOR, "Creating new particle system");
-	PARTICLE* system1;
-	system1 = new PARTICLE(device, log);
-	system1->setID(lastID);
-	system1->setName("PARTICLE");
-	system1->setColors(video::SColor(0, 200, 200, 200), video::SColor(0, 255, 255, 255));
-	system1->setDirection(dir);
-	system1->setPosition(pos);
-	system1->setScale(scale);
-	system1->setRate(500, 500);
-	system1->setSize(core::dimension2df(1,1), core::dimension2df(2, 2));
-	system1->setAge(200, 300);
-	system1->loadTexture(filename);
+	PARTICLE* tmp;
+	tmp = new PARTICLE(device, log);
+	tmp->init();
+	tmp->setID(lastID);
+	tmp->setName("PARTICLE");
+	tmp->setColors(video::SColor(0, 200, 200, 200), video::SColor(0, 255, 255, 255));
+	tmp->setDirection(dir);
+	tmp->setPosition(pos);
+	tmp->setScale(scale);
+	tmp->setRate(500, 500);
+	tmp->setSize(core::dimension2df(1,1), core::dimension2df(2, 2));
+	tmp->setAge(200, 300);
+	tmp->loadTexture(filename);
 	lastID++;
-	system1->init();
-	objects.push_back(system1);
+	
+	tmp->update();
+	log->debugData(MAJOR, "created at", tmp->getPosition().X);
+	objects.push_back(tmp);
 	log->debugData(MAJOR, "Particle system added", lastID-1);
-	system1->update();
+	
 	return lastID-1;
 }
 PARTICLE* SCENE::editParticleSystem(int id)
 {
-	//log->debugData("Getting particle system", id);
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
 		if(((PARTICLE*)(*it))->getID()==id)
 		{
-			//log->debugData("Found particle system", id);
 			return ((PARTICLE*)(*it));
 		}
 	}
-	log->logData("Particle system doesn't exist. ID", id);
+	log->logData("Couldn't find particle system");
 	return NULL;
 }
 int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale)
@@ -228,6 +231,7 @@ int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 	tmp->setPosition(pos);
 	tmp->setRotation(rot);
 	tmp->setScale(scale);
+	tmp->init();
 	lastID++;
 	objects.push_back(tmp);
 	tmp->update();
@@ -235,7 +239,7 @@ int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 }
 MESH* SCENE::editMesh(int id)
 {
-	//log->debugData("Getting mesh", id);
+ //log->debugData("Getting mesh", id);
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
 		if(((MESH*)(*it))->getID()==id)
@@ -247,10 +251,41 @@ MESH* SCENE::editMesh(int id)
 	log->logData("Couldn't find mesh");
 	return NULL;
 }
+
+int SCENE::addAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale)
+{
+	ANIMATEDMESH* tmp = new ANIMATEDMESH(manager, log);
+	tmp->setID(lastID);
+	tmp->load(filename);
+	tmp->setName("ANIMATED_MESH");
+	tmp->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, true);
+	tmp->getIrrNode()->setMaterialType(video::EMT_SOLID);
+	tmp->setPosition(pos);
+	tmp->setRotation(rot);
+	tmp->setScale(scale);
+	tmp->init();
+	lastID++;
+	objects.push_back(tmp);
+	tmp->update();
+	return lastID-1;
+}
+
+ANIMATEDMESH* SCENE::editAnimatedMesh(int id)
+{
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if(((ANIMATEDMESH*)(*it))->getID()==id)
+		{
+			return ((ANIMATEDMESH*)(*it));
+		}
+	}
+	log->logData("Couldn't find animated mesh");
+	return NULL;
+}
 int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, float dropoff, video::E_LIGHT_TYPE type)
 {
 	LIGHT* temp = new LIGHT(manager, log);
-	temp->setColor(video::SColor(0, 1, 1, 1));
+	temp->setColor(video::SColor(255, 255, 255, 255));
 	temp->setPosition(pos);
 	temp->setScale(scale);
 	temp->setRotation(rot);
@@ -260,6 +295,9 @@ int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df sc
 	temp->setName("LIGHT");
 	lastID++;
 	temp->init();
+	temp->setPosition(pos);
+	temp->setScale(scale);
+	temp->setRotation(rot);
 	objects.push_back(temp);
 	temp->update();
 	return lastID-1;
@@ -315,4 +353,18 @@ irrBulletWorld* SCENE::getWorld()
 bool SCENE::keyDown(EKEY_CODE keycode)
 {
 	return receiver.KeyDown(keycode);
+}
+
+CAMERA* SCENE::getCamera()
+{
+	return camera;
+}
+
+IKinematicCharacterController* SCENE::getCharacter()
+{
+	return character;
+}
+void SCENE::setCharacter(IKinematicCharacterController* character)
+{
+	this->character=character;
 }

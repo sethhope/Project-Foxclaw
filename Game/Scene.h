@@ -12,6 +12,7 @@
 #include "Objects/Collider.h"
 #include "Objects/EmptyObject.h"
 #include "Objects/Camera.h"
+#include "Objects/AnimatedMesh.h"
 #include "EventReceiver.h"
 #include "Irrlicht.h"
 #include "irrKlang.h"
@@ -28,10 +29,10 @@ namespace FCE
 	{
 		public:
 			SCENE();
-			SCENE(LOGGER* log, IrrlichtDevice* device, FEventReceiver receiver);
+			SCENE(LOGGER* log, IrrlichtDevice* device);
 			~SCENE();
 			void init();
-			void update();
+			void update(FEventReceiver receiver);
 			void render();
 			int addParticleSystem(core::vector3df pos, core::vector3df dir, core::vector3df scale, std::string filename);
 			PARTICLE* editParticleSystem(int id);
@@ -43,7 +44,12 @@ namespace FCE
 			LIGHT* editLight(int id);
 			int addEmptyObject(core::vector3df pos, core::vector3df rot, core::vector3df scale);
 			EMPTYOBJECT* editEmpty(int id);
+			int addAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
+			ANIMATEDMESH* editAnimatedMesh(int id);
+			CAMERA* getCamera();
 			
+			IKinematicCharacterController* getCharacter();
+			void setCharacter(IKinematicCharacterController* character);
 			bool keyDown(EKEY_CODE keycode);
 			irrBulletWorld* getWorld();
 			IrrlichtDevice* getDevice();
@@ -62,6 +68,8 @@ namespace FCE
 			scene::ISceneManager* manager;
 			ISoundEngine* sound;
 			irrBulletWorld *world;
+			scene::ISceneNode* skydome;
+			IKinematicCharacterController* character;
 			
 			//Custom Classes
 			LOGGER* log;
@@ -69,7 +77,6 @@ namespace FCE
 			CAMERA* camera;
 			std::vector<OBJECT*> objects;
 			FEventReceiver receiver;
-			
 			//Other
 			lua_State* L;
 			

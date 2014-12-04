@@ -56,7 +56,7 @@ int FRAMEWORK::init()
 	gui = manager->getGUIEnvironment();
 	log->logData("Creating scene");
 	//Create a new scene object and initialize
-	scene = new SCENE(log, device, receiver);
+	scene = new SCENE(log, device);
 	scene->init();
 	//add debug camera.
 	log->logData("Scene created");
@@ -68,7 +68,7 @@ int FRAMEWORK::update()
 	//check if device is running and set run variable
 	run = device->run();
 	//update the scene
-	scene->update();
+	scene->update(receiver);
 	return 0;
 }
 

@@ -4,10 +4,9 @@ using namespace FCE;
 
 PARTICLE::PARTICLE(IrrlichtDevice* device, LOGGER* log)
 {
-	ps = device->getSceneManager()->addParticleSystemSceneNode(true);
 	this->device = device;
 	this->log = log;
-	size = core::aabbox3d<f32>(-1, 0, -1, 1, 1, 1);
+	size = core::aabbox3d<f32>(-1, -1, -1, 1, 1, 1);
 	dir = core::vector3df(0, 0.1, 0);
 	rateMin = 100;
 	rateMax = 200;
@@ -32,6 +31,7 @@ PARTICLE::~PARTICLE()
 void PARTICLE::onInit()
 {
 	log->logData("Initiating particle system", id);
+	ps = device->getSceneManager()->addParticleSystemSceneNode(true);
 	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
 	em->drop();
@@ -46,10 +46,7 @@ void PARTICLE::onInit()
 
 void PARTICLE::onUpdate()
 {
- /*
-	ps->setPosition(position);
-	ps->setRotation(rotation);
-	ps->setScale(scale);*/
+	thisNode = ps;
 }
 
 void PARTICLE::onRender()
@@ -84,7 +81,7 @@ void PARTICLE::setScale(core::vector3df scale)
 {
 	log->debugData(MINOR, "Setting scale for particle system", id);
 	this->scale = scale;
-	ps->setScale(scale);
+	//ps->setScale(scale);
 	log->debugData(MAJOR, "Scale set");
 }
 void PARTICLE::setDirection(core::vector3df dir)
@@ -124,7 +121,7 @@ void PARTICLE::addAffector(std::string type)
 	}
 	log->debugData(MAJOR, "Affector added");
 }
-void PARTICLE::setAge(float minAge, float maxAge)
+void PARTICLE::setAge(int minAge, int maxAge)
 {
 	log->debugData(MINOR, "Setting age of particle system", id);
 	this->minAge = minAge;
@@ -134,7 +131,7 @@ void PARTICLE::setAge(float minAge, float maxAge)
 	em->drop();
 	log->debugData(MAJOR, "Age set");
 }
-void PARTICLE::setRate(float rateMin, float rateMax)
+void PARTICLE::setRate(int rateMin, int rateMax)
 {
 	log->debugData(MINOR, "Setting rate of particle system", id);
 	this->rateMin = rateMin;
@@ -153,16 +150,6 @@ void PARTICLE::setSize(core::dimension2df sizeMin, core::dimension2df sizeMax)
 	ps->setEmitter(em);
 	em->drop();
 	log->debugData(MAJOR, "Size set");
-}
-void PARTICLE::setID(int id)
-{
-	log->debugData(MINOR, "Setting ID of particle system to", id);
-	this->id = id;
-	log->debugData(MAJOR, "ID set");
-}
-int PARTICLE::getID()
-{
-	return id;
 }
 void PARTICLE::setEmitterSize(core::aabbox3d<f32> size)
 {

@@ -59,12 +59,3 @@ ISound* SOUND::getSound()
 {
 	return s;
 }
-void SOUND::setID(int id)
-{
-	this->id = id;
-}
-
-int SOUND::getID()
-{
-	return id;
-}

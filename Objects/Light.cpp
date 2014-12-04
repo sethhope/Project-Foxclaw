@@ -39,7 +39,7 @@ void LIGHT::onInit()
 	log->debugData(MAJOR, "Creating light");
 	scene::ILightSceneNode* tmp;
 	tmp = manager->addLightSceneNode(NULL, position, color, dropoff);
-	tmp->getLightData().Type = type;
+	tmp->setLightType(type);
 	thisNode = tmp;
 	thisNode->setScale(scale);
 	if(!thisNode)
@@ -52,12 +52,4 @@ void LIGHT::onInit()
 void LIGHT::setType(video::E_LIGHT_TYPE type)
 {
 	this->type = type;
-}
-void LIGHT::setID(int id)
-{
-	this->id = id;
-}
-int LIGHT::getID()
-{
-	return id;
 }

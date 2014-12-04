@@ -38,13 +38,25 @@ void COLLIDER::init()
 		ICollisionShape* shape = new ISphereShape(node, mass);
 		body = world->addRigidBody(shape);
 	}
-	if(type == COL_MESH)
+	if(type == COL_MESH_GIMPACT)
 	{
-		log->debugData(MAJOR, "Creating Mesh Collider");
+		log->debugData(MAJOR, "Creating Mesh GIMPACT Collider");
 		ICollisionShape* shape = new IGImpactMeshShape(node, colMesh, mass);
 		body = world->addRigidBody(shape);
 	}
-	//body->setActivationState(EAS_DISABLE_DEACTIVATION);
+	if(type == COL_MESH_CONVEXHULL)
+	{
+		log->debugData(MAJOR, "Creating mesh CONVEXHULL collider");
+		ICollisionShape* shape = new IConvexHullShape(node, colMesh, mass);
+		body = world->addRigidBody(shape);
+	}
+	if(type == COL_MESH_TRIMESH)
+	{
+		log->debugData(MAJOR, "Creating mesh TRIMESH collider");
+		ICollisionShape* shape = new IBvhTriangleMeshShape(node, colMesh, mass);
+		body = world->addRigidBody(shape);
+	}
+	
 	log->debugData(EXTRA, "Finished collider init");
 }
 

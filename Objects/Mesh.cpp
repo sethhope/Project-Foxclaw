@@ -17,20 +17,11 @@ MESH::~MESH()
 	
 }
 
-int MESH::getID()
-{
-	return id;
-}
-/*scene::IAnimatedMeshSceneNode* MESH::getNode()
-{
-	return node;
-}*/
-
 int MESH::load(std::string filename)
 {
 	log->logData("Loading mesh", filename);
 	mesh = manager->getMesh(filename.c_str());
-	scene::IAnimatedMeshSceneNode* node = manager->addAnimatedMeshSceneNode(mesh);
+	scene::IMeshSceneNode* node = manager->addMeshSceneNode(mesh);
 	if(node)
 	{
 		log->debugData(MAJOR, "Loaded mesh");
@@ -39,10 +30,6 @@ int MESH::load(std::string filename)
 	}
 	log->logData("Failed to load mesh", filename);
 	return 1;
-}
-void MESH::setID(int id)
-{
-	this->id = id;
 }
 
 void MESH::onInit()

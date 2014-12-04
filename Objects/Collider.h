@@ -7,9 +7,11 @@
 
 #define COL_CUBE 0
 #define COL_SPHERE 1
-#define COL_MESH 2
+#define COL_MESH_GIMPACT 2
+#define COL_MESH_CONVEXHULL 3
+#define COL_MESH_TRIMESH 4
 
-#define MAX_TYPE 2
+#define MAX_TYPE 4
 using namespace irr;
 namespace FCE
 {

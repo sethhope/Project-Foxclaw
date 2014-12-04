@@ -43,9 +43,10 @@ namespace FCE
 			std::string name;
 			COLLIDER* collider;
 			bool uDa;
-		private:
 			int id;
+		private:
 			
+			bool initialized;
 			bool hasCollider;
 
 	};

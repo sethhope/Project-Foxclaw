@@ -7,6 +7,7 @@ CAMERA::CAMERA(scene::ISceneManager* manager, LOGGER* log)
 	type = FCAM_FPS;
 	initialized = false;
 	objectTarget = false;
+	offset = core::vector3df(0,0,0);
 }
 CAMERA::~CAMERA()
 {
@@ -40,7 +41,7 @@ void CAMERA::onUpdate()
 	uDa = false;
 	if(objectTarget)
 	{
-		camNode->setTarget(target->getIrrNode()->getPosition());
+		camNode->setTarget(target->getIrrNode()->getPosition()+offset);
 	}
 }
 
@@ -61,6 +62,8 @@ void CAMERA::setType(int type)
 void CAMERA::setTarget(OBJECT* target)
 {
 	this->target = target;
+	camNode->bindTargetAndRotation(true);
+	objectTarget = true;
 }
 
 void CAMERA::setTarget(core::vector3df pos)
@@ -68,6 +71,10 @@ void CAMERA::setTarget(core::vector3df pos)
 	camNode->setTarget(pos);
 }
 
+void CAMERA::setOffset(core::vector3df offset)
+{
+	this->offset = offset;
+}
 void CAMERA::setUpVector(core::vector3df pos)
 {
 	camNode->setUpVector(pos);
