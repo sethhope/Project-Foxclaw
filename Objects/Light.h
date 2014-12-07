@@ -21,7 +21,6 @@ namespace FCE
 			core::vector3df position;
 			core::vector3df scale;
 			video::SColorf color;
-			//scene::ISceneNode* node;
 			scene::ISceneManager* manager;
 			video::E_LIGHT_TYPE type;
 			float dropoff;

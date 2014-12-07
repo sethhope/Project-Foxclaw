@@ -68,7 +68,6 @@ void SCRIPT::onInit()
 		{"setPos", Mesh_setPos},
 		{"setRot", Mesh_setRot},
 		{"setScale", Mesh_setScale},
-		{"setMaterial", Mesh_setMaterial},
 		{"addCollider", Mesh_addCollider},
 		{"toObject", Mesh_toObject},
 		{NULL, NULL}
@@ -78,7 +77,6 @@ void SCRIPT::onInit()
 		{"setPos", AnimatedMesh_setPos},
 		{"setRot", AnimatedMesh_setRot},
 		{"setScale", AnimatedMesh_setScale},
-		{"setMaterial", AnimatedMesh_setMaterial},
 		{"addCollider", AnimatedMesh_addCollider},
 		{"setFrameLoop", AnimatedMesh_setFrameLoop},
 		{"setSpeed", AnimatedMesh_setSpeed},
@@ -157,6 +155,9 @@ void SCRIPT::onInit()
 		{"setName", Object_setName},
 		{"getID", Object_getID},
 		{"addScript", Object_addScript},
+		{"setMaterial", Object_setMaterial},
+		{"setMaterialFlag", Object_setMaterialFlag},
+		{"setMaterialTexture", Object_setTexture},
 		{NULL, NULL}
 	};
 	luaW_register<OBJECT>(L, "OBJECT", Empty_table, Object_table, Object_new);

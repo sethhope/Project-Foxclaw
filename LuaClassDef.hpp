@@ -318,6 +318,134 @@ int Object_addScript(lua_State* L)
 	s->attachTo((NODE*)o);
 	return 0;
 }
+int Object_setMaterial(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	std::string type = luaL_checkstring(L, 2);
+	if(o->getIrrNode()->getType() == scene::ESNT_CUBE || o->getIrrNode()->getType() == scene::ESNT_MESH || o->getIrrNode()->getType() == scene::ESNT_ANIMATED_MESH || o->getIrrNode()->getType() == scene::ESNT_BILLBOARD || o->getIrrNode()->getType() == scene::ESNT_WATER_SURFACE || o->getIrrNode()->getType() == scene::ESNT_SPHERE)
+	{
+		if(type == "solid")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_SOLID);
+		}
+		if(type == "solid2")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_SOLID_2_LAYER);
+		}
+		if(type == "lightmap")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_LIGHTMAP);
+		}
+		if(type == "lightmaplight")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_LIGHTMAP_LIGHTING);
+		}
+		if(type == "normalmap_solid")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_NORMAL_MAP_SOLID);
+		}
+		if(type == "parallax_solid")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_PARALLAX_MAP_SOLID);
+		}
+		if(type == "sphere_map")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_SPHERE_MAP);
+		}
+		if(type == "detail_map")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_DETAIL_MAP);
+		}
+	}
+	return 0;
+}
+int Object_setMaterialFlag(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	std::string type = luaL_checkstring(L, 2);
+	if(o->getIrrNode()->getType() == scene::ESNT_CUBE || o->getIrrNode()->getType() == scene::ESNT_MESH || o->getIrrNode()->getType() == scene::ESNT_ANIMATED_MESH || o->getIrrNode()->getType() == scene::ESNT_BILLBOARD || o->getIrrNode()->getType() == scene::ESNT_WATER_SURFACE || o->getIrrNode()->getType() == scene::ESNT_SPHERE)
+	{
+		bool value;
+		if(luaL_checknumber(L, 3)==0)
+		{
+			value = false;
+		}else
+		{
+			value = true;
+		}
+		if(type == "wireframe")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_WIREFRAME, value);
+		}
+		if(type == "pointcloud")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_POINTCLOUD, value);
+		}
+		if(type == "gouraud_shading")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_GOURAUD_SHADING, value);
+		}
+		if(type == "lighting")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, value);
+		}
+		if(type == "zbuffer")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_ZBUFFER, value);
+		}
+		if(type == "zwrite")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_ZWRITE_ENABLE, value);
+		}
+		if(type == "backface_culling")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_BACK_FACE_CULLING, value);
+		}
+		if(type == "frontface_culling")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_FRONT_FACE_CULLING, value);
+		}
+		if(type == "bilinear")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_BILINEAR_FILTER, value);
+		}
+		if(type == "trilinear")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_TRILINEAR_FILTER, value);
+		}
+		if(type == "anisotropic")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_ANISOTROPIC_FILTER, value);
+		}
+		if(type == "fog")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_FOG_ENABLE, value);
+		}
+		if(type == "normalize_normals")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, value);
+		}
+		if(type == "texturewrap")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_TEXTURE_WRAP, value);
+		}
+		if(type == "antialias")
+		{
+			o->getIrrNode()->setMaterialFlag(video::EMF_ANTI_ALIASING, value);
+		}
+	}
+	return 0;
+}
+int Object_setTexture(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	SCENE* s = luaW_check<SCENE>(L, 2);
+	if(o->getIrrNode()->getType() == scene::ESNT_CUBE || o->getIrrNode()->getType() == scene::ESNT_MESH || o->getIrrNode()->getType() == scene::ESNT_ANIMATED_MESH || o->getIrrNode()->getType() == scene::ESNT_BILLBOARD || o->getIrrNode()->getType() == scene::ESNT_WATER_SURFACE || o->getIrrNode()->getType() == scene::ESNT_SPHERE)
+	{
+		o->getIrrNode()->setMaterialTexture(luaL_checknumber(L, 3), s->getDevice()->getSceneManager()->getVideoDriver()->getTexture(luaL_checkstring(L, 4)));
+	}
+	return 0;
+}
 COLLIDER* Collider_new(lua_State* L)
 {
 	return 0;
@@ -368,36 +496,6 @@ int Mesh_setScale(lua_State* L)
 {
 	MESH* m = luaW_check<MESH>(L, 1);
 	m->setScale(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L,3), luaL_checknumber(L,4)));
-	return 0;
-}
-int Mesh_setMaterial(lua_State* L)
-{
-	MESH* m = luaW_check<MESH>(L, 1);
-	std::string type = luaL_checkstring(L, 2);
-	if(type == "solid")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_SOLID);
-	}
-	if(type == "solid2")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_SOLID_2_LAYER);
-	}
-	if(type == "lightmap")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_LIGHTMAP);
-	}
-	if(type == "lightmaplight")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_LIGHTMAP_LIGHTING);
-	}
-	if(type == "normalmap_solid")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_NORMAL_MAP_SOLID);
-	}
-	if(type == "parallax_solid")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_PARALLAX_MAP_SOLID);
-	}
 	return 0;
 }
 int Mesh_addCollider(lua_State* L)
@@ -457,36 +555,7 @@ int AnimatedMesh_setScale(lua_State* L)
 	m->setScale(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L,3), luaL_checknumber(L,4)));
 	return 0;
 }
-int AnimatedMesh_setMaterial(lua_State* L)
-{
-	ANIMATEDMESH* m = luaW_check<ANIMATEDMESH>(L, 1);
-	std::string type = luaL_checkstring(L, 2);
-	if(type == "solid")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_SOLID);
-	}
-	if(type == "solid2")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_SOLID_2_LAYER);
-	}
-	if(type == "lightmap")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_LIGHTMAP);
-	}
-	if(type == "lightmaplight")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_LIGHTMAP_LIGHTING);
-	}
-	if(type == "normalmap_solid")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_NORMAL_MAP_SOLID);
-	}
-	if(type == "parallax_solid")
-	{
-		m->getIrrNode()->setMaterialType(video::EMT_PARALLAX_MAP_SOLID);
-	}
-	return 0;
-}
+
 int AnimatedMesh_addCollider(lua_State* L)
 {
 	ANIMATEDMESH* m = luaW_check<ANIMATEDMESH>(L, 1);
