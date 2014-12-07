@@ -16,7 +16,7 @@ namespace FCE
 			NODE* getPrev();
 			NODE* getLastChild();
 			NODE* getFirstParent();
-			void attach(NODE* node);
+			void attachTo(NODE* node);
 			void detach();
 			void addSibling(NODE* node);
 			scene::ISceneNode* getIrrNode();

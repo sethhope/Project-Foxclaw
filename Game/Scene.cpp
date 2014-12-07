@@ -66,6 +66,7 @@ void SCENE::init()
 	lastID = 0;
 	soundID = 0;
 	camera = new CAMERA(manager, log);
+
 	//load startup lua script
 	log->logData("Loading startup script");
 	//create new script
@@ -81,7 +82,7 @@ void SCENE::init()
 	//run the init function within the startup script
 	mainScript->runInit();
 	manager->setAmbientLight(video::SColorf(0.2,0.2, 0.2, 1));
-	int l = addLight(core::vector3df(1, 1, 0), core::vector3df(50, 0, 0), core::vector3df(1, 1, 1), 10000, video::ELT_DIRECTIONAL);
+	int l = addLight(core::vector3df(1, 1, 0), core::vector3df(45, 0, 0), core::vector3df(1, 1, 1), 10000, video::ELT_DIRECTIONAL);
 	log->logData("Loaded scene objects");
 	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture("media/skydome.jpg"), 32, 16, 0.95, 2.0);
 	log->logData("Finished initializing");
@@ -94,13 +95,8 @@ void SCENE::update(FEventReceiver receiver)
 	log->debugData(EXTRA, "Calculating deltaTime");
 	deltaTime = device->getTimer()->getTime() - timeStamp;
 	timeStamp = device->getTimer()->getTime();
-	log->debugData(EXTRA, "Setting listener position");
-	//set listener position for the sound manager
-	sound->setListenerPosition(manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
 	log->debugData(EXTRA, "Updating Physics");
 	world->stepSimulation(deltaTime*0.004, 10);
-	log->debugData(EXTRA, "updating camera");
-	camera->update();
 	log->debugData(EXTRA, "Adding camera constants");
 	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().X);
 	lua_setglobal(mainScript->L, "CAM_X");
@@ -116,6 +112,8 @@ void SCENE::update(FEventReceiver receiver)
 	lua_setglobal(mainScript->L, "CAM_ROT_Y");
 	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getRotation().Z);
 	lua_setglobal(mainScript->L, "CAM_ROT_Z");
+	lua_pushnumber(mainScript->L, (lastID-1));
+	lua_setglobal(mainScript->L, "OBJECTS");
 	log->debugData(EXTRA, "Updating script");
 	//run the update function within the main script
 	mainScript->update();
@@ -126,8 +124,14 @@ void SCENE::update(FEventReceiver receiver)
 		(*it)->update();
 	}
 	log->debugData(EXTRA, "updating sound");
+
 	//update the sound driver
 	sound->update();
+	log->debugData(EXTRA, "updating camera");
+	camera->update();
+	log->debugData(EXTRA, "Setting listener position");
+	//set listener position for the sound manager
+	sound->setListenerPosition(manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
 }
 
 void SCENE::render()
@@ -344,7 +348,18 @@ EMPTYOBJECT* SCENE::editEmpty(int id)
 	log->logData("EmptyObject not found. ID", id);
 	return NULL;
 }
-
+OBJECT* SCENE::getObject(int id)
+{
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if((*it)->getID()==id)
+		{
+			return *it;
+		}
+	}
+	log->logData("Sound doesn't exist. ID", id);
+	return NULL;
+}
 irrBulletWorld* SCENE::getWorld()
 {
 	return world;

@@ -36,7 +36,7 @@ void SCRIPT::onInit()
 	luaL_openlibs(L);
 	log->debugData(MINOR, "Opened libraries");
 	//TODO: add functions and classes
-
+	
 	static luaL_Reg Scene_metatable[] =
 	{
 		{"addSound", Scene_addSound},
@@ -60,6 +60,7 @@ void SCRIPT::onInit()
 		{"modifyCharacter", Scene_modifyCharacter},
 		{"characterData", Scene_getCharacterData},
 		{"moveCharacter", Scene_moveCharacter},
+		{"getObject", Scene_getObject},
 		{NULL, NULL}
 	};
 	static luaL_Reg Mesh_metatable[] =
@@ -143,7 +144,22 @@ void SCRIPT::onInit()
 	{
 		{NULL, NULL}
 	};
-	luaW_register<OBJECT>(L, "OBJECT", Empty_table, Empty_table, Object_new);
+	static luaL_Reg Object_table[] =
+	{
+		{"getCollider", Object_getCollider},
+		{"getPosition", Object_getPosition},
+		{"getRotation", Object_getRotation},
+		{"getScale", Object_getScale},
+		{"setPosition", Object_setPosition},
+		{"setRotation", Object_setRotation},
+		{"setScale", Object_setScale},
+		{"getName", Object_getName},
+		{"setName", Object_setName},
+		{"getID", Object_getID},
+		{"addScript", Object_addScript},
+		{NULL, NULL}
+	};
+	luaW_register<OBJECT>(L, "OBJECT", Empty_table, Object_table, Object_new);
 	luaW_register<CAMERA>(L, "CAMERA", Empty_table, Camera_metatable, Camera_new);
 	luaW_register<EMPTYOBJECT>(L, "EMPTY", Empty_table, EmptyObject_metatable, Empty_new);
 	luaW_register<SOUND>(L, "SOUND", Empty_table, Sound_metatable, Sound_new);
@@ -192,6 +208,15 @@ lua_State* SCRIPT::runInit()
 
 void SCRIPT::onUpdate()
 {
+	if(getParent())
+	{
+		luaW_push<OBJECT>(L, (OBJECT*)getParent());
+		lua_setglobal(L, "ParentObject");
+	}else
+	{
+		lua_pushnumber(L, 0);
+		lua_setglobal(L, "ParentObject");
+	}
 	lua_getglobal(L, "update");
 	if(lua_pcall(L, 0, 0, 0)!=0)
 	{

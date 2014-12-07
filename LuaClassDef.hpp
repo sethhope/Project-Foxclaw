@@ -121,6 +121,7 @@ int Scene_addCamera(lua_State* L)
 	SCENE* s = luaW_check<SCENE>(L, 1);
 	s->getCamera()->setType(luaL_checknumber(L, 2));
 	s->getCamera()->init();
+	s->getCamera()->update();
 	return 0;
 }
 int Scene_getCamera(lua_State* L)
@@ -229,7 +230,12 @@ int Scene_moveCharacter(lua_State* L)
 	s->getCharacter()->setPositionIncrementPerSimulatorStep(direction*multiplier);
 	return 0;
 }
-
+int Scene_getObject(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	luaW_push<OBJECT>(L,s->getObject(luaL_checknumber(L, 2)));
+	return 1;
+}
 OBJECT* Object_new(lua_State* L)
 {
 	OBJECT* o = new OBJECT();
@@ -241,7 +247,77 @@ int Object_getCollider(lua_State* L)
 	luaW_push<COLLIDER>(L, o->getCollider());
 	return 1;
 }
+int Object_getPosition(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	lua_pushnumber(L, o->getPosition().X);
+	lua_pushnumber(L, o->getPosition().Y);
+	lua_pushnumber(L, o->getPosition().Z);
+	return 3;
+}
+int Object_getRotation(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	lua_pushnumber(L, o->getRotation().X);
+	lua_pushnumber(L, o->getRotation().Y);
+	lua_pushnumber(L, o->getRotation().Z);
+	return 3;
+}
+int Object_getScale(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	lua_pushnumber(L, o->getScale().X);
+	lua_pushnumber(L, o->getScale().Y);
+	lua_pushnumber(L, o->getScale().Z);
+	return 3;
+}
+int Object_setPosition(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	o->setPosition(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+	return 0;
+}
 
+int Object_setRotation(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	o->setRotation(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+	return 0;
+}
+int Object_setScale(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	o->setScale(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+	return 0;
+}
+int Object_getName(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	lua_pushstring(L, o->getName().c_str());
+	return 1;
+}
+int Object_setName(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	o->setName(luaL_checkstring(L, 2));
+	return 0;
+}
+int Object_getID(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	lua_pushnumber(L, o->getID());
+	return 1;
+}
+int Object_addScript(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	SCRIPT* s = new SCRIPT(luaW_check<SCENE>(L, 2)->getLog());
+	s->init();
+	s->run(luaL_checkstring(L, 3));
+	s->runInit();
+	s->attachTo((NODE*)o);
+	return 0;
+}
 COLLIDER* Collider_new(lua_State* L)
 {
 	return 0;

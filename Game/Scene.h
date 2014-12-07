@@ -47,7 +47,7 @@ namespace FCE
 			int addAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
 			ANIMATEDMESH* editAnimatedMesh(int id);
 			CAMERA* getCamera();
-			
+			OBJECT* getObject(int id);
 			IKinematicCharacterController* getCharacter();
 			void setCharacter(IKinematicCharacterController* character);
 			bool keyDown(EKEY_CODE keycode);

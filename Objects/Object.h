@@ -1,6 +1,7 @@
 #ifndef _FOBJECT_H_
 #define _FOBJECT_H_
 #include "stdafx.h"
+#include <map>
 #include "node.h"
 #include "Collider.h"
 #include "Irrlicht.h"
@@ -25,10 +26,8 @@ namespace FCE
 			void setScale(core::vector3df scale);
 			void addCollider(LOGGER* log, int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass);
 			void addCollider(LOGGER* log, int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass, scene::IMesh* colMesh);
-			
 			void setID(int id);
 			int getID();
-			
 			COLLIDER* getCollider();
 			core::vector3df getPosition();
 			core::vector3df getRotation();
@@ -45,7 +44,7 @@ namespace FCE
 			bool uDa;
 			int id;
 		private:
-			
+			std::map<std::string, float> metadata;
 			bool initialized;
 			bool hasCollider;
 

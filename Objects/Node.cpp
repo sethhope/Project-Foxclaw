@@ -30,10 +30,13 @@ NODE::~NODE()
 	}
 }
 
-void NODE::attach(NODE* node)
+void NODE::attachTo(NODE* node)
 {
 	parent = node->getLastChild();
-	thisNode->setParent(parent->getIrrNode());
+	if(thisNode&&parent->getIrrNode())
+	{
+		thisNode->setParent(parent->getIrrNode());
+	}
 	node->getLastChild()->child = this;
 }
 
