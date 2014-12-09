@@ -60,6 +60,7 @@ The same applies for all other copyright notices at the top of files included wi
 //#include "collisionobjectaffectorbuoyancy.h"
 #include "collisioncallbackinformation.h"
 #include "liquidbody.h"
+#include "capsuleshape.h"
 #include "kinematiccharactercontroller.h"
 
 

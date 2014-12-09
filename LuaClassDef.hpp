@@ -146,7 +146,8 @@ int Scene_getKey(lua_State* L)
 int Scene_createCharacter(lua_State* L)
 {
 	SCENE* s = luaW_check<SCENE>(L, 1);
-	IKinematicCharacterController* c = new IKinematicCharacterController(s->getWorld());
+	IKinematicCharacterController* c = new IKinematicCharacterController(s->getWorld(), luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4));
+	c->setUseGhostSweepTest(true);
 	s->setCharacter(c);
 	return 0;
 }
@@ -230,11 +231,34 @@ int Scene_moveCharacter(lua_State* L)
 	s->getCharacter()->setPositionIncrementPerSimulatorStep(direction*multiplier);
 	return 0;
 }
+int Scene_setPhysicsDebug(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	bool d = false;
+	if(luaL_checknumber(L, 2) != 0)
+	{
+		d = true;
+	}
+	s->setDebug(d);
+	return 0;
+}
 int Scene_getObject(lua_State* L)
 {
 	SCENE* s = luaW_check<SCENE>(L, 1);
 	luaW_push<OBJECT>(L,s->getObject(luaL_checknumber(L, 2)));
 	return 1;
+}
+int Scene_setSkydome(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->setSkydome(luaL_checkstring(L, 2));
+	return 0;
+}
+int Scene_removeObject(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->removeObject(luaL_checknumber(L, 2));
+	return 0;
 }
 OBJECT* Object_new(lua_State* L)
 {
@@ -444,6 +468,13 @@ int Object_setTexture(lua_State* L)
 	{
 		o->getIrrNode()->setMaterialTexture(luaL_checknumber(L, 3), s->getDevice()->getSceneManager()->getVideoDriver()->getTexture(luaL_checkstring(L, 4)));
 	}
+	return 0;
+}
+int Object_attachTo(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	OBJECT* o_ = luaW_check<OBJECT>(L, 2);
+	o->attachTo((NODE*)o_);
 	return 0;
 }
 COLLIDER* Collider_new(lua_State* L)
@@ -847,6 +878,10 @@ int Empty_addCollider(lua_State* L)
 	{
 		m->addCollider(s->getLog(), COL_SPHERE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
 	}
+	if(type == "CAPSULE")
+	{
+		m->addCollider(s->getLog(), COL_CAPSULE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+	}
 	return 0;
 }
 int Empty_toObject(lua_State* L)
@@ -902,6 +937,12 @@ int Camera_setOffset(lua_State* L)
 {
 	CAMERA* c = luaW_check<CAMERA>(L, 1);
 	c->setOffset(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+	return 0;
+}
+int Camera_setPosition(lua_State* L)
+{
+	CAMERA* c = luaW_check<CAMERA>(L, 1);
+	c->setPosition(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
 	return 0;
 }
 #endif

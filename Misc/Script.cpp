@@ -61,6 +61,9 @@ void SCRIPT::onInit()
 		{"characterData", Scene_getCharacterData},
 		{"moveCharacter", Scene_moveCharacter},
 		{"getObject", Scene_getObject},
+		{"setPhysicsDebug", Scene_setPhysicsDebug},
+		{"setSkydome", Scene_setSkydome},
+		{"removeObject", Scene_removeObject},
 		{NULL, NULL}
 	};
 	static luaL_Reg Mesh_metatable[] =
@@ -127,6 +130,7 @@ void SCRIPT::onInit()
 		{"setTarget", Camera_setTarget},
 		{"setAspect", Camera_setAspect},
 		{"setOffset", Camera_setOffset},
+		{"setPosition", Camera_setPosition},
 		{NULL, NULL}
 	};
 	static luaL_Reg EmptyObject_metatable[] =
@@ -158,6 +162,7 @@ void SCRIPT::onInit()
 		{"setMaterial", Object_setMaterial},
 		{"setMaterialFlag", Object_setMaterialFlag},
 		{"setMaterialTexture", Object_setTexture},
+		{"attachTo", Object_attachTo},
 		{NULL, NULL}
 	};
 	luaW_register<OBJECT>(L, "OBJECT", Empty_table, Object_table, Object_new);

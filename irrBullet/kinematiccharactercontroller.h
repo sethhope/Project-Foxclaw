@@ -19,6 +19,7 @@ class IKinematicCharacterController
 {
     public:
         IKinematicCharacterController(irrBulletWorld* const world);
+        IKinematicCharacterController(irrBulletWorld* const world, irr::f32 characterHeight, irr::f32 characterWidth, irr::f32 stepHeight = 0.35);
         ~IKinematicCharacterController();
 
         void reset();

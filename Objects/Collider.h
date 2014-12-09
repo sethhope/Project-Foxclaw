@@ -4,14 +4,15 @@
 #include "Misc/Logger.h"
 #include "Irrlicht.h"
 #include "irrBullet.h"
-
 #define COL_CUBE 0
 #define COL_SPHERE 1
 #define COL_MESH_GIMPACT 2
 #define COL_MESH_CONVEXHULL 3
 #define COL_MESH_TRIMESH 4
-
-#define MAX_TYPE 4
+#define COL_LIQUID 5
+#define COL_SOFTBODY 6
+#define COL_CAPSULE 7
+#define MAX_TYPE 7
 using namespace irr;
 namespace FCE
 {
@@ -35,6 +36,8 @@ namespace FCE
 			irrBulletWorld *world;
 			scene::IMesh* colMesh;
 			IRigidBody* body;
+			ILiquidBody* lbody;
+			ISoftBody* sbody;
 			LOGGER* log;
 			scene::ISceneNode* node;
 	};

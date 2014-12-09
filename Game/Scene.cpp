@@ -11,6 +11,7 @@ SCENE::SCENE(LOGGER* log, IrrlichtDevice* device)
 	//Set init variables from constructor
 	this->log = log;
  	this->device = device;
+ 	debug = false;
 	gui = device->getGUIEnvironment();
 	manager = device->getSceneManager();
 	
@@ -34,8 +35,7 @@ void SCENE::init()
 	//begin scene initialization
 	log->logData("Initiating Scene");
 	log->logData("Initializing Physics World");
-	world = createIrrBulletWorld(device, true, false);
-	
+	world = createIrrBulletWorld(device, true, true);
 	world->setDebugMode(EPDM_DrawWireframe | EPDM_FastWireframe);
 	if(!world)
 	{
@@ -84,7 +84,6 @@ void SCENE::init()
 	manager->setAmbientLight(video::SColorf(0.2,0.2, 0.2, 1));
 	int l = addLight(core::vector3df(1, 1, 0), core::vector3df(45, 0, 0), core::vector3df(1, 1, 1), 10000, video::ELT_DIRECTIONAL);
 	log->logData("Loaded scene objects");
-	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture("media/skydome.jpg"), 32, 16, 0.95, 2.0);
 	log->logData("Finished initializing");
 }
 
@@ -124,7 +123,6 @@ void SCENE::update(FEventReceiver receiver)
 		(*it)->update();
 	}
 	log->debugData(EXTRA, "updating sound");
-
 	//update the sound driver
 	sound->update();
 	log->debugData(EXTRA, "updating camera");
@@ -137,12 +135,15 @@ void SCENE::update(FEventReceiver receiver)
 void SCENE::render()
 {
 	//draw all things in the manager and GUI.
-	//world->debugDrawWorld(true);
-	//world->debugDrawProperties(true);
 	manager->drawAll();
 	gui->drawAll();
 	//run the render function in the main script
 	mainScript->render();
+	if(debug)
+	{
+		world->debugDrawWorld(true);
+		world->debugDrawProperties(true);
+	}
 }
 //misc functions
 LOGGER* SCENE::getLog()
@@ -382,4 +383,26 @@ IKinematicCharacterController* SCENE::getCharacter()
 void SCENE::setCharacter(IKinematicCharacterController* character)
 {
 	this->character=character;
+}
+void SCENE::setDebug(bool debug)
+{
+	log->logData("Setting debug to", (int)debug);
+	this->debug = debug;
+}
+void SCENE::setSkydome(std::string filename)
+{
+	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture(filename.c_str()), 32, 16, 0.95, 2.0);
+}
+void SCENE::removeObject(int id)
+{
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if((*it)->getID()==id)
+		{
+			manager->addToDeletionQueue((*it)->getIrrNode());
+			(*it)->~OBJECT();
+			objects.erase(it);
+			return;
+		}
+	}
 }

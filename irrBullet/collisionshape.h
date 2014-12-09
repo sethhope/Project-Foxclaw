@@ -30,7 +30,8 @@ enum ECollisionShapeType
     ECST_SPHERE,
     ECST_BVHTRIMESH,
     ECST_CONVEXHULL,
-    ECST_GIMPACT
+    ECST_GIMPACT,
+    ECST_CAPSULE
 };
 
 enum EScalingPair

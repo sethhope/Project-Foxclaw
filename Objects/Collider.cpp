@@ -20,7 +20,7 @@ COLLIDER::COLLIDER(scene::ISceneNode* parent, scene::ISceneManager* manager, irr
 
 COLLIDER::~COLLIDER()
 {
-	
+	world->removeCollisionObject(body, true);
 }
 
 void COLLIDER::init()
@@ -56,6 +56,17 @@ void COLLIDER::init()
 		ICollisionShape* shape = new IBvhTriangleMeshShape(node, colMesh, mass);
 		body = world->addRigidBody(shape);
 	}
+	if(type == COL_LIQUID)
+	{
+		log->debugData(MAJOR, "Creating liquid collider");
+		lbody = world->addLiquidBody(node->getPosition(), node->getBoundingBox());
+	}
+	if(type == COL_CAPSULE)
+	{
+		log->debugData(MAJOR, "Creating capsule collider");
+		ICollisionShape* shape = new ICapsuleShape(node, mass);
+		body = world->addRigidBody(shape);
+	}
 	
 	log->debugData(EXTRA, "Finished collider init");
 }
@@ -77,31 +88,43 @@ void COLLIDER::setDamping(float lDamping, float aDamping)
 {
 	log->debugData(MAJOR, "Setting collider lDamping to", lDamping);
 	log->debugData(MAJOR, "Setting collider aDamping to", aDamping);
-	body->setDamping(lDamping, aDamping);
+	if(type != COL_LIQUID && type != COL_SOFTBODY)
+	{
+		body->setDamping(lDamping, aDamping);
+	}
 }
 
 void COLLIDER::setFriction(float friction)
 {
 	log->debugData(MAJOR, "Setting collider friction to", friction);
-	body->setFriction(friction);
+	if(type != COL_LIQUID && type != COL_SOFTBODY)
+	{
+		body->setFriction(friction);
+	}
 }
 
 void COLLIDER::setMass(float mass)
 {
 	log->debugData(MAJOR, "Setting collider mass to", mass);
-	world->removeCollisionObject(body, false);
-	core::vector3df inertia;
-	body->getCollisionShape()->calculateLocalInertia(mass, inertia);
-	body->setMassProps(mass, inertia);
+	if(type != COL_LIQUID && type != COL_SOFTBODY)
+	{
+		world->removeCollisionObject(body, false);
+		core::vector3df inertia;
+		body->getCollisionShape()->calculateLocalInertia(mass, inertia);
+		body->setMassProps(mass, inertia);
 	
-	world->addRigidBody(body->getCollisionShape());
-	body->setMassProps(mass, core::vector3df(0, 0, 0));
+		world->addRigidBody(body->getCollisionShape());
+		body->setMassProps(mass, core::vector3df(0, 0, 0));
+	}
 }
 
 void COLLIDER::setVelocity(core::vector3df velocity)
 {
 	log->debugData(MAJOR, "Setting collider velocity");
-	body->setAngularVelocity(velocity);
+	if(type != COL_LIQUID && type != COL_SOFTBODY)
+	{
+		body->setAngularVelocity(velocity);
+	}
 }
 
 void COLLIDER::setMesh(scene::IMesh* colMesh)
@@ -109,3 +132,4 @@ void COLLIDER::setMesh(scene::IMesh* colMesh)
 	log->debugData(MAJOR, "Setting collider mesh");
 	this->colMesh = colMesh;
 }
+

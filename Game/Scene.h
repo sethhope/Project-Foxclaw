@@ -34,26 +34,34 @@ namespace FCE
 			void init();
 			void update(FEventReceiver receiver);
 			void render();
+			
+			void removeObject(int id);
+			
 			int addParticleSystem(core::vector3df pos, core::vector3df dir, core::vector3df scale, std::string filename);
-			PARTICLE* editParticleSystem(int id);
 			int addSound(std::string filename, core::vector3df pos, bool loop);
-			SOUND* editSound(int id);
 			int addMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
-			MESH* editMesh(int id);
 			int addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, float dropoff, video::E_LIGHT_TYPE type);
-			LIGHT* editLight(int id);
 			int addEmptyObject(core::vector3df pos, core::vector3df rot, core::vector3df scale);
-			EMPTYOBJECT* editEmpty(int id);
 			int addAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
+			void setCharacter(IKinematicCharacterController* character);
+			void setDebug(bool debug);
+			void setSkydome(std::string filename);
+			
+			PARTICLE* editParticleSystem(int id);
+			SOUND* editSound(int id);
+			MESH* editMesh(int id);
+			LIGHT* editLight(int id);
+			EMPTYOBJECT* editEmpty(int id);
 			ANIMATEDMESH* editAnimatedMesh(int id);
 			CAMERA* getCamera();
 			OBJECT* getObject(int id);
 			IKinematicCharacterController* getCharacter();
-			void setCharacter(IKinematicCharacterController* character);
-			bool keyDown(EKEY_CODE keycode);
 			irrBulletWorld* getWorld();
 			IrrlichtDevice* getDevice();
 			LOGGER* getLog();
+
+			bool keyDown(EKEY_CODE keycode);
+			
 		private:
 			
 			//Standard variables
@@ -61,6 +69,7 @@ namespace FCE
 			float deltaTime;
 			int soundID;
 			int lastID;
+			bool debug;
 			
 			//Irrlicht Classes
 			IrrlichtDevice* device;

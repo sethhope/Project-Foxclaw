@@ -19,7 +19,7 @@ void CAMERA::onInit()
 	if(type == FCAM_FPS)
 	{
 		log->debugData(MINOR, "Initialized Camera as type", type);
-		camNode = manager->addCameraSceneNodeFPS();
+		camNode = manager->addCameraSceneNodeFPS(0, 100, 0);
 	}
 	if(type == FCAM_FREE)
 	{

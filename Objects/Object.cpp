@@ -17,6 +17,10 @@ OBJECT::OBJECT()
 OBJECT::~OBJECT()
 {
 	detach();
+	if(hasCollider)
+	{
+		delete collider;
+	}
 }
 
 void OBJECT::init()
