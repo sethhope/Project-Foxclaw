@@ -47,3 +47,8 @@ scene::IAnimatedMesh* MESH::getMesh()
 {
 	return mesh;
 }
+
+std::string MESH::getOType()
+{
+	return "MESH";
+}

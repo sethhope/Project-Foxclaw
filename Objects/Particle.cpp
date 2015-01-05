@@ -160,3 +160,8 @@ void PARTICLE::setEmitterSize(core::aabbox3d<f32> size)
 	em->drop();
 	log->debugData(MAJOR, "Emitter size set");
 }
+
+std::string PARTICLE::getOType()
+{
+	return "PARTICLE";
+}

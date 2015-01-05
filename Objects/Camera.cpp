@@ -124,5 +124,8 @@ scene::ISceneManager* CAMERA::getManager()
 {
 	return manager;
 }
-
+std::string CAMERA::getOType()
+{
+	return "CAMERA";
+}
 

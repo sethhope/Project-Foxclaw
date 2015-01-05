@@ -19,9 +19,9 @@ SCENE::SCENE(LOGGER* log, IrrlichtDevice* device)
 
 SCENE::~SCENE()
 {
+	objects.clear();
 	//drop the sound driver
 	sound->drop();
-	
 	delete world;
 	objects.clear();
 	delete mainScript;
@@ -77,7 +77,7 @@ void SCENE::init()
 	luaW_push<SCENE>(mainScript->L, this);
 	lua_setglobal(mainScript->L, "MainScene");
 	//run mainScript
-	mainScript->run("Scripts/startup.lua");
+	mainScript->run((std::string)(device->getFileSystem()->getAbsolutePath("Scripts/startup.lua").c_str()));
 	log->logData("Loading scene objects");
 	//run the init function within the startup script
 	mainScript->runInit();
@@ -95,7 +95,7 @@ void SCENE::update(FEventReceiver receiver)
 	deltaTime = device->getTimer()->getTime() - timeStamp;
 	timeStamp = device->getTimer()->getTime();
 	log->debugData(EXTRA, "Updating Physics");
-	world->stepSimulation(deltaTime*0.004, 10);
+	world->stepSimulation(deltaTime*0.004, 4);
 	log->debugData(EXTRA, "Adding camera constants");
 	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().X);
 	lua_setglobal(mainScript->L, "CAM_X");
@@ -139,6 +139,11 @@ void SCENE::render()
 	gui->drawAll();
 	//run the render function in the main script
 	mainScript->render();
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		log->debugData(EXTRA, (*it)->getName());
+		(*it)->render();
+	}
 	if(debug)
 	{
 		world->debugDrawWorld(true);
@@ -161,7 +166,7 @@ int SCENE::addSound(std::string filename, core::vector3df pos, bool loop)
 {
 	SOUND* temp = new SOUND(sound, log);
 	temp->setID(lastID);
-	temp->load(filename, loop);
+	temp->load((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()), loop);
 	temp->setPosition(pos);
 	temp->setVolume(1.0f);
 	
@@ -203,7 +208,7 @@ int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vec
 	tmp->setRate(500, 500);
 	tmp->setSize(core::dimension2df(1,1), core::dimension2df(2, 2));
 	tmp->setAge(200, 300);
-	tmp->loadTexture(filename);
+	tmp->loadTexture((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()));
 	lastID++;
 	
 	tmp->update();
@@ -229,7 +234,7 @@ int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 {
 	MESH* tmp = new MESH(manager, log);
 	tmp->setID(lastID);
-	tmp->load(filename);
+	tmp->load((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()));
 	tmp->setName("MESH");
 	tmp->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, true);
 	tmp->getIrrNode()->setMaterialType(video::EMT_SOLID);
@@ -261,7 +266,7 @@ int SCENE::addAnimatedMesh(std::string filename, core::vector3df pos, core::vect
 {
 	ANIMATEDMESH* tmp = new ANIMATEDMESH(manager, log);
 	tmp->setID(lastID);
-	tmp->load(filename);
+	tmp->load((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()));
 	tmp->setName("ANIMATED_MESH");
 	tmp->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, true);
 	tmp->getIrrNode()->setMaterialType(video::EMT_SOLID);
@@ -391,7 +396,7 @@ void SCENE::setDebug(bool debug)
 }
 void SCENE::setSkydome(std::string filename)
 {
-	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture(filename.c_str()), 32, 16, 0.95, 2.0);
+	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()), 32, 16, 0.95, 2.0);
 }
 void SCENE::removeObject(int id)
 {

@@ -68,3 +68,8 @@ void ANIMATEDMESH::setSpeed(float speed)
 {
 	anim->setAnimationSpeed(speed);
 }
+
+std::string ANIMATEDMESH::getOType()
+{
+	return "ANIMATEDMESH";
+}

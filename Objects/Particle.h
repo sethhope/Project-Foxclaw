@@ -15,6 +15,8 @@ namespace FCE
 			void onInit();
 			void onUpdate();
 			void onRender();
+			std::string getOType();
+			
 			void loadTexture(std::string filename);
 			void setPosition(core::vector3df position);
 			void setScale(core::vector3df scale);

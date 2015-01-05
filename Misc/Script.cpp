@@ -201,6 +201,15 @@ lua_State* SCRIPT::run(std::string filename)
 lua_State* SCRIPT::runInit()
 {
 	log->debugData(MAJOR, "Running init function");
+	if(getParent())
+	{
+		luaW_push<OBJECT>(L, (OBJECT*)getParent());
+		lua_setglobal(L, "ParentObject");
+	}else
+	{
+		lua_pushnumber(L, 0);
+		lua_setglobal(L, "ParentObject");
+	}
 	lua_getglobal(L, "init");
 	int er = lua_pcall(L, 0, 0, 0);
 	if(er != 0)
@@ -238,4 +247,8 @@ void SCRIPT::onRender()
 		log->logData("Failed to run render function", lua_tostring(L, -1));
 		return;
 	}
+}
+std::string SCRIPT::getOType()
+{
+	return "SCRIPT";
 }

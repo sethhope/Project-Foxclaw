@@ -14,6 +14,8 @@ namespace FCE
 			void onInit();
 			void onUpdate();
 			void onRender();
+			std::string getOType();
+			
 			void setColor(video::SColorf color);
 			void setDropoff(float dropoff);
 			void setType(video::E_LIGHT_TYPE type);

@@ -26,3 +26,7 @@ void EMPTYOBJECT::onRender()
 	
 }
 
+std::string EMPTYOBJECT::getOType()
+{
+	return "EMPTYOBJECT";
+}

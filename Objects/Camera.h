@@ -21,6 +21,7 @@ namespace FCE
 			void onInit();
 			void onUpdate();
 			void onRender();
+			std::string getOType();
 			
 			void setType(int type);
 			int getType();

@@ -18,6 +18,7 @@ namespace FCE
 			void onInit();
 			void onUpdate();
 			void onRender();
+			std::string getOType();
 			void load(std::string filename, bool loop);
 			void setVolume(float volume);
 			ISound* getSound();

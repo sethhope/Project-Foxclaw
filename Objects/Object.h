@@ -18,6 +18,7 @@ namespace FCE
 			virtual void onInit(){};
 			virtual void onUpdate(){};
 			virtual void onRender(){};
+			virtual std::string getOType(){return "OBJECT";};
 			void init();
 			void update();
 			void render();

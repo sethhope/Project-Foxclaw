@@ -18,6 +18,7 @@ namespace FCE
 			void onInit();
 			void onUpdate();
 			void onRender();
+			std::string getOType();
 			lua_State* runInit();
 			lua_State* run(std::string filename);
 			lua_State* L;

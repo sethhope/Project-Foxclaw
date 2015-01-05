@@ -16,8 +16,10 @@
 	#define PLAT "Win32"
 #elif defined(__APPLE__)
 	#define PLAT "Apple"
+#elif defined(__CYGWIN__)
+	#define PLAT "CYGWIN"
 #else
-	#define PLAT "Other"
+	#define PLAT "Other (Probably Linux)"
 #endif
 //TODO:create compressed filesystem
 
@@ -45,6 +47,7 @@ namespace FCE
 			video::IVideoDriver* driver;
 			gui::IGUIEnvironment* gui;
 			scene::ISceneManager* manager;
+			io::IXMLReader* settings;
 			
 	};
 }

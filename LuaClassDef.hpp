@@ -337,7 +337,9 @@ int Object_addScript(lua_State* L)
 	OBJECT* o = luaW_check<OBJECT>(L, 1);
 	SCRIPT* s = new SCRIPT(luaW_check<SCENE>(L, 2)->getLog());
 	s->init();
-	s->run(luaL_checkstring(L, 3));
+	s->run((std::string)(luaW_check<SCENE>(L, 2)->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 3)).c_str()));
+	luaW_push<SCENE>(s->L, luaW_check<SCENE>(L, 2));
+	lua_setglobal(s->L, "MainScene");
 	s->runInit();
 	s->attachTo((NODE*)o);
 	return 0;

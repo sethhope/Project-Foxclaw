@@ -53,3 +53,7 @@ void LIGHT::setType(video::E_LIGHT_TYPE type)
 {
 	this->type = type;
 }
+std::string LIGHT::getOType()
+{
+	return "LIGHT";
+}

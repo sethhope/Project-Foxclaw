@@ -18,9 +18,9 @@ int FRAMEWORK::init()
 {
 	run = true; // Set the run variable.
 	log = new LOGGER(); //create the logger
-	
+	device = createDevice(video::EDT_NULL);
 	//initialize the logger to EngineLog.txt
-	log->init("EngineLog.txt");
+	log->init((std::string)(device->getFileSystem()->getAbsolutePath("EngineLog.txt").c_str()));
 	log->setDebug(ALL);
 	//log header data.
 	log->debugData(MINOR, "Logger initialized");

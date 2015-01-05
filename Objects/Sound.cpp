@@ -59,3 +59,7 @@ ISound* SOUND::getSound()
 {
 	return s;
 }
+std::string SOUND::getOType()
+{
+	return "SOUND";
+}

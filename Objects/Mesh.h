@@ -15,6 +15,7 @@ namespace FCE
 			void onInit();
 			void onUpdate();
 			void onRender();
+			std::string getOType();
 			
 			int load(std::string filename);
 			
