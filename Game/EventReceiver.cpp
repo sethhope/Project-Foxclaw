@@ -5,7 +5,7 @@ using namespace FCE;
 
 FEventReceiver::FEventReceiver()
 {
-	for(int i = 0; i < KEY_KEY_CODES_COUNT; i++)
+	for(u16 i = 0; i < KEY_KEY_CODES_COUNT; i++)
 	{
 		keys[i] = false;
 	}

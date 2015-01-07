@@ -260,6 +260,19 @@ int Scene_removeObject(lua_State* L)
 	s->removeObject(luaL_checknumber(L, 2));
 	return 0;
 }
+int Scene_setTimeScale(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->setTimeScale(luaL_checknumber(L, 2));
+	return 0;
+}
+int Scene_getTimeScale(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	lua_pushnumber(L, s->getTimeScale());
+	return 1;
+}
+
 OBJECT* Object_new(lua_State* L)
 {
 	OBJECT* o = new OBJECT();
@@ -508,7 +521,20 @@ int Collider_setMass(lua_State* L)
 	c->setMass(luaL_checknumber(L, 2));
 	return 0;
 }
-
+int Collider_checkCollisionWith(lua_State* L)
+{
+	COLLIDER* c = luaW_check<COLLIDER>(L, 1);
+	OBJECT* o = luaW_check<OBJECT>(L, 2);
+	bool col = c->body->getAttributes()->
+	if(col == true)
+	{
+		lua_pushnumber(L, 1);
+	}else
+	{
+		lua_pushnumber(L, 0);
+	}
+	return 1;
+}
 MESH* Mesh_new(lua_State* L)
 {
 	return 0;

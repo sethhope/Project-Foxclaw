@@ -10,6 +10,7 @@
 #define FCAM_MAYA 2
 
 using namespace irr;
+using namespace core;
 namespace FCE
 {
 	class CAMERA : public OBJECT
@@ -23,23 +24,23 @@ namespace FCE
 			void onRender();
 			std::string getOType();
 			
-			void setType(int type);
-			int getType();
+			void setType(u8 type);
+			u8 getType();
 			void setTarget(OBJECT* target);
 			void setTarget(core::vector3df pos);
 			void setOffset(core::vector3df offset);
 			void setUpVector(core::vector3df pos);
-			void setFOV(float fov);
-			void setFarClipping(float clip);
-			void setNearClipping(float clip);
-			void setAspectRatio(float aspect);
-			float getFOV();
-			float getFarClipping();
-			float getNearClipping();
+			void setFOV(f32 fov);
+			void setFarClipping(f32 clip);
+			void setNearClipping(f32 clip);
+			void setAspectRatio(f32 aspect);
+			f32 getFOV();
+			f32 getFarClipping();
+			f32 getNearClipping();
 			scene::ISceneManager* getManager();
 			scene::ICameraSceneNode* getCamNode();
 		private:
-			int type;
+			u8 type;
 			core::vector3df offset;
 			scene::ICameraSceneNode* camNode;
 			LOGGER* log;

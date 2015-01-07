@@ -20,7 +20,9 @@ COLLIDER::COLLIDER(scene::ISceneNode* parent, scene::ISceneManager* manager, irr
 
 COLLIDER::~COLLIDER()
 {
+	
 	world->removeCollisionObject(body, true);
+	body->remove();
 }
 
 void COLLIDER::init()
@@ -67,7 +69,6 @@ void COLLIDER::init()
 		ICollisionShape* shape = new ICapsuleShape(node, mass);
 		body = world->addRigidBody(shape);
 	}
-	
 	log->debugData(EXTRA, "Finished collider init");
 }
 

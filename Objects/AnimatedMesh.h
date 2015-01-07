@@ -19,15 +19,15 @@ namespace FCE
 			
 			int load(std::string filename);
 
-			void setFrameLoop(int begin, int end);
-			void setSpeed(float speed);
+			void setFrameLoop(u32 begin, u32 end);
+			void setSpeed(f32 speed);
 			
 			scene::IAnimatedMesh* getMesh();
 			scene::IAnimatedMeshSceneNode* getNode();
 
 		private:
 			LOGGER* log;
-			int flbegin, flend;
+			u32 flbegin, flend;
 			scene::IAnimatedMesh* mesh;
 			scene::IAnimatedMeshSceneNode* anim;
 			scene::ISceneManager* manager;

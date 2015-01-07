@@ -54,7 +54,7 @@ scene::IAnimatedMeshSceneNode* ANIMATEDMESH::getNode()
 {
 	return anim;
 }
-void ANIMATEDMESH::setFrameLoop(int begin, int end)
+void ANIMATEDMESH::setFrameLoop(u32 begin, u32 end)
 {
 	if(flbegin != begin || flend != end)
 	{
@@ -64,7 +64,7 @@ void ANIMATEDMESH::setFrameLoop(int begin, int end)
 	}
 }
 
-void ANIMATEDMESH::setSpeed(float speed)
+void ANIMATEDMESH::setSpeed(f32 speed)
 {
 	anim->setAnimationSpeed(speed);
 }

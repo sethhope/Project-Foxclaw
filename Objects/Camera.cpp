@@ -49,12 +49,12 @@ void CAMERA::onRender()
 {
 }
 
-void CAMERA::setAspectRatio(float aspect)
+void CAMERA::setAspectRatio(f32 aspect)
 {
 	camNode->setAspectRatio(aspect);
 }
 
-void CAMERA::setType(int type)
+void CAMERA::setType(u8 type)
 {
 	this->type = type;
 }
@@ -80,17 +80,17 @@ void CAMERA::setUpVector(core::vector3df pos)
 	camNode->setUpVector(pos);
 }
 
-void CAMERA::setNearClipping(float clip)
+void CAMERA::setNearClipping(f32 clip)
 {
 	camNode->setNearValue(clip);
 }
 
-void CAMERA::setFarClipping(float clip)
+void CAMERA::setFarClipping(f32 clip)
 {
 	camNode->setFarValue(clip);
 }
 
-void CAMERA::setFOV(float fov)
+void CAMERA::setFOV(f32 fov)
 {
 	camNode->setFOV(fov);
 }
@@ -100,22 +100,22 @@ scene::ICameraSceneNode* CAMERA::getCamNode()
 	return camNode;
 }
 
-float CAMERA::getFOV()
+f32 CAMERA::getFOV()
 {
 	return camNode->getFOV();
 }
 
-float CAMERA::getNearClipping()
+f32 CAMERA::getNearClipping()
 {
 	return camNode->getNearValue();
 }
 
-float CAMERA::getFarClipping()
+f32 CAMERA::getFarClipping()
 {
 	return camNode->getFarValue();
 }
 
-int CAMERA::getType()
+u8 CAMERA::getType()
 {
 	return type;
 }

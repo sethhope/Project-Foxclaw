@@ -64,6 +64,8 @@ void SCRIPT::onInit()
 		{"setPhysicsDebug", Scene_setPhysicsDebug},
 		{"setSkydome", Scene_setSkydome},
 		{"removeObject", Scene_removeObject},
+		{"setTimeScale", Scene_setTimeScale},
+		{"getTimeScale", Scene_getTimeScale},
 		{NULL, NULL}
 	};
 	static luaL_Reg Mesh_metatable[] =
@@ -165,6 +167,16 @@ void SCRIPT::onInit()
 		{"attachTo", Object_attachTo},
 		{NULL, NULL}
 	};
+	static luaL_Reg Collider_table[] =
+	{
+		{"setVelocity", Collider_setVelocity},
+		{"setFriction", Collider_setFriction},
+		{"setDamping", Collider_setDamping},
+		{"setMass", Collider_setMass},
+		{"checkCollisionWith", Collider_checkCollisionWith},
+		{NULL, NULL}
+	};
+	luaW_register<COLLIDER>(L, "COLLIDER", Empty_table, Collider_table, Collider_new);
 	luaW_register<OBJECT>(L, "OBJECT", Empty_table, Object_table, Object_new);
 	luaW_register<CAMERA>(L, "CAMERA", Empty_table, Camera_metatable, Camera_new);
 	luaW_register<EMPTYOBJECT>(L, "EMPTY", Empty_table, EmptyObject_metatable, Empty_new);

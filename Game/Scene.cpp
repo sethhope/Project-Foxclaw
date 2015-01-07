@@ -66,6 +66,7 @@ void SCENE::init()
 	lastID = 0;
 	soundID = 0;
 	camera = new CAMERA(manager, log);
+	timeScale = 0.004;
 
 	//load startup lua script
 	log->logData("Loading startup script");
@@ -82,7 +83,7 @@ void SCENE::init()
 	//run the init function within the startup script
 	mainScript->runInit();
 	manager->setAmbientLight(video::SColorf(0.2,0.2, 0.2, 1));
-	int l = addLight(core::vector3df(1, 1, 0), core::vector3df(45, 0, 0), core::vector3df(1, 1, 1), 10000, video::ELT_DIRECTIONAL);
+	u32 l = addLight(core::vector3df(1, 1, 0), core::vector3df(45, 0, 0), core::vector3df(1, 1, 1), 10000, video::ELT_DIRECTIONAL);
 	log->logData("Loaded scene objects");
 	log->logData("Finished initializing");
 }
@@ -95,7 +96,7 @@ void SCENE::update(FEventReceiver receiver)
 	deltaTime = device->getTimer()->getTime() - timeStamp;
 	timeStamp = device->getTimer()->getTime();
 	log->debugData(EXTRA, "Updating Physics");
-	world->stepSimulation(deltaTime*0.004, 4);
+	world->stepSimulation(deltaTime*timeScale, 4);
 	log->debugData(EXTRA, "Adding camera constants");
 	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().X);
 	lua_setglobal(mainScript->L, "CAM_X");
@@ -162,7 +163,7 @@ IrrlichtDevice* SCENE::getDevice()
 }
 
 //
-int SCENE::addSound(std::string filename, core::vector3df pos, bool loop)
+u32 SCENE::addSound(std::string filename, core::vector3df pos, bool loop)
 {
 	SOUND* temp = new SOUND(sound, log);
 	temp->setID(lastID);
@@ -180,7 +181,7 @@ int SCENE::addSound(std::string filename, core::vector3df pos, bool loop)
 	return lastID-1;
 }
 
-SOUND* SCENE::editSound(int id)
+SOUND* SCENE::editSound(u32 id)
 {
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
@@ -193,7 +194,7 @@ SOUND* SCENE::editSound(int id)
 	return NULL;
 }
 
-int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vector3df scale, std::string filename)
+u32 SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vector3df scale, std::string filename)
 {
 	log->debugData(MAJOR, "Creating new particle system");
 	PARTICLE* tmp;
@@ -218,7 +219,7 @@ int SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vec
 	
 	return lastID-1;
 }
-PARTICLE* SCENE::editParticleSystem(int id)
+PARTICLE* SCENE::editParticleSystem(u32 id)
 {
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
@@ -230,7 +231,7 @@ PARTICLE* SCENE::editParticleSystem(int id)
 	log->logData("Couldn't find particle system");
 	return NULL;
 }
-int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale)
+u32 SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale)
 {
 	MESH* tmp = new MESH(manager, log);
 	tmp->setID(lastID);
@@ -247,7 +248,7 @@ int SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 	tmp->update();
 	return lastID-1;
 }
-MESH* SCENE::editMesh(int id)
+MESH* SCENE::editMesh(u32 id)
 {
  //log->debugData("Getting mesh", id);
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
@@ -262,7 +263,7 @@ MESH* SCENE::editMesh(int id)
 	return NULL;
 }
 
-int SCENE::addAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale)
+u32 SCENE::addAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale)
 {
 	ANIMATEDMESH* tmp = new ANIMATEDMESH(manager, log);
 	tmp->setID(lastID);
@@ -280,7 +281,7 @@ int SCENE::addAnimatedMesh(std::string filename, core::vector3df pos, core::vect
 	return lastID-1;
 }
 
-ANIMATEDMESH* SCENE::editAnimatedMesh(int id)
+ANIMATEDMESH* SCENE::editAnimatedMesh(u32 id)
 {
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
@@ -292,7 +293,7 @@ ANIMATEDMESH* SCENE::editAnimatedMesh(int id)
 	log->logData("Couldn't find animated mesh");
 	return NULL;
 }
-int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, float dropoff, video::E_LIGHT_TYPE type)
+u32 SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, f32 dropoff, video::E_LIGHT_TYPE type)
 {
 	LIGHT* temp = new LIGHT(manager, log);
 	temp->setColor(video::SColor(255, 255, 255, 255));
@@ -312,7 +313,7 @@ int SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df sc
 	temp->update();
 	return lastID-1;
 }
-LIGHT* SCENE::editLight(int id)
+LIGHT* SCENE::editLight(u32 id)
 {
 	//log->debugData("Checking for light", id);
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
@@ -327,7 +328,7 @@ LIGHT* SCENE::editLight(int id)
 	return NULL;
 }
 
-int SCENE::addEmptyObject(core::vector3df pos, core::vector3df rot, core::vector3df scale)
+u32 SCENE::addEmptyObject(core::vector3df pos, core::vector3df rot, core::vector3df scale)
 {
 	EMPTYOBJECT* e = new EMPTYOBJECT(manager);
 	e->setPosition(pos);
@@ -342,7 +343,7 @@ int SCENE::addEmptyObject(core::vector3df pos, core::vector3df rot, core::vector
 	return lastID-1;
 }
 
-EMPTYOBJECT* SCENE::editEmpty(int id)
+EMPTYOBJECT* SCENE::editEmpty(u32 id)
 {
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
@@ -354,7 +355,7 @@ EMPTYOBJECT* SCENE::editEmpty(int id)
 	log->logData("EmptyObject not found. ID", id);
 	return NULL;
 }
-OBJECT* SCENE::getObject(int id)
+OBJECT* SCENE::getObject(u32 id)
 {
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
@@ -398,7 +399,7 @@ void SCENE::setSkydome(std::string filename)
 {
 	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()), 32, 16, 0.95, 2.0);
 }
-void SCENE::removeObject(int id)
+void SCENE::removeObject(u32 id)
 {
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
@@ -410,4 +411,12 @@ void SCENE::removeObject(int id)
 			return;
 		}
 	}
+}
+f32 SCENE::getTimeScale()
+{
+	return timeScale;
+}
+void SCENE::setTimeScale(f32 timeScale)
+{
+	this->timeScale = timeScale;
 }

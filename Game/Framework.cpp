@@ -88,7 +88,7 @@ int FRAMEWORK::render()
 			run = false;
 		}
 		//This last block is adding the FPS to the window header.
-		int fps = driver->getFPS();
+		u32 fps = driver->getFPS();
         core::stringw str = L"FoxClaw Engine by Jcam Technologies [";
         str += driver->getName();
         str += "] FPS:";

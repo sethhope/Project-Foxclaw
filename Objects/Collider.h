@@ -29,13 +29,14 @@ namespace FCE
 			void setFriction(float friction);
 			void setDamping(float lDamping, float aDamping);
 			void setMesh(scene::IMesh* colMesh);
+			IRigidBody* body;
 		private:
 			int type;
 			float friction, mass, damping;
 			float rad;
 			irrBulletWorld *world;
 			scene::IMesh* colMesh;
-			IRigidBody* body;
+			
 			ILiquidBody* lbody;
 			ISoftBody* sbody;
 			LOGGER* log;
