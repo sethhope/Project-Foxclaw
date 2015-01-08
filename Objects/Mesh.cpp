@@ -17,7 +17,7 @@ MESH::~MESH()
 	
 }
 
-int MESH::load(std::string filename)
+u8 MESH::load(std::string filename)
 {
 	log->logData("Loading mesh", filename);
 	mesh = manager->getMesh(filename.c_str());
@@ -26,6 +26,11 @@ int MESH::load(std::string filename)
 	{
 		log->debugData(MAJOR, "Loaded mesh");
 		thisNode = node;
+		if(!thisNode)
+		{
+			log->debugData(MAJOR, "Failed to load thisNode");
+			return 1;
+		}
 		return 0;
 	}
 	log->logData("Failed to load mesh", filename);

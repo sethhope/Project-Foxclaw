@@ -4,6 +4,7 @@
 #include "Object.h"
 #include "Misc/Logger.h"
 using namespace irr;
+using namespace core;
 namespace FCE
 {
 	class LIGHT : public OBJECT
@@ -17,7 +18,7 @@ namespace FCE
 			std::string getOType();
 			
 			void setColor(video::SColorf color);
-			void setDropoff(float dropoff);
+			void setDropoff(f32 dropoff);
 			void setType(video::E_LIGHT_TYPE type);
 		private:
 			core::vector3df position;
@@ -25,7 +26,7 @@ namespace FCE
 			video::SColorf color;
 			scene::ISceneManager* manager;
 			video::E_LIGHT_TYPE type;
-			float dropoff;
+			f32 dropoff;
 			LOGGER* log;
 			
 	};

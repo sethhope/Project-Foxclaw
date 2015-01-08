@@ -17,13 +17,13 @@ namespace FCE
 			void onRender();
 			std::string getOType();
 			
-			int load(std::string filename);
+			u8 load(std::string filename);
 			
 			scene::IAnimatedMesh* getMesh();
 			//scene::IAnimatedMeshSceneNode* getNode();
 			
 		private:
-			int id;
+			u32 id;
 			LOGGER* log;
 			
 			scene::IAnimatedMesh* mesh;

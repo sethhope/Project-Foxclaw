@@ -8,6 +8,7 @@
 #include "irrBullet.h"
 #include "Misc/Logger.h"
 using namespace irr;
+using namespace core;
 namespace FCE
 {
 	class OBJECT : public NODE
@@ -25,10 +26,10 @@ namespace FCE
 			void setPosition(core::vector3df pos);
 			void setRotation(core::vector3df rot);
 			void setScale(core::vector3df scale);
-			void addCollider(LOGGER* log, int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass);
-			void addCollider(LOGGER* log, int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass, scene::IMesh* colMesh);
-			void setID(int id);
-			int getID();
+			void addCollider(LOGGER* log, u16 type, scene::ISceneManager* manager, irrBulletWorld* world, f32 mass);
+			void addCollider(LOGGER* log, u16 type, scene::ISceneManager* manager, irrBulletWorld* world, f32 mass, scene::IMesh* colMesh);
+			void setID(u32 id);
+			u32 getID();
 			COLLIDER* getCollider();
 			core::vector3df getPosition();
 			core::vector3df getRotation();
@@ -43,9 +44,9 @@ namespace FCE
 			std::string name;
 			COLLIDER* collider;
 			bool uDa;
-			int id;
+			u32 id;
 		private:
-			std::map<std::string, float> metadata;
+			std::map<std::string, f32> metadata;
 			bool initialized;
 			bool hasCollider;
 

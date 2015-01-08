@@ -121,7 +121,7 @@ void PARTICLE::addAffector(std::string type)
 	}
 	log->debugData(MAJOR, "Affector added");
 }
-void PARTICLE::setAge(int minAge, int maxAge)
+void PARTICLE::setAge(u32 minAge, u32 maxAge)
 {
 	log->debugData(MINOR, "Setting age of particle system", id);
 	this->minAge = minAge;
@@ -131,7 +131,7 @@ void PARTICLE::setAge(int minAge, int maxAge)
 	em->drop();
 	log->debugData(MAJOR, "Age set");
 }
-void PARTICLE::setRate(int rateMin, int rateMax)
+void PARTICLE::setRate(u32 rateMin, u32 rateMax)
 {
 	log->debugData(MINOR, "Setting rate of particle system", id);
 	this->rateMin = rateMin;

@@ -20,6 +20,27 @@
 using namespace irr;
 using namespace FCE;
 
+int System_run(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 2);
+	std::string filename = luaL_checkstring(L, 1);
+	lua_State* tmp = L;
+	if(luaL_loadfile(tmp, filename.c_str()))
+	{
+		s->getLog()->logData("Failed to load script", filename);
+		s->getLog()->debugData(MINOR, "Error", lua_tostring(L, -1));
+		return 0;
+	}
+	if(lua_pcall(tmp, 0, 0xd, 0))
+	{
+		s->getLog()->logData("Failed to run script", filename);
+		s->getLog()->debugData(MINOR, "Error", lua_tostring(L, -1));
+		return 0;
+	}
+	L = tmp;
+	return 0;
+}
+
 SCENE* Scene_new(lua_State* L)
 {
 	SCENE* s = new SCENE();
@@ -395,6 +416,22 @@ int Object_setMaterial(lua_State* L)
 		{
 			o->getIrrNode()->setMaterialType(video::EMT_DETAIL_MAP);
 		}
+		if(type == "spheremap2")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_REFLECTION_2_LAYER);
+		}
+		if(type == "transparent_alpha")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
+		}
+		if(type == "transparent_alpha_fast")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF);
+		}
+		if(type == "transparent_add")
+		{
+			o->getIrrNode()->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
+		}
 	}
 	return 0;
 }
@@ -525,7 +562,7 @@ int Collider_checkCollisionWith(lua_State* L)
 {
 	COLLIDER* c = luaW_check<COLLIDER>(L, 1);
 	OBJECT* o = luaW_check<OBJECT>(L, 2);
-	bool col = c->body->getAttributes()->
+	bool col = c->body->checkCollideWith(o->getCollider()->body);
 	if(col == true)
 	{
 		lua_pushnumber(L, 1);

@@ -49,7 +49,7 @@ void SOUND::load(std::string filename, bool loop)
 	}
 }
 
-void SOUND::setVolume(float volume)
+void SOUND::setVolume(f32 volume)
 {
 	log->debugData(MINOR, "Setting volume of", this->id);
 	log->debugData(MAJOR, "Setting to", volume);

@@ -6,6 +6,7 @@
 #include "Irrlicht.h"
 #include "irrKlang.h"
 using namespace irr;
+using namespace core;
 using namespace irrklang;
 namespace FCE
 {
@@ -20,13 +21,13 @@ namespace FCE
 			void onRender();
 			std::string getOType();
 			void load(std::string filename, bool loop);
-			void setVolume(float volume);
+			void setVolume(f32 volume);
 			ISound* getSound();
 		private:
 			ISoundEngine* engine;
 			ISound* s;
 			LOGGER* log;
-			float volume;
+			f32 volume;
 	};
 }
 #endif

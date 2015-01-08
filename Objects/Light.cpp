@@ -30,7 +30,7 @@ void LIGHT::setColor(video::SColorf color)
 	this->color = color;
 }
 
-void LIGHT::setDropoff(float dropoff)
+void LIGHT::setDropoff(f32 dropoff)
 {
 	this->dropoff = dropoff;
 }

@@ -88,14 +88,14 @@ void OBJECT::setName(std::string name)
 	this->name = name;
 }
 
-void OBJECT::addCollider(LOGGER* log, int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass)
+void OBJECT::addCollider(LOGGER* log, u16 type, scene::ISceneManager* manager, irrBulletWorld* world, f32 mass)
 {
 	collider = new COLLIDER(getIrrNode(), manager, world, type, mass, log);
 	collider->init();
 	hasCollider = true;
 }
 
-void OBJECT::addCollider(LOGGER* log, int type, scene::ISceneManager* manager, irrBulletWorld* world, float mass, scene::IMesh* colMesh)
+void OBJECT::addCollider(LOGGER* log, u16 type, scene::ISceneManager* manager, irrBulletWorld* world, f32 mass, scene::IMesh* colMesh)
 {
 	collider = new COLLIDER(getIrrNode(), manager, world, type, mass, log);
 	collider->setMesh(colMesh);
@@ -128,12 +128,12 @@ core::vector3df  OBJECT::getScale()
 	return scale;
 }
 
-void OBJECT::setID(int id)
+void OBJECT::setID(u32 id)
 {
 	this->id = id;
 }
 
-int OBJECT::getID()
+u32 OBJECT::getID()
 {
 	return id;
 }

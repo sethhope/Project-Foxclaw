@@ -176,6 +176,8 @@ void SCRIPT::onInit()
 		{"checkCollisionWith", Collider_checkCollisionWith},
 		{NULL, NULL}
 	};
+	lua_pushcfunction(L, System_run);
+	lua_setglobal(L, "System_run");
 	luaW_register<COLLIDER>(L, "COLLIDER", Empty_table, Collider_table, Collider_new);
 	luaW_register<OBJECT>(L, "OBJECT", Empty_table, Object_table, Object_new);
 	luaW_register<CAMERA>(L, "CAMERA", Empty_table, Camera_metatable, Camera_new);
