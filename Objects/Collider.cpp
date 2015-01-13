@@ -134,3 +134,12 @@ void COLLIDER::setMesh(scene::IMesh* colMesh)
 	this->colMesh = colMesh;
 }
 
+int COLLIDER::getType()
+{
+	return type;
+}
+
+float COLLIDER::getMass()
+{
+	return mass;
+}

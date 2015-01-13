@@ -46,6 +46,24 @@ SCENE* Scene_new(lua_State* L)
 	SCENE* s = new SCENE();
 	return s;
 }
+int Scene_Load(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->load(luaL_checkstring(L, 2));
+	return 0;
+}
+int Scene_Save(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->save(luaL_checkstring(L, 2));
+	return 0;
+}
+int Scene_Objects(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	lua_pushnumber(L, ((s->lastID)-1));
+	return 1;
+}
 int Scene_addSound(lua_State* L)
 {
 	SCENE* s = luaW_check<SCENE>(L, 1);
@@ -137,6 +155,32 @@ int Scene_getEmpty(lua_State* L)
 	luaW_push<EMPTYOBJECT>(L, s->editEmpty(luaL_checknumber(L, 2)));
 	return 1;
 }
+int Scene_addLight(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	video::E_LIGHT_TYPE light;
+	if(luaL_checknumber(L, 12) == 0)
+	{
+		light = video::ELT_POINT;
+	}
+	if(luaL_checknumber(L, 12) == 1)
+	{
+		light = video::ELT_SPOT;
+	}
+	if(luaL_checknumber(L, 12) == 2)
+	{
+		light = video::ELT_DIRECTIONAL;
+	}
+	int id = s->addLight(core::vector3df(luaL_checknumber(L,2),luaL_checknumber(L,3),luaL_checknumber(L,4)), core::vector3df(luaL_checknumber(L,5),luaL_checknumber(L,6),luaL_checknumber(L,7)),core::vector3df(luaL_checknumber(L,8),luaL_checknumber(L,9),luaL_checknumber(L,10)), luaL_checknumber(L, 11), light);
+	lua_pushnumber(L, id);
+	return 1;
+}
+int Scene_getLight(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	luaW_push<LIGHT>(L, s->editLight(luaL_checknumber(L, 2)));
+	return 1;
+}
 int Scene_addCamera(lua_State* L)
 {
 	SCENE* s = luaW_check<SCENE>(L, 1);
@@ -163,6 +207,29 @@ int Scene_getKey(lua_State* L)
 		lua_pushnumber(L, 0);
 	}
 	return 1;
+}
+int Scene_getMouseButton(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	bool b = s->MouseDown(luaL_checknumber(L, 2));
+	if(b)
+	{
+		lua_pushnumber(L, 1);
+	}
+	else
+	{
+		lua_pushnumber(L, 0);
+	}
+	return 1;
+}
+int Scene_getMousePos(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	int x = s->MousePos().X;
+	int y = s->MousePos().Y;
+	lua_pushnumber(L, x);
+	lua_pushnumber(L, y);
+	return 2;
 }
 int Scene_createCharacter(lua_State* L)
 {
@@ -294,10 +361,255 @@ int Scene_getTimeScale(lua_State* L)
 	return 1;
 }
 
+int Scene_addButton(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->getLog()->debugData(MAJOR, "Creating button");
+	GUI* g = new GUI(s->getDevice()->getGUIEnvironment(), s->getLog());
+	core::stringw t1 = luaL_checkstring(L, 2);
+	core::stringw t2 = luaL_checkstring(L, 3);
+	u32 x1 = luaL_checknumber(L, 4);
+	u32 y1 = luaL_checknumber(L, 5);
+	u32 x2 = luaL_checknumber(L, 6);
+	u32 y2 = luaL_checknumber(L, 7);
+	u32 parent = luaL_checknumber(L, 8);
+	std::string script = luaL_checkstring(L, 9);
+	g->initButton(0, t1, t2, rect<s32>(x1, y1, x2, y2));
+	SCRIPT* guiScript = new SCRIPT(s->getLog());
+	guiScript->init();
+	luaW_push<SCENE>(guiScript->L, s);
+	lua_setglobal(guiScript->L, "MainScene");
+	guiScript->run((std::string)(s->getDevice()->getFileSystem()->getAbsolutePath(script.c_str()).c_str()));
+	g->addScript(guiScript);
+	u32 but = s->addGui(g, parent);
+	lua_pushnumber(L, but);
+	return 1;
+}
+int Scene_addSlider(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->getLog()->debugData(MAJOR, "Creating slider");
+	GUI* g = new GUI(s->getDevice()->getGUIEnvironment(), s->getLog());
+	bool h;
+	u8 hor = luaL_checknumber(L, 2);
+	if(hor == 1)
+	{
+		h = true;
+	}else
+	{
+		h = false;
+	}
+	u32 x1 = luaL_checknumber(L, 3);
+	u32 y1 = luaL_checknumber(L, 4);
+	u32 x2 = luaL_checknumber(L, 5);
+	u32 y2 = luaL_checknumber(L, 6);
+	u32 parent = luaL_checknumber(L, 7);
+	std::string script = luaL_checkstring(L, 8);
+	g->initScrollBar(0, h, rect<s32>(x1, y1, x2, y2));
+	SCRIPT* guiScript = new SCRIPT(s->getLog());
+	guiScript->init();
+	luaW_push<SCENE>(guiScript->L, s);
+	lua_setglobal(guiScript->L, "MainScene");
+	guiScript->run((std::string)(s->getDevice()->getFileSystem()->getAbsolutePath(script.c_str()).c_str()));
+	g->addScript(guiScript);
+	u32 but = s->addGui(g, parent);
+	lua_pushnumber(L, but);
+	return 1;
+}
+int Scene_addEditBox(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->getLog()->debugData(MAJOR, "Creating editbox");
+	GUI* g = new GUI(s->getDevice()->getGUIEnvironment(), s->getLog());
+	core::stringw text = luaL_checkstring(L, 2);
+	u32 x1 = luaL_checknumber(L, 3);
+	u32 y1 = luaL_checknumber(L, 4);
+	u32 x2 = luaL_checknumber(L, 5);
+	u32 y2 = luaL_checknumber(L, 6);
+	u8 border = luaL_checknumber(L, 7);
+	std::string script = luaL_checkstring(L, 9);
+	bool useBorder;
+	if(border == 1)
+	{
+		useBorder = true;
+	}else
+	{
+		useBorder = false;
+	}
+	u32 parent = luaL_checknumber(L, 8);
+	g->initEditBox(0, text, rect<s32>(x1, y1, x2, y2), useBorder);
+	SCRIPT* guiScript = new SCRIPT(s->getLog());
+	guiScript->init();
+	luaW_push<SCENE>(guiScript->L, s);
+	lua_setglobal(guiScript->L, "MainScene");
+	guiScript->run((std::string)(s->getDevice()->getFileSystem()->getAbsolutePath(script.c_str()).c_str()));
+	g->addScript(guiScript);
+	u32 ed = s->addGui(g, parent);
+	lua_pushnumber(L, ed);
+	return 1;
+}
+
+int Scene_addListBox(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->getLog()->debugData(MAJOR, "Creating Listbox");
+	GUI* g = new GUI(s->getDevice()->getGUIEnvironment(), s->getLog());
+	u32 x1 = luaL_checknumber(L, 2);
+	u32 y1 = luaL_checknumber(L, 3);
+	u32 x2 = luaL_checknumber(L, 4);
+	u32 y2 = luaL_checknumber(L, 5);
+	u32 parent = luaL_checknumber(L, 6);
+	std::string script = luaL_checkstring(L, 7);
+	g->initListBox(0, rect<s32>(x1, y1, x2, y2));
+	SCRIPT* guiScript = new SCRIPT(s->getLog());
+	guiScript->init();
+	luaW_push<SCENE>(guiScript->L, s);
+	lua_setglobal(guiScript->L, "MainScene");
+	guiScript->run((std::string)(s->getDevice()->getFileSystem()->getAbsolutePath(script.c_str()).c_str()));
+	g->addScript(guiScript);
+	u32 list = s->addGui(g, parent);
+	lua_pushnumber(L, list);
+	return 1;
+}
+
+int Scene_addListItem(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->getLog()->debugData(MAJOR, "Adding list item");
+	core::stringw itemName = luaL_checkstring(L, 2);
+	u32 itemID = luaL_checknumber(L, 3);
+	u32 retID = 0;
+	bool found = false;
+	for(std::vector<GUI*>::iterator it = s->callers.begin(); it < s->callers.end(); it++)
+	{
+		if((*it)->guiCaller == itemID)
+		{
+			found = true;
+			retID = (*it)->addItemToList(itemName);
+		}
+	}
+	if(!found)
+	{
+		for(std::vector<GUI*>::iterator it = s->guiObjects.begin(); it < s->guiObjects.end(); it++)
+		{
+			if((*it)->guiCaller == itemID)
+			{
+				found = true;
+				retID = (*it)->addItemToList(itemName);
+			}
+		}
+	}
+	if(!found)
+	{
+		s->getLog()->debugData(MAJOR, "Item not found");
+		return 0;
+	}
+	lua_pushnumber(L, retID);
+	return 1;
+}
+
+int Scene_removeListItem(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->getLog()->debugData(MAJOR, "Removing list item");
+	u32 itemID = luaL_checknumber(L, 2);
+	bool found = false;
+	for(std::vector<GUI*>::iterator it = s->callers.begin(); it < s->callers.end(); it++)
+	{
+		if((*it)->guiCaller == itemID)
+		{
+			found = true;
+			(*it)->removeItemFromList(itemID);
+		}
+	}
+	if(!found)
+	{
+		for(std::vector<GUI*>::iterator it = s->guiObjects.begin(); it < s->guiObjects.end(); it++)
+		{
+			if((*it)->guiCaller == itemID)
+			{
+				found = true;
+				(*it)->removeItemFromList(itemID);
+			}
+		}
+	}
+	if(!found)
+	{
+		s->getLog()->debugData(MAJOR, "Item not found");
+		return 0;
+	}
+	return 0;
+}
+
+int Scene_addWindow(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->getLog()->debugData(MAJOR, "Creating window");
+	GUI* g = new GUI(s->getDevice()->getGUIEnvironment(), s->getLog());
+	core::stringw title = luaL_checkstring(L, 2);
+	u32 x1 = luaL_checknumber(L, 3);
+	u32 y1 = luaL_checknumber(L, 4);
+	u32 x2 = luaL_checknumber(L, 5);
+	u32 y2 = luaL_checknumber(L, 6);
+	u32 parent = luaL_checknumber(L, 7);
+	std::string script = luaL_checkstring(L, 8);
+	g->initWindow(0, title, rect<s32>(x1, y1, x2, y2), true);
+	SCRIPT* guiScript = new SCRIPT(s->getLog());
+	guiScript->init();
+	luaW_push<SCENE>(guiScript->L, s);
+	lua_setglobal(guiScript->L, "MainScene");
+	guiScript->run((std::string)(s->getDevice()->getFileSystem()->getAbsolutePath(script.c_str()).c_str()));
+	g->addScript(guiScript);
+	u32 wind = s->addGui(g, parent);
+	lua_pushnumber(L, wind);
+	return 1;
+}
+int Scene_addText(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->getLog()->debugData(MAJOR, "Creating text");
+	GUI* g = new GUI(s->getDevice()->getGUIEnvironment(), s->getLog());
+	core::stringw text = luaL_checkstring(L, 2);
+	u32 x1 = luaL_checknumber(L, 3);
+	u32 y1 = luaL_checknumber(L, 4);
+	u32 x2 = luaL_checknumber(L, 5);
+	u32 y2 = luaL_checknumber(L, 6);
+	u32 parent = luaL_checknumber(L, 7);
+	g->initText(0, text, false, true, rect<s32>(x1, y1, x2, y2));
+	u32 wind = s->addGui(g, parent);
+	lua_pushnumber(L, wind);
+	return 1;
+}
+int Scene_setMetaData(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	s->setMetaData(luaL_checkstring(L, 2), luaL_checknumber(L, 3));
+	return 0;
+}
+
+int Scene_getMetaData(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	lua_pushnumber(L, s->getMetaData(luaL_checkstring(L, 2)));
+	return 1;
+}
+
 OBJECT* Object_new(lua_State* L)
 {
 	OBJECT* o = new OBJECT();
 	return o;
+}
+int Object_setMetaData(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	o->setMetaData(luaL_checkstring(L, 2), luaL_checknumber(L, 3));
+	return 0;
+}
+int Object_getMetaData(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	lua_pushnumber(L, o->getMetaData(luaL_checkstring(L, 2)));
+	return 1;
 }
 int Object_getCollider(lua_State* L)
 {
@@ -359,6 +671,12 @@ int Object_setName(lua_State* L)
 	OBJECT* o = luaW_check<OBJECT>(L, 1);
 	o->setName(luaL_checkstring(L, 2));
 	return 0;
+}
+int Object_getType(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	lua_pushstring(L, o->getOType().c_str());
+	return 1;
 }
 int Object_getID(lua_State* L)
 {
@@ -508,6 +826,15 @@ int Object_setMaterialFlag(lua_State* L)
 		if(type == "antialias")
 		{
 			o->getIrrNode()->setMaterialFlag(video::EMF_ANTI_ALIASING, value);
+		}
+		if(type == "paraHeight")
+		{
+			o->getIrrNode()->getMaterial(0).MaterialTypeParam = value;
+		}
+		if(type == "castshadow")
+		{
+			if(o->getOType() == "ANIMATEDMESH" || o->getOType() == "MESH")
+			((scene::IAnimatedMeshSceneNode*)o->getIrrNode())->addShadowVolumeSceneNode();
 		}
 	}
 	return 0;
@@ -960,6 +1287,12 @@ CAMERA* Camera_new(lua_State* L)
 	return NULL;
 }
 
+int Camera_getType(lua_State* L)
+{
+	CAMERA* c = luaW_check<CAMERA>(L, 1);
+	lua_pushnumber(L, c->getType());
+	return 1;
+}
 int Camera_setFOV(lua_State* L)
 {
 	CAMERA* c = luaW_check<CAMERA>(L, 1);
@@ -1008,6 +1341,54 @@ int Camera_setPosition(lua_State* L)
 {
 	CAMERA* c = luaW_check<CAMERA>(L, 1);
 	c->setPosition(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+	return 0;
+}
+
+LIGHT* Light_new(lua_State* L)
+{
+	LIGHT* l;
+	return l;
+	//NEVER USE
+}
+
+int Light_setColor(lua_State* L)
+{
+	LIGHT* l = luaW_check<LIGHT>(L, 1);
+	l->setColor(video::SColorf(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+	return 0;
+}
+int Light_getColor(lua_State* L)
+{
+	LIGHT* l = luaW_check<LIGHT>(L, 1);
+	video::SColorf c = l->getColor();
+	lua_pushnumber(L, c.r);
+	lua_pushnumber(L, c.g);
+	lua_pushnumber(L, c.b);
+	return 3;
+}
+int Light_setDropoff(lua_State* L)
+{
+	LIGHT* l = luaW_check<LIGHT>(L, 1);
+	l->setDropoff(luaL_checknumber(L, 2));
+	return 0;
+}
+int Light_setType(lua_State* L)
+{
+	LIGHT* l = luaW_check<LIGHT>(L, 1);
+	video::E_LIGHT_TYPE light;
+	if(luaL_checknumber(L, 2) == 0)
+	{
+		light = video::ELT_POINT;
+	}
+	if(luaL_checknumber(L, 2) == 1)
+	{
+		light = video::ELT_SPOT;
+	}
+	if(luaL_checknumber(L, 2) == 2)
+	{
+		light = video::ELT_DIRECTIONAL;
+	}
+	l->setType(light);
 	return 0;
 }
 #endif

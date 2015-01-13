@@ -55,10 +55,15 @@ void OBJECT::render()
 
 void OBJECT::setPosition(core::vector3df pos)
 {
+	core::vector3df lastPos = position;
 	position = pos;
 	if(initialized)
 	{
 		getIrrNode()->setPosition(pos);
+	}
+	if(hasCollider)
+	{
+		collider->body->getPointer()->translate(btVector3(pos.X-lastPos.X, pos.Y-lastPos.Y, pos.Z-lastPos.Z));
 	}
 	uDa = true;
 }
@@ -70,6 +75,13 @@ void OBJECT::setRotation(core::vector3df rot)
 	{
 		getIrrNode()->setRotation(rot);
 	}
+	if(hasCollider)
+	{
+		core::matrix4 trans;
+		trans = collider->body->getWorldTransform();
+		trans.setRotationDegrees(rot);
+		collider->body->setWorldTransform(trans);
+	}
 	uDa = true;
 }
 
@@ -79,6 +91,11 @@ void OBJECT::setScale(core::vector3df scale)
 	 if(initialized)
 	 {
 	 	getIrrNode()->setScale(scale);
+	 }
+	 if(hasCollider)
+	 {
+	 	collider->world->removeCollisionObject(collider->body, false);
+		collider->init();
 	 }
 	uDa = true;
 }
@@ -136,4 +153,12 @@ void OBJECT::setID(u32 id)
 u32 OBJECT::getID()
 {
 	return id;
+}
+void OBJECT::setMetaData(std::string key, f32 data)
+{
+	metadata[key] = data;
+}
+f32 OBJECT::getMetaData(std::string key)
+{
+	return metadata[key];
 }

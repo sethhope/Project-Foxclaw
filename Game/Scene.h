@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #define SCREENWIDTH 1024
 #define SCREENHEIGHT 800
+#include <map>
 #include "Misc/Script.h"
 #include "Misc/Logger.h"
 #include "Objects/Mesh.h"
@@ -17,7 +18,7 @@
 #include "Irrlicht.h"
 #include "irrKlang.h"
 #include "irrBullet.h"
-
+#include "GUI.h"
 using namespace irr;
 using namespace core;
 using namespace irrklang;
@@ -32,7 +33,7 @@ namespace FCE
 			SCENE();
 			SCENE(LOGGER* log, IrrlichtDevice* device);
 			~SCENE();
-			void init();
+			void init(FEventReceiver receiver);
 			void update(FEventReceiver receiver);
 			void render();
 			
@@ -47,7 +48,7 @@ namespace FCE
 			void setCharacter(IKinematicCharacterController* character);
 			void setDebug(bool debug);
 			void setSkydome(std::string filename);
-			
+			u32 addGui(GUI* gui, u32 parentID);
 			PARTICLE* editParticleSystem(u32 id);
 			SOUND* editSound(u32 id);
 			MESH* editMesh(u32 id);
@@ -60,11 +61,21 @@ namespace FCE
 			irrBulletWorld* getWorld();
 			IrrlichtDevice* getDevice();
 			LOGGER* getLog();
+			void save(std::string filename);
+			void setMetaData(std::string key, f32 data);
+			f32 getMetaData(std::string key);
 
 			f32 getTimeScale();
 			void setTimeScale(f32 timeScale);
 			bool keyDown(EKEY_CODE keycode);
+			bool MouseDown(u8 button);
+			position2di MousePos();
+			std::vector<GUI*> guiObjects;
+			std::vector<GUI*> callers;
+			lua_State* L;
+			u32 lastID;
 			
+			void load(std::string filename);
 		private:
 			
 			//Standard variables
@@ -72,14 +83,16 @@ namespace FCE
 			f32 deltaTime;
 			f32 timeScale;
 			u32 soundID;
-			u32 lastID;
+			std::map<std::string, f32> metadata;
+			u32 lastGUI;
+			std::string skyFile;
 			bool debug;
 			
 			//Irrlicht Classes
 			IrrlichtDevice* device;
 			gui::IGUIEnvironment* gui;
 			scene::ISceneManager* manager;
-			ISoundEngine* sound;
+   ISoundEngine* sound;
 			irrBulletWorld *world;
 			scene::ISceneNode* skydome;
 			IKinematicCharacterController* character;
@@ -88,10 +101,10 @@ namespace FCE
 			LOGGER* log;
 			SCRIPT* mainScript;
 			CAMERA* camera;
+
 			std::vector<OBJECT*> objects;
 			FEventReceiver receiver;
-			//Other
-			lua_State* L;
+			
 			
 			
 			

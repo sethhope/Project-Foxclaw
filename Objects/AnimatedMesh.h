@@ -22,12 +22,15 @@ namespace FCE
 			void setFrameLoop(u32 begin, u32 end);
 			void setSpeed(f32 speed);
 			
+			std::string getFilename();
+			
 			scene::IAnimatedMesh* getMesh();
 			scene::IAnimatedMeshSceneNode* getNode();
 
 		private:
 			LOGGER* log;
 			u32 flbegin, flend;
+			std::string filename;
 			scene::IAnimatedMesh* mesh;
 			scene::IAnimatedMeshSceneNode* anim;
 			scene::ISceneManager* manager;

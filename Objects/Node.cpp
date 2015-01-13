@@ -28,7 +28,6 @@ NODE::~NODE()
 			child->parent = NULL;
 		}
 	}
-
 }
 
 void NODE::attachTo(NODE* node)

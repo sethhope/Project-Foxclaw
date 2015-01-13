@@ -6,7 +6,7 @@ ANIMATEDMESH::ANIMATEDMESH(scene::ISceneManager* manager,  LOGGER* log)
 	this->manager = manager;
 	this->log = log;
 	id = -1;
-	name = "MESH";
+	name = "ANIMATEDMESH";
 	flbegin = 1;
 	flend = 1;
 	position = core::vector3df(0, 0, 0);
@@ -16,12 +16,13 @@ ANIMATEDMESH::ANIMATEDMESH(scene::ISceneManager* manager,  LOGGER* log)
 
 ANIMATEDMESH::~ANIMATEDMESH()
 {
-
+	anim->remove();
 }
 
 int ANIMATEDMESH::load(std::string filename)
 {
 	log->logData("Loading animated mesh", filename);
+	this->filename = filename;
 	mesh = manager->getMesh(filename.c_str());
 	anim = manager->addAnimatedMeshSceneNode(mesh);
 	if(anim)
@@ -72,4 +73,9 @@ void ANIMATEDMESH::setSpeed(f32 speed)
 std::string ANIMATEDMESH::getOType()
 {
 	return "ANIMATEDMESH";
+}
+
+std::string ANIMATEDMESH::getFilename()
+{
+	return filename;
 }

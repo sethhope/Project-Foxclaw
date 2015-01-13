@@ -28,13 +28,15 @@ namespace FCE
 			void setScale(core::vector3df scale);
 			void addCollider(LOGGER* log, u16 type, scene::ISceneManager* manager, irrBulletWorld* world, f32 mass);
 			void addCollider(LOGGER* log, u16 type, scene::ISceneManager* manager, irrBulletWorld* world, f32 mass, scene::IMesh* colMesh);
+			void setMetaData(std::string key, f32 data);
+			f32 getMetaData(std::string key);
 			void setID(u32 id);
 			u32 getID();
 			COLLIDER* getCollider();
 			core::vector3df getPosition();
 			core::vector3df getRotation();
 			core::vector3df getScale();
-			
+			bool hasCollider;
 			void setName(std::string name);
 			std::string getName();
 		protected:
@@ -48,7 +50,7 @@ namespace FCE
 		private:
 			std::map<std::string, f32> metadata;
 			bool initialized;
-			bool hasCollider;
+			
 
 	};
 }

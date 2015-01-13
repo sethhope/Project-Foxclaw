@@ -69,6 +69,7 @@ void CAMERA::setTarget(OBJECT* target)
 void CAMERA::setTarget(core::vector3df pos)
 {
 	camNode->setTarget(pos);
+	objectTarget = false;
 }
 
 void CAMERA::setOffset(core::vector3df offset)
@@ -129,3 +130,7 @@ std::string CAMERA::getOType()
 	return "CAMERA";
 }
 
+OBJECT* CAMERA::getTarget()
+{
+	return target;
+}

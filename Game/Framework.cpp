@@ -57,7 +57,7 @@ int FRAMEWORK::init()
 	log->logData("Creating scene");
 	//Create a new scene object and initialize
 	scene = new SCENE(log, device);
-	scene->init();
+	scene->init(receiver);
 	//add debug camera.
 	log->logData("Scene created");
 	return 0;
@@ -69,6 +69,38 @@ int FRAMEWORK::update()
 	run = device->run();
 	//update the scene
 	scene->update(receiver);
+	log->debugData(EXTRA, "Updating GUI");
+	receiver.callers = scene->callers;
+	std::vector<GUI*>::iterator it = scene->guiObjects.begin();
+	while(it < scene->guiObjects.end())
+	{
+		if((*it)->guiCaller == 0)
+		{
+			it = receiver.callers.erase(it);
+			it--;
+			log->debugData(MAJOR, "Removing gui object");
+		}
+		else
+		{
+			bool exists = false;
+			for(std::vector<GUI*>::iterator ite = receiver.callers.begin(); ite < receiver.callers.end(); ite++)
+			{
+				if((*it) == (*ite))
+				{
+					exists = true;
+				}
+			}
+			if(!exists)
+			{
+				log->debugData(MAJOR, "Added GUI to Receiver");
+				receiver.addGUI((*it));
+			}
+			it++;
+		}
+	}
+
+	scene->callers = receiver.callers;
+	scene->guiObjects.clear();
 	return 0;
 }
 

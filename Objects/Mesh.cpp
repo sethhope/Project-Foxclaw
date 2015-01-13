@@ -14,12 +14,12 @@ MESH::MESH(scene::ISceneManager* manager,  LOGGER* log)
 
 MESH::~MESH()
 {
-	
 }
 
 u8 MESH::load(std::string filename)
 {
 	log->logData("Loading mesh", filename);
+	this->filename = filename;
 	mesh = manager->getMesh(filename.c_str());
 	scene::IMeshSceneNode* node = manager->addMeshSceneNode(mesh);
 	if(node)
@@ -56,4 +56,9 @@ scene::IAnimatedMesh* MESH::getMesh()
 std::string MESH::getOType()
 {
 	return "MESH";
+}
+
+std::string MESH::getFilename()
+{
+	return filename;
 }

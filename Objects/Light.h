@@ -20,6 +20,9 @@ namespace FCE
 			void setColor(video::SColorf color);
 			void setDropoff(f32 dropoff);
 			void setType(video::E_LIGHT_TYPE type);
+			video::E_LIGHT_TYPE getType();
+			f32 getDropoff();
+			video::SColorf getColor();
 		private:
 			core::vector3df position;
 			core::vector3df scale;

@@ -39,6 +39,7 @@ namespace FCE
 			f32 getNearClipping();
 			scene::ISceneManager* getManager();
 			scene::ICameraSceneNode* getCamNode();
+			OBJECT* getTarget();
 		private:
 			u8 type;
 			core::vector3df offset;

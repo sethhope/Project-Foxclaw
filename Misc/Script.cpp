@@ -39,6 +39,9 @@ void SCRIPT::onInit()
 	
 	static luaL_Reg Scene_metatable[] =
 	{
+		{"load", Scene_Load},
+		{"save", Scene_Save},
+		{"Objects", Scene_Objects},
 		{"addSound", Scene_addSound},
 		{"getSound", Scene_getSound},
 		{"SLog", Scene_Slog},
@@ -53,6 +56,8 @@ void SCRIPT::onInit()
 		{"getParticle", Scene_getParticle},
 		{"addEmpty", Scene_addEmpty},
 		{"getEmpty", Scene_getEmpty},
+		{"addLight", Scene_addLight},
+		{"getLight", Scene_getLight},
 		{"addCamera", Scene_addCamera},
 		{"getCamera", Scene_getCamera},
 		{"getKey", Scene_getKey},
@@ -66,6 +71,18 @@ void SCRIPT::onInit()
 		{"removeObject", Scene_removeObject},
 		{"setTimeScale", Scene_setTimeScale},
 		{"getTimeScale", Scene_getTimeScale},
+		{"getMouseButton", Scene_getMouseButton},
+		{"getMousePosition", Scene_getMousePos},
+		{"addWindow", Scene_addWindow},
+		{"addSlider", Scene_addSlider},
+		{"addButton", Scene_addButton},
+		{"addEditBox", Scene_addEditBox},
+		{"addText", Scene_addText},
+		{"addListBox", Scene_addListBox},
+		{"addListItem", Scene_addListItem},
+		{"removeListItem", Scene_removeListItem},
+		{"setMetaData", Scene_setMetaData},
+		{"getMetaData", Scene_getMetaData},
 		{NULL, NULL}
 	};
 	static luaL_Reg Mesh_metatable[] =
@@ -125,6 +142,7 @@ void SCRIPT::onInit()
 	};
 	static luaL_Reg Camera_metatable[] =
 	{
+		{"getType", Camera_getType},
 		{"setFOV", Camera_setFOV},
 		{"getFOV", Camera_getFOV},
 		{"setClipping", Camera_setClipping},
@@ -144,6 +162,14 @@ void SCRIPT::onInit()
 		{"toObject", Empty_toObject},
 		{NULL, NULL}
 	};
+	static luaL_Reg Light_metatable[] =
+	{
+		{"setColor", Light_setColor},
+		{"setDropoff", Light_setDropoff},
+		{"setType", Light_setType},
+		{"getColor", Light_getColor},
+		{NULL, NULL}
+	};
 	static luaL_Reg Empty_table[] =
 	{
 		{NULL, NULL}
@@ -159,12 +185,15 @@ void SCRIPT::onInit()
 		{"setScale", Object_setScale},
 		{"getName", Object_getName},
 		{"setName", Object_setName},
+		{"getType", Object_getType},
 		{"getID", Object_getID},
 		{"addScript", Object_addScript},
 		{"setMaterial", Object_setMaterial},
 		{"setMaterialFlag", Object_setMaterialFlag},
 		{"setMaterialTexture", Object_setTexture},
 		{"attachTo", Object_attachTo},
+		{"setMetaData", Object_setMetaData},
+		{"getMetaData", Object_getMetaData},
 		{NULL, NULL}
 	};
 	static luaL_Reg Collider_table[] =
@@ -178,6 +207,7 @@ void SCRIPT::onInit()
 	};
 	lua_pushcfunction(L, System_run);
 	lua_setglobal(L, "System_run");
+	luaW_register<LIGHT>(L, "LIGHT", Empty_table, Light_metatable, Light_new);
 	luaW_register<COLLIDER>(L, "COLLIDER", Empty_table, Collider_table, Collider_new);
 	luaW_register<OBJECT>(L, "OBJECT", Empty_table, Object_table, Object_new);
 	luaW_register<CAMERA>(L, "CAMERA", Empty_table, Camera_metatable, Camera_new);

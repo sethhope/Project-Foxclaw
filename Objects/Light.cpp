@@ -28,11 +28,19 @@ void LIGHT::onRender()
 void LIGHT::setColor(video::SColorf color)
 {
 	this->color = color;
+	if(thisNode)
+	{
+		video::SLight l = ((scene::ILightSceneNode*)thisNode)->getLightData();
+		l.DiffuseColor = color;
+		((scene::ILightSceneNode*)thisNode)->setLightData(l);
+	}
 }
 
 void LIGHT::setDropoff(f32 dropoff)
 {
 	this->dropoff = dropoff;
+	if(thisNode)
+		((scene::ILightSceneNode*)thisNode)->setRadius(dropoff);
 }
 void LIGHT::onInit()
 {
@@ -56,4 +64,19 @@ void LIGHT::setType(video::E_LIGHT_TYPE type)
 std::string LIGHT::getOType()
 {
 	return "LIGHT";
+}
+
+video::E_LIGHT_TYPE LIGHT::getType()
+{
+	return type;
+}
+
+f32 LIGHT::getDropoff()
+{
+	return dropoff;
+}
+
+video::SColorf LIGHT::getColor()
+{
+	return color;
 }
