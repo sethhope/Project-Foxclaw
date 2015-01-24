@@ -27,7 +27,10 @@ namespace FCE
 			void setSize(core::dimension2df sizeMin, core::dimension2df sizeMax);
 			void setAge(u32 minAge, u32 maxAge);
 			void setEmitterSize(core::aabbox3d<f32> size);
+			
+			std::string getFilename();
 		private:
+			std::string filename;
 			video::SColor color1, color2;
 			core::vector3df dir;
 			u32 rateMin, rateMax;

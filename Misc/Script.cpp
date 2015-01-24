@@ -58,6 +58,8 @@ void SCRIPT::onInit()
 		{"getEmpty", Scene_getEmpty},
 		{"addLight", Scene_addLight},
 		{"getLight", Scene_getLight},
+		{"addTerrain", Scene_addTerrain},
+		{"getTerrain", Scene_getTerrain},
 		{"addCamera", Scene_addCamera},
 		{"getCamera", Scene_getCamera},
 		{"getKey", Scene_getKey},
@@ -191,6 +193,7 @@ void SCRIPT::onInit()
 		{"setMaterial", Object_setMaterial},
 		{"setMaterialFlag", Object_setMaterialFlag},
 		{"setMaterialTexture", Object_setTexture},
+		{"useShader", Object_useShader},
 		{"attachTo", Object_attachTo},
 		{"setMetaData", Object_setMetaData},
 		{"getMetaData", Object_getMetaData},
@@ -205,8 +208,20 @@ void SCRIPT::onInit()
 		{"checkCollisionWith", Collider_checkCollisionWith},
 		{NULL, NULL}
 	};
+	static luaL_Reg Terrain_table[] =
+	{
+		{"empty", Terrain_newEmpty},
+		{"load", Terrain_load},
+		{"getHeight", Terrain_getHeight},
+		{"setHeight", Terrain_setHeight},
+		{"getSizeX", Terrain_getSizeX},
+		{"getSizeY", Terrain_getSizeY},
+		{"addCollider", Terrain_addCollider},
+		{NULL, NULL}
+	};
 	lua_pushcfunction(L, System_run);
 	lua_setglobal(L, "System_run");
+	luaW_register<TERRAIN>(L, "TERRAIN", Empty_table, Terrain_table, Terrain_new);
 	luaW_register<LIGHT>(L, "LIGHT", Empty_table, Light_metatable, Light_new);
 	luaW_register<COLLIDER>(L, "COLLIDER", Empty_table, Collider_table, Collider_new);
 	luaW_register<OBJECT>(L, "OBJECT", Empty_table, Object_table, Object_new);

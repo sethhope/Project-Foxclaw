@@ -60,6 +60,7 @@ void PARTICLE::loadTexture(std::string filename)
 	log->debugData(MAJOR, "Set to", filename);
 	ps->setMaterialTexture(0, device->getVideoDriver()->getTexture(filename.c_str()));
 	log->debugData(MAJOR, "Texture set");
+	this->filename = filename;
 }
 void PARTICLE::setColors(video::SColor color1, video::SColor color2)
 {
@@ -164,4 +165,9 @@ void PARTICLE::setEmitterSize(core::aabbox3d<f32> size)
 std::string PARTICLE::getOType()
 {
 	return "PARTICLE";
+}
+
+std::string PARTICLE::getFilename()
+{
+	return filename;
 }

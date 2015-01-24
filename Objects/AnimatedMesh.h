@@ -21,7 +21,7 @@ namespace FCE
 
 			void setFrameLoop(u32 begin, u32 end);
 			void setSpeed(f32 speed);
-			
+			u32 getCurrentFrame();
 			std::string getFilename();
 			
 			scene::IAnimatedMesh* getMesh();

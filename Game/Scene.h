@@ -4,6 +4,7 @@
 #define SCREENWIDTH 1024
 #define SCREENHEIGHT 800
 #include <map>
+#include "ShaderCallback.h"
 #include "Misc/Script.h"
 #include "Misc/Logger.h"
 #include "Objects/Mesh.h"
@@ -14,6 +15,7 @@
 #include "Objects/EmptyObject.h"
 #include "Objects/Camera.h"
 #include "Objects/AnimatedMesh.h"
+#include "Objects/Terrain.h"
 #include "EventReceiver.h"
 #include "Irrlicht.h"
 #include "irrKlang.h"
@@ -45,6 +47,7 @@ namespace FCE
 			u32 addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, f32 dropoff, video::E_LIGHT_TYPE type);
 			u32 addEmptyObject(core::vector3df pos, core::vector3df rot, core::vector3df scale);
 			u32 addAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
+			u32 addTerrain(core::vector3df pos, core::vector3df rot, core::vector3df scale);
 			void setCharacter(IKinematicCharacterController* character);
 			void setDebug(bool debug);
 			void setSkydome(std::string filename);
@@ -57,6 +60,7 @@ namespace FCE
 			ANIMATEDMESH* editAnimatedMesh(u32 id);
 			CAMERA* getCamera();
 			OBJECT* getObject(u32 id);
+			TERRAIN* getTerrain(u32 id);
 			IKinematicCharacterController* getCharacter();
 			irrBulletWorld* getWorld();
 			IrrlichtDevice* getDevice();
@@ -92,7 +96,7 @@ namespace FCE
 			IrrlichtDevice* device;
 			gui::IGUIEnvironment* gui;
 			scene::ISceneManager* manager;
-   ISoundEngine* sound;
+   			ISoundEngine* sound;
 			irrBulletWorld *world;
 			scene::ISceneNode* skydome;
 			IKinematicCharacterController* character;
@@ -104,13 +108,6 @@ namespace FCE
 
 			std::vector<OBJECT*> objects;
 			FEventReceiver receiver;
-			
-			
-			
-			
-
-			
-
 	};
 }
 #endif // _SCENE_H_

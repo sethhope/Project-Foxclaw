@@ -61,7 +61,6 @@ void SCENE::init(FEventReceiver receiver)
 	//play test sound to test sound engine
 	addSound("jingle.mp3", core::vector3df(0, 0, 0), false);
 	//TODO:add splash screen
-	
 	//set initial values
 	log->logData("Setting initial values");
 	lastID = 0;
@@ -80,13 +79,11 @@ void SCENE::init(FEventReceiver receiver)
 	lua_setglobal(mainScript->L, "MainScene");
 	//run mainScript
 	mainScript->run((std::string)(device->getFileSystem()->getAbsolutePath("Scripts/startup.lua").c_str()));
-	log->logData("Loading scene objects");
+	log->logData("Running init() on startup.lua");
 	//run the init function within the startup script
 	mainScript->runInit();
-	log->logData("Created button");
-	log->logData("Loaded scene objects");
+	log->logData("init() succeeded");
 	log->logData("Finished initializing");
-	
 }
 
 void SCENE::update(FEventReceiver receiver)
@@ -119,6 +116,7 @@ void SCENE::update(FEventReceiver receiver)
 	//run the update function within the main script
 	mainScript->update();
 	log->debugData(EXTRA, "Updating objects");
+	int i = 0;
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
 		log->debugData(EXTRA, (*it)->getName());
@@ -137,8 +135,9 @@ void SCENE::update(FEventReceiver receiver)
 void SCENE::render()
 {
 	//draw all things in the manager and GUI.
-	manager->drawAll();
-	gui->drawAll();
+//	manager->drawAll();
+	
+	
 	//run the render function in the main script
 	mainScript->render();
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
@@ -146,11 +145,15 @@ void SCENE::render()
 		log->debugData(EXTRA, (*it)->getName());
 		(*it)->render();
 	}
+
+	//device->getVideoDriver()->setRenderTarget(0, true, true);
 	if(debug)
 	{
 		world->debugDrawWorld(true);
 		world->debugDrawProperties(true);
 	}
+	manager->drawAll();
+	gui->drawAll();
 }
 //misc functions
 LOGGER* SCENE::getLog()
@@ -239,7 +242,7 @@ u32 SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 	tmp->load((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()));
 	tmp->setName("MESH");
 	tmp->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, true);
-	tmp->getIrrNode()->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
+	//tmp->getIrrNode()->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
 	tmp->getIrrNode()->setMaterialType(video::EMT_SOLID);
 	tmp->setPosition(pos);
 	tmp->setRotation(rot);
@@ -276,7 +279,7 @@ u32 SCENE::addAnimatedMesh(std::string filename, core::vector3df pos, core::vect
 	tmp->setScale(scale);
 	tmp->init();
 	tmp->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, true);
-	tmp->getIrrNode()->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
+	//tmp->getIrrNode()->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
 	tmp->getIrrNode()->setMaterialType(video::EMT_SOLID);
 	lastID++;
 	objects.push_back(tmp);
@@ -356,6 +359,31 @@ EMPTYOBJECT* SCENE::editEmpty(u32 id)
 		}
 	}
 	log->logData("EmptyObject not found. ID", id);
+	return NULL;
+}
+u32 SCENE::addTerrain(core::vector3df pos, core::vector3df rot, core::vector3df scale)
+{
+	TERRAIN* t = new TERRAIN(manager, log);
+	t->init();
+	t->setPosition(pos);
+	t->setRotation(rot);
+	t->setScale(scale);
+	t->setID(lastID);
+	t->setName("TERRAIN");
+	lastID++;
+	objects.push_back(t);
+	return lastID-1;
+}
+TERRAIN* SCENE::getTerrain(u32 id)
+{
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if(((TERRAIN*)(*it))->getID()==id)
+		{
+			return ((TERRAIN*)(*it));
+		}
+	}
+	log->logData("Terrain not found. ID", id);
 	return NULL;
 }
 OBJECT* SCENE::getObject(u32 id)
@@ -841,6 +869,7 @@ void SCENE::load(std::string filename)
 
 void SCENE::save(std::string filename)
 {
+	log->logData("Saving level", filename);
 	io::IXMLWriter* xml = device->getFileSystem()->createXMLWriter(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str());
 	xml->writeXMLHeader();
 	xml->writeComment(L"Project Foxclaw Generated Level File");
@@ -1001,6 +1030,10 @@ void SCENE::save(std::string filename)
 				parentID = ((OBJECT*)((*it)->getParent()))->getID();
 			}
 			xml->writeElement(L"id", true, L"id", core::stringw((*it)->getID()).c_str(), L"parent-id", core::stringw(parentID).c_str());
+			xml->writeLineBreak();
+			core::stringw file = ((PARTICLE*)(*it))->getFilename().c_str();
+			file = device->getFileSystem()->getRelativeFilename(file, device->getFileSystem()->getWorkingDirectory());
+			xml->writeElement(L"file", true, L"filename", file.c_str());
 			xml->writeLineBreak();
 			xml->writeElement(L"name", true, L"name", core::stringw((*it)->getName().c_str()).c_str());
 			xml->writeLineBreak();

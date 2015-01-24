@@ -79,3 +79,8 @@ std::string ANIMATEDMESH::getFilename()
 {
 	return filename;
 }
+
+u32 ANIMATEDMESH::getCurrentFrame()
+{
+	return anim->getFrameNr();
+}

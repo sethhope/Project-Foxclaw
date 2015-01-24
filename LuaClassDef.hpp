@@ -4,7 +4,7 @@
 #include "lua.hpp"
 #include "luawrapper.hpp"
 #include "Irrlicht.h"
-
+#include "Game/ShaderCallback.h"
 
 #include "Objects/Object.h"
 #include "Objects/Node.h"
@@ -13,7 +13,7 @@
 #include "Objects/Particle.h"
 #include "Objects/EmptyObject.h"
 #include "Objects/AnimatedMesh.h"
-
+#include "Objects/Terrain.h"
 #include "Misc/Logger.h"
 #include "Game/Scene.h"
 
@@ -153,6 +153,19 @@ int Scene_getEmpty(lua_State* L)
 {
 	SCENE* s = luaW_check<SCENE>(L, 1);
 	luaW_push<EMPTYOBJECT>(L, s->editEmpty(luaL_checknumber(L, 2)));
+	return 1;
+}
+int Scene_addTerrain(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	int id = s->addTerrain(core::vector3df(luaL_checknumber(L,2),luaL_checknumber(L,3),luaL_checknumber(L,4)), core::vector3df(luaL_checknumber(L,5),luaL_checknumber(L,6),luaL_checknumber(L,7)),core::vector3df(luaL_checknumber(L,8),luaL_checknumber(L,9),luaL_checknumber(L,10)));
+	lua_pushnumber(L, id);
+	return 1;
+}
+int Scene_getTerrain(lua_State* L)
+{
+	SCENE* s = luaW_check<SCENE>(L, 1);
+	luaW_push<TERRAIN>(L, s->getTerrain(luaL_checknumber(L, 2)));
 	return 1;
 }
 int Scene_addLight(lua_State* L)
@@ -689,11 +702,12 @@ int Object_addScript(lua_State* L)
 	OBJECT* o = luaW_check<OBJECT>(L, 1);
 	SCRIPT* s = new SCRIPT(luaW_check<SCENE>(L, 2)->getLog());
 	s->init();
+	s->attachTo((NODE*)o);
 	s->run((std::string)(luaW_check<SCENE>(L, 2)->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 3)).c_str()));
 	luaW_push<SCENE>(s->L, luaW_check<SCENE>(L, 2));
 	lua_setglobal(s->L, "MainScene");
+	
 	s->runInit();
-	s->attachTo((NODE*)o);
 	return 0;
 }
 int Object_setMaterial(lua_State* L)
@@ -751,6 +765,26 @@ int Object_setMaterial(lua_State* L)
 			o->getIrrNode()->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
 		}
 	}
+	return 0;
+}
+int Object_useShader(lua_State* L)
+{
+	OBJECT* o = luaW_check<OBJECT>(L, 1);
+	SCENE* s = luaW_check<SCENE>(L, 2);
+	io::path vsFile = luaL_checkstring(L, 3);
+	io::path psFile = luaL_checkstring(L, 4);
+	
+	ShaderCallback* scb = new ShaderCallback();
+	scb->device = s->getDevice();
+	video::IGPUProgrammingServices* gpu = s->getDevice()->getVideoDriver()->getGPUProgrammingServices();
+	const video::E_GPU_SHADING_LANGUAGE sLang = video::EGSL_DEFAULT;
+	video::E_MATERIAL_TYPE currM = o->getIrrNode()->getMaterial(0).MaterialType;
+	s32 mat1 = gpu->addHighLevelShaderMaterialFromFiles(vsFile, "vertexMain", video::EVST_VS_1_1, psFile, "pixelMain", video::EPST_PS_1_1, scb, currM, 0, sLang);
+	
+	scb->drop();
+	
+	o->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, false);
+	o->getIrrNode()->setMaterialType((video::E_MATERIAL_TYPE)mat1);
 	return 0;
 }
 int Object_setMaterialFlag(lua_State* L)
@@ -1389,6 +1423,75 @@ int Light_setType(lua_State* L)
 		light = video::ELT_DIRECTIONAL;
 	}
 	l->setType(light);
+	return 0;
+}
+
+TERRAIN* Terrain_new(lua_State* L)
+{
+	return 0;
+}
+int Terrain_newEmpty(lua_State* L)
+{
+	TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+	t->empty(luaL_checknumber(L, 2), luaL_checknumber(L, 3));
+	return 0;
+}
+int Terrain_load(lua_State* L)
+{
+	TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+	t->load(luaL_checkstring(L, 2));
+	return 0;
+}
+int Terrain_getHeight(lua_State* L)
+{
+	TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+	lua_pushnumber(L, t->getHeightmap()->getData(luaL_checknumber(L,2), luaL_checknumber(L,3)));
+	return 1;
+}
+int Terrain_setHeight(lua_State* L)
+{
+	TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+	t->setHeight(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4));
+	return 0;
+}
+int Terrain_getSizeX(lua_State* L)
+{
+	TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+	lua_pushnumber(L, t->getHeightmap()->getWidth());
+	return 1;
+}
+int Terrain_getSizeY(lua_State* L)
+{
+	TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+	lua_pushnumber(L, t->getHeightmap()->getHeight());
+	return 1;
+}
+
+int Terrain_addCollider(lua_State* L)
+{
+	TERRAIN* m = luaW_check<TERRAIN>(L, 1);
+	SCENE* s = luaW_check<SCENE>(L, 2);
+	std::string type = luaL_checkstring(L, 3);
+	if(type == "CUBE")
+	{
+		m->addCollider(s->getLog(), COL_CUBE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+	}
+	if(type == "SPHERE")
+	{
+		m->addCollider(s->getLog(), COL_SPHERE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+	}
+	if(type == "MESH_CONVEXHULL")
+	{
+		m->addCollider(s->getLog(), COL_MESH_CONVEXHULL, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4), m->getMesh());
+	}
+	if(type == "MESH_TRIMESH")
+	{
+		m->addCollider(s->getLog(), COL_MESH_TRIMESH, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4), m->getMesh());
+	}
+	if(type == "MESH_GIMPACT")
+	{
+		m->addCollider(s->getLog(), COL_MESH_GIMPACT, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4), m->getMesh());
+	}
 	return 0;
 }
 #endif
