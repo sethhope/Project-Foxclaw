@@ -7,6 +7,7 @@
 #include "Irrlicht.h"
 #include "irrBullet.h"
 #include "Misc/Logger.h"
+#include "Game/ShaderCallback.h"
 using namespace irr;
 using namespace core;
 namespace FCE
@@ -30,15 +31,20 @@ namespace FCE
 			void addCollider(LOGGER* log, u16 type, scene::ISceneManager* manager, irrBulletWorld* world, f32 mass, scene::IMesh* colMesh);
 			void setMetaData(std::string key, f32 data);
 			f32 getMetaData(std::string key);
+			void useShader(IrrlichtDevice* device, std::string vsName, std::string fsName);
 			void setID(u32 id);
 			u32 getID();
 			COLLIDER* getCollider();
 			core::vector3df getPosition();
 			core::vector3df getRotation();
 			core::vector3df getScale();
+			core::vector3df getUpVector();
 			bool hasCollider;
 			void setName(std::string name);
 			std::string getName();
+			std::string vsName;
+			std::string fsName;
+			bool hasShader;
 		protected:
 			core::vector3df rotation;
 			core::vector3df position;
@@ -50,7 +56,7 @@ namespace FCE
 		private:
 			std::map<std::string, f32> metadata;
 			bool initialized;
-			
+
 
 	};
 }

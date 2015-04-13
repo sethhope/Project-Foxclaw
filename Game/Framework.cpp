@@ -9,9 +9,10 @@ FRAMEWORK::FRAMEWORK()
 FRAMEWORK::~FRAMEWORK()
 {
 	log->logData("Framework Closed");
-	//device->drop(); //Drop the irrlicht device
+
 	delete scene;
 	delete log;
+	device->drop(); //Drop the irrlicht device
 }
 
 int FRAMEWORK::init()
@@ -46,7 +47,7 @@ int FRAMEWORK::init()
 	}
 	//set top of window
 	device->setWindowCaption(L"FoxClaw Engine by Jcam Technologies");
-	
+
 	//get the driver, manager, and gui handler from irrlicht
 	log->logData("Getting driver");
 	driver = device->getVideoDriver();
@@ -71,7 +72,21 @@ int FRAMEWORK::update()
 	scene->update(receiver);
 	log->debugData(EXTRA, "Updating GUI");
 	receiver.callers = scene->callers;
-	std::vector<GUI*>::iterator it = scene->guiObjects.begin();
+	std::vector<GUI*>::iterator it = scene->callers.begin();
+	while(it < scene->callers.end())
+	{
+		if((*it)->guiCaller == 0)
+		{
+			it = scene->callers.erase(it);
+			log->debugData(MAJOR, "Removing gui object");
+		}
+		else
+		{
+			it++;
+		}
+	}
+	receiver.callers=scene->callers;
+	it = scene->guiObjects.begin();
 	while(it < scene->guiObjects.end())
 	{
 		if((*it)->guiCaller == 0)

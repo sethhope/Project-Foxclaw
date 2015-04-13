@@ -5,116 +5,131 @@ using namespace irr;
 
 NODE::NODE()
 {
-	child = NULL;
-	parent = NULL;
+    children.clear();
+    parent = NULL;
+    _cID = 1;
+    cID = 0;
 }
 
 NODE::~NODE()
 {
-	if(parent)
-	{
-		if(child)
-		{
-			child->parent = parent;
-			parent->child = child;
-		}else
-		{
-			parent->child = NULL;
-		}
-	}else
-	{
-		if(child)
-		{
-			child->parent = NULL;
-		}
-	}
+    if(parent)
+    {
+        if(!children.empty())
+        {
+            for(std::vector<NODE*>::iterator it = children.begin(); it < children.end(); it++)
+            {
+                (*it)->parent = parent;
+                parent->addChild((*it));
+            }
+        }
+        else
+        {
+            parent->removeChild(cID);
+        }
+    }
+    else
+    {
+        if(!children.empty())
+        {
+            for(std::vector<NODE*>::iterator it = children.begin(); it < children.end(); it++)
+            {
+                (*it)->parent = NULL;
+                (*it)->cID = 0;
+            }
+        }
+    }
+    if(thisNode)
+    {
+        thisNode->remove();
+    }
 }
 
 void NODE::attachTo(NODE* node)
 {
-	parent = node->getLastChild();
-	if(thisNode&&parent->getIrrNode())
-	{
-		thisNode->setParent(parent->getIrrNode());
-	}
-	node->getLastChild()->child = this;
+    parent = node;
+    if(thisNode && parent->getIrrNode())
+    {
+        thisNode->setParent(parent->getIrrNode());
+    }
+    node->addChild(this);
 }
 
 void NODE::detach()
 {
-	if(parent)
-	{
-		parent->child = NULL;
-		parent->getIrrNode()->removeChild(thisNode);
-		parent = NULL;
-	}
+    if(parent)
+    {
+        parent->removeChild(cID);
+        parent->getIrrNode()->removeChild(thisNode);
+        parent = NULL;
+    }
 }
 
-void NODE::addSibling(NODE* node)
+NODE* NODE::getChild(u32 id)
 {
-}
-
-NODE* NODE::getChild()
-{
-	if(child)
-	{
-		return child;
-	}
-	return NULL;
+    for(std::vector<NODE*>::iterator it = children.begin(); it < children.end(); it++)
+    {
+        if((*it)->cID == id)
+        {
+            return ((NODE*)(*it));
+        }
+    }
+    return NULL;
 }
 
 NODE* NODE::getParent()
 {
-	if(parent)
-	{
-		return parent;
-	}
-	return NULL;
-}
-
-NODE* NODE::getNext()
-{
-	if(nextNode)
-	{
-		return nextNode;
-	}
-	return NULL;
-}
-
-NODE* NODE::getPrev()
-{
-	if(prevNode)
-	{
-		return prevNode;
-	}
-	return NULL;
-}
-
-NODE* NODE::getLastChild()
-{
-	if(child)
-	{
-		return child->getLastChild();
-	}
-	else
-	{
-		return this;
-	}
+    if(parent)
+    {
+        return parent;
+    }
+    return NULL;
 }
 
 NODE* NODE::getFirstParent()
 {
-	if(parent)
-	{
-		return parent->getFirstParent();
-	}else
-	{
-		return this;
-	}
+    if(parent)
+    {
+        return parent->getFirstParent();
+    }
+    else
+    {
+        return this;
+    }
 }
 
+
+void NODE::addChild(NODE* n)
+{
+    bool exists = false;
+    for(std::vector<NODE*>::iterator it = children.begin(); it < children.end(); it++)
+    {
+        if((*it)==n)
+        {
+            exists = true;
+        }
+    }
+    if(!exists)
+    {
+        n->cID = _cID;
+        _cID++;
+        children.push_back(n);
+    }
+}
+
+void NODE::removeChild(u32 id)
+{
+    for(std::vector<NODE*>::iterator it = children.begin(); it < children.end(); it++)
+    {
+        if((*it)->cID == id)
+        {
+            children.erase(it);
+            return;
+        }
+    }
+}
 scene::ISceneNode* NODE::getIrrNode()
 {
-	return thisNode;
+    return thisNode;
 }
 

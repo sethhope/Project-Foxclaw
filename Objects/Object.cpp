@@ -11,6 +11,7 @@ OBJECT::OBJECT()
 	thisNode = NULL;
 	uDa = true;
 	hasCollider = false;
+	hasShader = false;
 	initialized = false;
 }
 
@@ -38,18 +39,29 @@ void OBJECT::update()
 		getIrrNode()->setRotation(rotation);
 		getIrrNode()->setScale(scale);
 	}
-	if(getChild())
+	if(!children.empty())
 	{
-		((OBJECT*)getChild())->update();
+		for(std::vector<NODE*>::iterator it = children.begin(); it < children.end(); it++)
+		{
+			((OBJECT*)(*it))->update();
+		}
+	}
+	if(hasCollider)
+	{
+		position=getIrrNode()->getPosition();
+		rotation=getIrrNode()->getRotation();
 	}
 }
 
 void OBJECT::render()
 {
 	onRender();
-	if(getChild())
+	if(!children.empty())
 	{
-		((OBJECT*)getChild())->render();
+		for(std::vector<NODE*>::iterator it = children.begin(); it < children.end(); it++)
+		{
+			((OBJECT*)(*it))->render();
+		}
 	}
 }
 
@@ -144,7 +156,14 @@ core::vector3df  OBJECT::getScale()
 {
 	return scale;
 }
-
+core::vector3df OBJECT::getUpVector()
+{
+	core::matrix4 m;
+	m.setRotationDegrees(getIrrNode()->getRotation());
+	core::vector3df upv = core::vector3df(0, 1, 0);
+	m.transformVect(upv);
+	return upv;
+}
 void OBJECT::setID(u32 id)
 {
 	this->id = id;
@@ -161,4 +180,24 @@ void OBJECT::setMetaData(std::string key, f32 data)
 f32 OBJECT::getMetaData(std::string key)
 {
 	return metadata[key];
+}
+void OBJECT::useShader(IrrlichtDevice* device, std::string vsName, std::string fsName)
+{
+    this->vsName = vsName;
+    this->fsName = fsName;
+    hasShader = true;
+    io::path vsFile = vsName.c_str();
+    io::path psFile = fsName.c_str();
+
+    ShaderCallback* scb = new ShaderCallback();
+    scb->device = device;
+    video::IGPUProgrammingServices* gpu = device->getVideoDriver()->getGPUProgrammingServices();
+    const video::E_GPU_SHADING_LANGUAGE sLang = video::EGSL_DEFAULT;
+    video::E_MATERIAL_TYPE currM = thisNode->getMaterial(0).MaterialType;
+    s32 mat1 = gpu->addHighLevelShaderMaterialFromFiles(vsFile, "vertexMain", video::EVST_VS_1_1, psFile, "pixelMain", video::EPST_PS_1_1, scb, currM, 0, sLang);
+
+    scb->drop();
+
+    thisNode->setMaterialFlag(video::EMF_LIGHTING, false);
+    thisNode->setMaterialType((video::E_MATERIAL_TYPE)mat1);
 }

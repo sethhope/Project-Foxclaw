@@ -84,6 +84,7 @@ class IKinematicCharacterController
         btPairCachingGhostObject* GhostObject;
         btKinematicCharacterController* Character;
         irr::core::matrix4 WorldTransform;
+        irr::f32 gravity;
 };
 
 #endif // __KINEMATIC_CHARACTER_CONTROLLER_H__

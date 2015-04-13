@@ -1,6 +1,5 @@
 #include "Scene.h"
 using namespace FCE;
-
 SCENE::SCENE()
 {
 	//Should never be used
@@ -14,7 +13,7 @@ SCENE::SCENE(LOGGER* log, IrrlichtDevice* device)
  	debug = false;
 	gui = device->getGUIEnvironment();
 	manager = device->getSceneManager();
-	
+
 }
 
 SCENE::~SCENE()
@@ -25,7 +24,7 @@ SCENE::~SCENE()
 	delete world;
 	objects.clear();
 	delete mainScript;
-	
+
 }
 
 void SCENE::init(FEventReceiver receiver)
@@ -58,9 +57,9 @@ void SCENE::init(FEventReceiver receiver)
 		return;
 	}
 	log->debugData(MINOR, "Initialized Sound Engine Version", IRR_KLANG_VERSION);
-	//play test sound to test sound engine
-	addSound("jingle.mp3", core::vector3df(0, 0, 0), false);
 	//TODO:add splash screen
+	log->debugData(EXTRA, "Initializing post processing system");
+	postManager = new CPostProcessManager(device);
 	//set initial values
 	log->logData("Setting initial values");
 	lastID = 0;
@@ -94,29 +93,11 @@ void SCENE::update(FEventReceiver receiver)
 	deltaTime = device->getTimer()->getTime() - timeStamp;
 	timeStamp = device->getTimer()->getTime();
 	log->debugData(EXTRA, "Updating Physics");
-	world->stepSimulation(deltaTime*timeScale, 4);
-	log->debugData(EXTRA, "Adding camera constants");
-	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().X);
-	lua_setglobal(mainScript->L, "CAM_X");
-	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().Y);
-	lua_setglobal(mainScript->L, "CAM_Y");
-	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getAbsolutePosition().Z);
-	lua_setglobal(mainScript->L, "CAM_Z");
-	lua_pushnumber(mainScript->L, deltaTime);
-	lua_setglobal(mainScript->L, "deltaTime");
-	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getRotation().X);
-	lua_setglobal(mainScript->L, "CAM_ROT_X");
-	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getRotation().Y);
-	lua_setglobal(mainScript->L, "CAM_ROT_Y");
-	lua_pushnumber(mainScript->L, manager->getActiveCamera()->getRotation().Z);
-	lua_setglobal(mainScript->L, "CAM_ROT_Z");
-	lua_pushnumber(mainScript->L, (lastID-1));
-	lua_setglobal(mainScript->L, "OBJECTS");
+	world->stepSimulation(deltaTime/timeScale, 4);
 	log->debugData(EXTRA, "Updating script");
 	//run the update function within the main script
 	mainScript->update();
 	log->debugData(EXTRA, "Updating objects");
-	int i = 0;
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
 		log->debugData(EXTRA, (*it)->getName());
@@ -130,14 +111,14 @@ void SCENE::update(FEventReceiver receiver)
 	log->debugData(EXTRA, "Setting listener position");
 	//set listener position for the sound manager
 	sound->setListenerPosition(manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
+
 }
 
 void SCENE::render()
 {
+	postManager->prepare(false);
 	//draw all things in the manager and GUI.
-//	manager->drawAll();
-	
-	
+	manager->drawAll();
 	//run the render function in the main script
 	mainScript->render();
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
@@ -145,14 +126,12 @@ void SCENE::render()
 		log->debugData(EXTRA, (*it)->getName());
 		(*it)->render();
 	}
-
-	//device->getVideoDriver()->setRenderTarget(0, true, true);
 	if(debug)
 	{
 		world->debugDrawWorld(true);
 		world->debugDrawProperties(true);
 	}
-	manager->drawAll();
+	postManager->update();
 	gui->drawAll();
 }
 //misc functions
@@ -166,7 +145,6 @@ IrrlichtDevice* SCENE::getDevice()
 	return device;
 }
 
-//
 u32 SCENE::addSound(std::string filename, core::vector3df pos, bool loop)
 {
 	SOUND* temp = new SOUND(sound, log);
@@ -174,11 +152,11 @@ u32 SCENE::addSound(std::string filename, core::vector3df pos, bool loop)
 	temp->load((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()), loop);
 	temp->setPosition(pos);
 	temp->setVolume(1.0f);
-	
+
 	if(!temp->getSound()->getSoundEffectControl())
 	{
 		log->logData("Effects not supported!");
-		
+
 	}
 	lastID++;
 	objects.push_back(temp);
@@ -215,12 +193,11 @@ u32 SCENE::addParticleSystem(core::vector3df pos, core::vector3df dir, core::vec
 	tmp->setAge(200, 300);
 	tmp->loadTexture((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()));
 	lastID++;
-	
+
 	tmp->update();
 	log->debugData(MAJOR, "created at", tmp->getPosition().X);
 	objects.push_back(tmp);
 	log->debugData(MAJOR, "Particle system added", lastID-1);
-	
 	return lastID-1;
 }
 PARTICLE* SCENE::editParticleSystem(u32 id)
@@ -251,6 +228,7 @@ u32 SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 	lastID++;
 	objects.push_back(tmp);
 	tmp->update();
+	postManager->addNodeToDepthPass(tmp->getIrrNode());
 	return lastID-1;
 }
 MESH* SCENE::editMesh(u32 id)
@@ -284,6 +262,7 @@ u32 SCENE::addAnimatedMesh(std::string filename, core::vector3df pos, core::vect
 	lastID++;
 	objects.push_back(tmp);
 	tmp->update();
+	postManager->addNodeToDepthPass(tmp->getIrrNode());
 	return lastID-1;
 }
 
@@ -317,6 +296,7 @@ u32 SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df sc
 	temp->setRotation(rot);
 	objects.push_back(temp);
 	temp->update();
+	postManager->addNodeToDepthPass(temp->getIrrNode());
 	return lastID-1;
 }
 LIGHT* SCENE::editLight(u32 id)
@@ -372,6 +352,7 @@ u32 SCENE::addTerrain(core::vector3df pos, core::vector3df rot, core::vector3df 
 	t->setName("TERRAIN");
 	lastID++;
 	objects.push_back(t);
+	postManager->addNodeToDepthPass(t->getIrrNode());
 	return lastID-1;
 }
 TERRAIN* SCENE::getTerrain(u32 id)
@@ -428,7 +409,7 @@ void SCENE::setDebug(bool debug)
 }
 void SCENE::setSkydome(std::string filename)
 {
-	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()), 32, 16, 0.95, 2.0);
+	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()), 64, 64, 1, 2.0);
 	skyFile = filename;
 }
 void SCENE::removeObject(u32 id)
@@ -516,14 +497,17 @@ void SCENE::load(std::string filename)
 		if((*it)->getOType() != "CAMERA")
 		{
 			manager->addToDeletionQueue((*it)->getIrrNode());
+			postManager->addNodeToDepthPass((*it)->getIrrNode());
 			if((*it)->hasCollider)
 			{
-				world->addToDeletionQueue((*it)->getCollider()->body);
+				world->removeCollisionObject((*it)->getCollider()->body);
 			}
 		}
 	}
+	world->stepSimulation(0, 1);
 	camera->setTarget(core::vector3df(0, 0, 0));
 	objects.clear();
+	sound->stopAllSounds();
 	lastID = 0;
 	io::IXMLReader* xml = device->getFileSystem()->createXMLReader(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str());
 	bool inObject = false;
@@ -581,8 +565,11 @@ void SCENE::load(std::string filename)
 					core::vector3df pos;
 					core::vector3df rot;
 					core::vector3df scale;
+					core::stringw vs;
+					core::stringw ps;
 					int id;
 					int parentID;
+					bool hasShader=false;
 					bool hasCollider=false;
 					int colliderType;
 					f32 mass;
@@ -617,6 +604,15 @@ void SCENE::load(std::string filename)
 								{
 									scale = core::vector3df(xml->getAttributeValueAsFloat(0), xml->getAttributeValueAsFloat(1), xml->getAttributeValueAsFloat(2));
 								}
+								if(core::stringw(L"Shader").equals_ignore_case(xml->getNodeName()))
+                                {
+                                    if(core::stringw(L"true").equals_ignore_case(xml->getAttributeValue(0)))
+                                    {
+                                        hasShader = true;
+                                        vs = xml->getAttributeValue(1);
+                                        ps = xml->getAttributeValue(2);
+                                    }
+                                }
 								if(core::stringw(L"Collider").equals_ignore_case(xml->getNodeName()))
 								{
 									if(core::stringw(L"true").equals_ignore_case(xml->getAttributeValue(0)))
@@ -638,7 +634,7 @@ void SCENE::load(std::string filename)
 					}
 					core::stringc cname = core::stringc(name);
 					core::stringc cfilename = core::stringc(filename);
-					
+
 					MESH* tmpMesh = new MESH(manager, log);
 					tmpMesh->setID(id);
 					tmpMesh->load((std::string)(device->getFileSystem()->getAbsolutePath(cfilename.c_str()).c_str()));
@@ -655,6 +651,13 @@ void SCENE::load(std::string filename)
 					{
 						tmpMesh->addCollider(log, colliderType, manager, world, mass, tmpMesh->getMesh());
 					}
+					if(hasShader)
+                    {
+                        core::stringc vs1 = core::stringc(vs);
+                        core::stringc ps1 = core::stringc(ps);
+                        ((OBJECT*)tmpMesh)->useShader(device, vs1.c_str(), ps1.c_str());
+                        log->debugData(MAJOR, "Loading shaders for", tmpMesh->getID());
+                    }
 					objects.push_back(tmpMesh);
 
 				}
@@ -667,9 +670,12 @@ void SCENE::load(std::string filename)
 					core::vector3df pos;
 					core::vector3df rot;
 					core::vector3df scale;
+					core::stringw vs;
+					core::stringw ps;
 					int id;
 					int parentID;
 					bool hasCollider=false;
+					bool hasShader=false;
 					int colliderType;
 					f32 mass;
 					while(xml && xml->read() && inMesh)
@@ -703,6 +709,15 @@ void SCENE::load(std::string filename)
 								{
 									scale = core::vector3df(xml->getAttributeValueAsFloat(0), xml->getAttributeValueAsFloat(1), xml->getAttributeValueAsFloat(2));
 								}
+								if(core::stringw(L"Shader").equals_ignore_case(xml->getNodeName()))
+                                {
+                                    if(core::stringw(L"true").equals_ignore_case(xml->getAttributeValue(0)))
+                                    {
+                                        hasShader = true;
+                                        vs = xml->getAttributeValue(1);
+                                        ps = xml->getAttributeValue(2);
+                                    }
+                                }
 								if(core::stringw(L"Collider").equals_ignore_case(xml->getNodeName()))
 								{
 									if(core::stringw(L"true").equals_ignore_case(xml->getAttributeValue(0)))
@@ -740,6 +755,13 @@ void SCENE::load(std::string filename)
 					{
 						tmpMesh->addCollider(log, colliderType, manager, world, mass, tmpMesh->getMesh());
 					}
+					if(hasShader)
+                    {
+                        core::stringc vs1 = core::stringc(vs);
+                        core::stringc ps1 = core::stringc(ps);
+                        ((OBJECT*)tmpMesh)->useShader(device, vs1.c_str(), ps1.c_str());
+                        log->debugData(MAJOR, "Loading shaders for", tmpMesh->getID());
+                    }
 					objects.push_back(tmpMesh);
 				}
 				else if(core::stringw(L"LIGHT").equals_ignore_case(xml->getNodeName()))
@@ -842,6 +864,164 @@ void SCENE::load(std::string filename)
 				else if(core::stringw(L"PARTICLE").equals_ignore_case(xml->getNodeName()))
 				{
 					log->logData("FOUND PARTICLE");
+					bool inPart = true;
+					core::stringw name;
+					core::stringw filename;
+					core::vector3df pos;
+					core::vector3df rot;
+					core::vector3df scale;
+					u32 rateMin, rateMax;
+					u32 ageMin, ageMax;
+					f32 sizeMin, sizeMax;
+					int id;
+					int parentID;
+					while(xml && xml->read() && inPart)
+					{
+						switch(xml->getNodeType())
+						{
+							case io::EXN_ELEMENT:
+								if(core::stringw(L"file").equals_ignore_case(xml->getNodeName()))
+								{
+									filename = xml->getAttributeValue(0);
+								}
+								if(core::stringw(L"id").equals_ignore_case(xml->getNodeName()))
+								{
+									id = xml->getAttributeValueAsFloat(0);
+									parentID = xml->getAttributeValueAsFloat(1);
+									parentIDs[id] = parentID;
+								}
+								if(core::stringw(L"rate").equals_ignore_case(xml->getNodeName()))
+								{
+									rateMin = xml->getAttributeValueAsFloat(0);
+									rateMax = xml->getAttributeValueAsFloat(1);
+								}
+								if(core::stringw(L"age").equals_ignore_case(xml->getNodeName()))
+								{
+									ageMin = xml->getAttributeValueAsFloat(0);
+									ageMax = xml->getAttributeValueAsFloat(1);
+								}
+								if(core::stringw(L"size").equals_ignore_case(xml->getNodeName()))
+								{
+									sizeMin=xml->getAttributeValueAsFloat(0);
+									sizeMax=xml->getAttributeValueAsFloat(1);
+								}
+								if(core::stringw(L"name").equals_ignore_case(xml->getNodeName()))
+								{
+									name = xml->getAttributeValue(0);
+								}
+								if(core::stringw(L"position").equals_ignore_case(xml->getNodeName()))
+								{
+									pos = core::vector3df(xml->getAttributeValueAsFloat(0), xml->getAttributeValueAsFloat(1), xml->getAttributeValueAsFloat(2));
+								}
+								if(core::stringw(L"rotation").equals_ignore_case(xml->getNodeName()))
+								{
+									rot = core::vector3df(xml->getAttributeValueAsFloat(0), xml->getAttributeValueAsFloat(1), xml->getAttributeValueAsFloat(2));
+								}
+								if(core::stringw(L"scale").equals_ignore_case(xml->getNodeName()))
+								{
+									scale = core::vector3df(xml->getAttributeValueAsFloat(0), xml->getAttributeValueAsFloat(1), xml->getAttributeValueAsFloat(2));
+								}
+							break;
+							case io::EXN_ELEMENT_END:
+								if(core::stringw(L"PARTICLE").equals_ignore_case(xml->getNodeName()))
+								{
+									inPart = false;
+								}
+							break;
+						}
+					}
+					core::stringc cname = core::stringc(name);
+					core::stringc cfilename = core::stringc(filename);
+
+					PARTICLE* tmpPart = new PARTICLE(device, log);
+					tmpPart->init();
+					tmpPart->setID(id);
+					tmpPart->loadTexture((std::string)(device->getFileSystem()->getAbsolutePath(cfilename.c_str()).c_str()));
+					tmpPart->setName(cname.c_str());
+					tmpPart->setPosition(pos);
+					tmpPart->setDirection(rot);
+					tmpPart->setScale(scale);
+					tmpPart->setSize(core::dimension2df(sizeMin, sizeMin), core::dimension2df(sizeMax,sizeMax));
+					tmpPart->setAge(ageMin, ageMax);
+					tmpPart->setRate(rateMin, rateMax);
+					tmpPart->update();
+					objects.push_back(tmpPart);
+				}
+				else if(core::stringw(L"EMPTY").equals_ignore_case(xml->getNodeName()))
+				{
+					log->logData("FOUND EMPTY");
+					bool inMesh = true;
+					core::stringw name;
+					core::vector3df pos;
+					core::vector3df rot;
+					core::vector3df scale;
+					int id;
+					int parentID;
+					bool hasCollider=false;
+					int colliderType;
+					f32 mass;
+					while(xml && xml->read() && inMesh)
+					{
+						switch(xml->getNodeType())
+						{
+							case io::EXN_ELEMENT:
+								if(core::stringw(L"id").equals_ignore_case(xml->getNodeName()))
+								{
+									id = xml->getAttributeValueAsFloat(0);
+									parentID = xml->getAttributeValueAsFloat(1);
+									parentIDs[id] = parentID;
+								}
+								if(core::stringw(L"name").equals_ignore_case(xml->getNodeName()))
+								{
+									name = xml->getAttributeValue(0);
+								}
+								if(core::stringw(L"position").equals_ignore_case(xml->getNodeName()))
+								{
+									pos = core::vector3df(xml->getAttributeValueAsFloat(0), xml->getAttributeValueAsFloat(1), xml->getAttributeValueAsFloat(2));
+								}
+								if(core::stringw(L"rotation").equals_ignore_case(xml->getNodeName()))
+								{
+									rot = core::vector3df(xml->getAttributeValueAsFloat(0), xml->getAttributeValueAsFloat(1), xml->getAttributeValueAsFloat(2));
+								}
+								if(core::stringw(L"scale").equals_ignore_case(xml->getNodeName()))
+								{
+									scale = core::vector3df(xml->getAttributeValueAsFloat(0), xml->getAttributeValueAsFloat(1), xml->getAttributeValueAsFloat(2));
+								}
+								if(core::stringw(L"Collider").equals_ignore_case(xml->getNodeName()))
+								{
+									if(core::stringw(L"true").equals_ignore_case(xml->getAttributeValue(0)))
+									{
+										hasCollider=true;
+										colliderType = xml->getAttributeValueAsFloat(1);
+										mass = xml->getAttributeValueAsFloat(2);
+									}
+								}
+							break;
+							case io::EXN_ELEMENT_END:
+								if(core::stringw(L"EMPTY").equals_ignore_case(xml->getNodeName()))
+								{
+									log->debugData(MAJOR, "leaving EMPTY");
+									inMesh = false;
+								}
+							break;
+						}
+					}
+					core::stringc cname = core::stringc(name);
+
+					EMPTYOBJECT* tmpEmpty = new EMPTYOBJECT(manager);
+					tmpEmpty->setID(id);
+					tmpEmpty->setName(cname.c_str());
+					tmpEmpty->setPosition(pos);
+					tmpEmpty->setRotation(rot);
+					tmpEmpty->setScale(scale);
+					tmpEmpty->init();
+					tmpEmpty->update();
+					if(hasCollider)
+					{
+						tmpEmpty->addCollider(log, colliderType, manager, world, mass);
+					}
+					objects.push_back(tmpEmpty);
+
 				}
 				else
 				{
@@ -910,6 +1090,14 @@ void SCENE::save(std::string filename)
 			xml->writeLineBreak();
 			xml->writeElement(L"scale", true, L"x", core::stringw((*it)->getScale().X).c_str(), L"y", core::stringw((*it)->getScale().Y).c_str(), L"z", core::stringw((*it)->getScale().Z).c_str());
 			xml->writeLineBreak();
+			if((*it)->hasShader)
+            {
+                xml->writeElement(L"Shader", true, L"hasShader", L"true", L"VertexShader", core::stringw((*it)->vsName.c_str()).c_str(), L"FragmentShader", core::stringw((*it)->fsName.c_str()).c_str());
+            }else
+            {
+                xml->writeElement(L"Shader", true, L"hasShader", L"false");
+            }
+            xml->writeLineBreak();
 			if((*it)->hasCollider)
 			{
 				xml->writeElement(L"Collider", true, L"hasCollider", L"true", L"type", core::stringw((*it)->getCollider()->getType()).c_str(), L"mass", core::stringw((*it)->getCollider()->getMass()).c_str());
@@ -945,6 +1133,14 @@ void SCENE::save(std::string filename)
 			xml->writeLineBreak();
 			xml->writeElement(L"scale", true, L"x", core::stringw((*it)->getScale().X).c_str(), L"y", core::stringw((*it)->getScale().Y).c_str(), L"z", core::stringw((*it)->getScale().Z).c_str());
 			xml->writeLineBreak();
+			if((*it)->hasShader)
+            {
+                xml->writeElement(L"Shader", true, L"hasShader", L"true", L"VertexShader", core::stringw((*it)->vsName.c_str()).c_str(), L"FragmentShader", core::stringw((*it)->fsName.c_str()).c_str());
+            }else
+            {
+                xml->writeElement(L"Shader", true, L"hasShader", L"false");
+            }
+            xml->writeLineBreak();
 			if((*it)->hasCollider)
 			{
 				xml->writeElement(L"Collider", true, L"hasCollider", L"true", L"type", core::stringw((*it)->getCollider()->getType()).c_str(), L"mass", core::stringw((*it)->getCollider()->getMass()).c_str());
@@ -1035,11 +1231,17 @@ void SCENE::save(std::string filename)
 			file = device->getFileSystem()->getRelativeFilename(file, device->getFileSystem()->getWorkingDirectory());
 			xml->writeElement(L"file", true, L"filename", file.c_str());
 			xml->writeLineBreak();
+			xml->writeElement(L"rate", true, L"rateMin", core::stringw(((PARTICLE*)(*it))->rateMin).c_str(), L"rateMax", core::stringw(((PARTICLE*)(*it))->rateMax).c_str());
+			xml->writeLineBreak();
+			xml->writeElement(L"age", true, L"ageMin", core::stringw(((PARTICLE*)(*it))->minAge).c_str(), L"ageMax", core::stringw(((PARTICLE*)(*it))->minAge).c_str());
+			xml->writeLineBreak();
+			xml->writeElement(L"size", true, L"sizeMin", core::stringw(((PARTICLE*)(*it))->sizeMin.Height).c_str(), L"sizeMax", core::stringw(((PARTICLE*)(*it))->sizeMax.Height).c_str());
+			xml->writeLineBreak();
 			xml->writeElement(L"name", true, L"name", core::stringw((*it)->getName().c_str()).c_str());
 			xml->writeLineBreak();
 			xml->writeElement(L"position", true, L"x", core::stringw((*it)->getPosition().X).c_str(), L"y", core::stringw((*it)->getPosition().Y).c_str(), L"z", core::stringw((*it)->getPosition().Z).c_str());
 			xml->writeLineBreak();
-			xml->writeElement(L"rotation", true, L"x", core::stringw((*it)->getRotation().X).c_str(), L"y", core::stringw((*it)->getRotation().Y).c_str(), L"z", core::stringw((*it)->getRotation().Z).c_str());
+			xml->writeElement(L"rotation", true, L"x", core::stringw(((PARTICLE*)(*it))->getDir().X).c_str(), L"y", core::stringw(((PARTICLE*)(*it))->getDir().Y).c_str(), L"z", core::stringw(((PARTICLE*)(*it))->getDir().Z).c_str());
 			xml->writeLineBreak();
 			xml->writeElement(L"scale", true, L"x", core::stringw((*it)->getScale().X).c_str(), L"y", core::stringw((*it)->getScale().Y).c_str(), L"z", core::stringw((*it)->getScale().Z).c_str());
 			xml->writeLineBreak();

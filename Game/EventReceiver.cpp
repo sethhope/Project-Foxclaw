@@ -3,6 +3,8 @@
 using namespace irr;
 using namespace FCE;
 
+
+
 FEventReceiver::FEventReceiver()
 {
 	for(u16 i = 0; i < KEY_KEY_CODES_COUNT; i++)
@@ -145,5 +147,5 @@ void FEventReceiver::OnNodePreRender(scene::ISceneNode* node)
 }
 void FEventReceiver::OnNodePostRender(scene::ISceneNode* node)
 {
-	
+
 }

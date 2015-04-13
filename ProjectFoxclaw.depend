@@ -1,0 +1,214 @@
+# depslib dependency file v1.0
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\main.cpp
+	"stdlib.h"
+	"Game/Framework.h"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\framework.h
+	"stdafx.h"
+	"Misc/Logger.h"
+	"Scene.h"
+	"Objects/Mesh.h"
+	"Misc/Script.h"
+	"EventReceiver.h"
+	"Irrlicht.h"
+
+1426881035 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\scene.h
+	"stdafx.h"
+	<map>
+	"ShaderCallback.h"
+	"Misc/Script.h"
+	"Misc/Logger.h"
+	"Objects/Mesh.h"
+	"Objects/Light.h"
+	"Objects/Particle.h"
+	"Objects/Sound.h"
+	"Objects/Collider.h"
+	"Objects/EmptyObject.h"
+	"Objects/Camera.h"
+	"Objects/AnimatedMesh.h"
+	"Objects/Terrain.h"
+	"EventReceiver.h"
+	"Irrlicht.h"
+	"irrKlang.h"
+	"irrBullet.h"
+	"GUI.h"
+	"Misc/PostProcessing/PostProcessManager.h"
+
+1425621749 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shadercallback.h
+	"stdafx.h"
+	"irrlicht.h"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\eventreceiver.h
+	"stdafx.h"
+	"irrlicht.h"
+	"GUI.h"
+	"Objects/LIGHT.h"
+
+1428513916 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\gui.h
+	"stdafx.h"
+	"Misc/Script.h"
+	"Misc/Logger.h"
+	"irrlicht.h"
+	"lua.hpp"
+
+1426984830 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\eventreceiver.cpp
+	"EventReceiver.h"
+
+1427570610 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\framework.cpp
+	"Framework.h"
+
+1425621750 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\renderer.cpp
+
+1428449191 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\scene.cpp
+	"Scene.h"
+
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shadercallback.cpp
+	"ShaderCallback.h"
+
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\logger.cpp
+	"Misc/Logger.h"
+
+1425684388 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\postprocessing\postprocessmanager.cpp
+	"PostProcessManager.h"
+	"IPostProcess.h"
+	"ShaderPostProcess.h"
+
+1425684389 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\postprocessing\postprocessmanager.h
+	<irrlicht.h>
+
+1425621872 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\postprocessing\ipostprocess.h
+	<irrlicht.h>
+
+1425621856 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\postprocessing\shaderpostprocess.h
+	"IPostprocess.h"
+	"ShaderMaterial.h"
+
+1425845786 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\postprocessing\shadermaterial.h
+	<irrlicht.h>
+
+1425860482 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\postprocessing\shadermaterial.cpp
+	"ShaderMaterial.h"
+
+1425621856 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\postprocessing\shaderpostprocess.cpp
+	"ShaderPostProcess.h"
+
+1428448242 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\script.cpp
+	"Script.h"
+	"LuaClassDef.hpp"
+	"Game/Scene.h"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\script.h
+	"lua.hpp"
+	"luawrapper.hpp"
+	"stdafx.h"
+	"Logger.h"
+	"Objects/Object.h"
+	"include/lua.hpp"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\logger.h
+	"stdafx.h"
+	<fstream>
+	<time.h>
+	<stdio.h>
+	<sstream>
+
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\animatedmesh.cpp
+	"AnimatedMesh.h"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\animatedmesh.h
+	"Object.h"
+	"Misc/Logger.h"
+	"Irrlicht.h"
+
+1426902586 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\object.h
+	"stdafx.h"
+	<map>
+	"node.h"
+	"Collider.h"
+	"Irrlicht.h"
+	"irrBullet.h"
+	"Misc/Logger.h"
+	"Game/ShaderCallback.h"
+
+1425621889 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\node.h
+	"stdafx.h"
+	"Irrlicht.h"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\collider.h
+	"stdafx.h"
+	"Misc/Logger.h"
+	"Irrlicht.h"
+	"irrBullet.h"
+
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\camera.cpp
+	"Camera.h"
+
+1426881121 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\camera.h
+	"stdafx.h"
+	"Object.h"
+	"Misc/Logger.h"
+	"irrlicht.h"
+
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\collider.cpp
+	"Collider.h"
+
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\emptyobject.cpp
+	"EmptyObject.h"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\emptyobject.h
+	"stdafx.h"
+	"Object.h"
+
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\light.cpp
+	"Light.h"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\light.h
+	"Irrlicht.h"
+	"Object.h"
+	"Misc/Logger.h"
+
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\mesh.cpp
+	"Mesh.h"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\mesh.h
+	"Object.h"
+	"Misc/Logger.h"
+	"Irrlicht.h"
+
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\node.cpp
+	"NODE.h"
+
+1426902586 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\object.cpp
+	"Object.h"
+
+1425621884 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\particle.cpp
+	"Particle.h"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\particle.h
+	"stdafx.h"
+	"Object.h"
+	"Irrlicht.h"
+	"Misc/Logger.h"
+
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\sound.cpp
+	"Sound.h"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\sound.h
+	"stdafx.h"
+	"Object.h"
+	"Misc/Logger.h"
+	"Irrlicht.h"
+	"irrKlang.h"
+
+1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\terrain.cpp
+	"Terrain.h"
+
+1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\terrain.h
+	"stdafx.h"
+	"Object.h"
+	"Misc/Logger.h"
+	"irrlicht.h"
+
+1428513897 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\gui.cpp
+	"GUI.h"
+

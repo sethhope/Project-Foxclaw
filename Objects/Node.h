@@ -11,22 +11,22 @@ namespace FCE
 			NODE();
 			~NODE();
 			NODE* getParent();
-			NODE* getChild();
-			NODE* getNext();
-			NODE* getPrev();
-			NODE* getLastChild();
+			NODE* getChild(u32 id);
 			NODE* getFirstParent();
 			void attachTo(NODE* node);
 			void detach();
-			void addSibling(NODE* node);
 			scene::ISceneNode* getIrrNode();
+			
+			void addChild(NODE* n);
+			void removeChild(u32 id);
 		private:
 			NODE* parent;
-			NODE* child;
-			NODE* nextNode;
-			NODE* prevNode;
-  protected:
+			
+  		protected:
+  			u32 cID;
+			u32 _cID;
 			scene::ISceneNode* thisNode;
+			std::vector<NODE*> children;
 	};
 }
 #endif //_NODE_H_

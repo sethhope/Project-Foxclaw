@@ -13,38 +13,45 @@
 #define COL_SOFTBODY 6
 #define COL_CAPSULE 7
 #define MAX_TYPE 7
+
+//TODO: Apply force and torque integration
 using namespace irr;
 namespace FCE
 {
-	
-	class COLLIDER
-	{
-		public:
-			COLLIDER(scene::ISceneNode* parent, scene::ISceneManager* manager, irrBulletWorld* world, int type, float mass, LOGGER* log);
-			~COLLIDER();
-			void init();
-			void setType(int type);
-			void setMass(float mass);
-			void setVelocity(core::vector3df velocity);
-			void setFriction(float friction);
-			void setDamping(float lDamping, float aDamping);
-			void setMesh(scene::IMesh* colMesh);
-			int getType();
-			float getMass();
-			IRigidBody* body;
-			irrBulletWorld *world;
-			scene::ISceneNode* node;
-		private:
-			int type;
-			float friction, mass, damping;
-			float rad;
-			
-			scene::IMesh* colMesh;
-			
-			ILiquidBody* lbody;
-			ISoftBody* sbody;
-			LOGGER* log;
-			
-	};
+
+class COLLIDER
+{
+public:
+    COLLIDER(scene::ISceneNode* parent, scene::ISceneManager* manager, irrBulletWorld* world, int type, float mass, LOGGER* log);
+    ~COLLIDER();
+    void init();
+    void setLocal(bool local);
+    void setType(int type);
+    void setMass(float mass);
+    void setVelocity(core::vector3df velocity);
+    void setAVelocity(core::vector3df velocity);
+    void addCentralForce(core::vector3df force);
+    void addForce(core::vector3df force, core::vector3df position);
+    void addTorque(core::vector3df torque);
+    void setFriction(float friction);
+    void setDamping(float lDamping, float aDamping);
+    void setMesh(scene::IMesh* colMesh);
+    int getType();
+    float getMass();
+    IRigidBody* body;
+    irrBulletWorld *world;
+    scene::ISceneNode* node;
+private:
+    int type;
+    float friction, mass, damping;
+    float rad;
+    bool local;
+    scene::IMesh* colMesh;
+
+    ILiquidBody* lbody;
+    ISoftBody* sbody;
+    LOGGER* log;
+
+};
 }
 #endif

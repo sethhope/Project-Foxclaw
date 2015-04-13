@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ProjectFoxclaw" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="../Project Foxclaw" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../FoxClawIrrlicht" />
+				<Option object_output="BIN/obj" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+			</Target>
+			<Target title="Release">
+				<Option output="../ProjectFoxclawRelease" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../FoxClawIrrlicht" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-std=c++11" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add directory='&quot;C:/Users/Seth/Desktop/Game Dev/FoxClawIrrlicht/Project-Foxclaw/irrBullet&quot;' />
+			<Add directory='&quot;C:/Users/Seth/Desktop/Game Dev/FoxClawIrrlicht/Project-Foxclaw/include&quot;' />
+			<Add directory='&quot;C:/Users/Seth/Desktop/Game Dev/FoxClawIrrlicht/Project-Foxclaw/irrBullet/bheaders&quot;' />
+			<Add directory='&quot;C:/Users/Seth/Desktop/Game Dev/FoxClawIrrlicht/Project-Foxclaw/irrBullet/bheaders/Bullet&quot;' />
+			<Add directory='&quot;C:/Users/Seth/Desktop/Game Dev/FoxClawIrrlicht/Project-Foxclaw&quot;' />
+		</Compiler>
+		<Linker>
+			<Add option="../libirrKlang.a" />
+			<Add option="../libIrrlicht.a" />
+			<Add option="../liblua52.a" />
+			<Add option="../libirrBullet.a" />
+			<Add option="../libBulletDynamics.a" />
+			<Add option="../libBulletSoftBody.a" />
+			<Add option="../libGIMPACTUtils.a" />
+			<Add option="../libLinearMath.a" />
+			<Add option="../libBulletCollision.a" />
+		</Linker>
+		<Unit filename="Game/EventReceiver.cpp" />
+		<Unit filename="Game/EventReceiver.h" />
+		<Unit filename="Game/Framework.cpp" />
+		<Unit filename="Game/Framework.h" />
+		<Unit filename="Game/GUI.cpp" />
+		<Unit filename="Game/GUI.h" />
+		<Unit filename="Game/Renderer.cpp" />
+		<Unit filename="Game/Renderer.h" />
+		<Unit filename="Game/Scene.cpp" />
+		<Unit filename="Game/Scene.h" />
+		<Unit filename="Game/ShaderCallback.cpp" />
+		<Unit filename="Game/ShaderCallback.h" />
+		<Unit filename="LuaClassDef.hpp" />
+		<Unit filename="Main.cpp" />
+		<Unit filename="Misc/Logger.cpp" />
+		<Unit filename="Misc/Logger.h" />
+		<Unit filename="Misc/PostProcessing/IPostProcess.h" />
+		<Unit filename="Misc/PostProcessing/PostProcessManager.cpp" />
+		<Unit filename="Misc/PostProcessing/PostProcessManager.h" />
+		<Unit filename="Misc/PostProcessing/ShaderMaterial.cpp" />
+		<Unit filename="Misc/PostProcessing/ShaderMaterial.h" />
+		<Unit filename="Misc/PostProcessing/ShaderPostProcess.cpp" />
+		<Unit filename="Misc/PostProcessing/ShaderPostProcess.h" />
+		<Unit filename="Misc/Script.cpp" />
+		<Unit filename="Misc/Script.h" />
+		<Unit filename="Objects/AnimatedMesh.cpp" />
+		<Unit filename="Objects/AnimatedMesh.h" />
+		<Unit filename="Objects/Camera.cpp" />
+		<Unit filename="Objects/Camera.h" />
+		<Unit filename="Objects/Collider.cpp" />
+		<Unit filename="Objects/Collider.h" />
+		<Unit filename="Objects/EmptyObject.cpp" />
+		<Unit filename="Objects/EmptyObject.h" />
+		<Unit filename="Objects/Light.cpp" />
+		<Unit filename="Objects/Light.h" />
+		<Unit filename="Objects/Mesh.cpp" />
+		<Unit filename="Objects/Mesh.h" />
+		<Unit filename="Objects/Node.cpp" />
+		<Unit filename="Objects/Node.h" />
+		<Unit filename="Objects/Object.cpp" />
+		<Unit filename="Objects/Object.h" />
+		<Unit filename="Objects/Particle.cpp" />
+		<Unit filename="Objects/Particle.h" />
+		<Unit filename="Objects/Sound.cpp" />
+		<Unit filename="Objects/Sound.h" />
+		<Unit filename="Objects/Terrain.cpp" />
+		<Unit filename="Objects/Terrain.h" />
+		<Unit filename="luawrapper.hpp" />
+		<Unit filename="luawrapperutil.hpp" />
+		<Unit filename="stdafx.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

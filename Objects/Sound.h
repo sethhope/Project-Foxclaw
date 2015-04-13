@@ -10,24 +10,24 @@ using namespace core;
 using namespace irrklang;
 namespace FCE
 {
-	class SOUND : public OBJECT
-	{
-		public:
-			SOUND();
-			SOUND(ISoundEngine* engine, LOGGER* log);
-			~SOUND();
-			void onInit();
-			void onUpdate();
-			void onRender();
-			std::string getOType();
-			void load(std::string filename, bool loop);
-			void setVolume(f32 volume);
-			ISound* getSound();
-		private:
-			ISoundEngine* engine;
-			ISound* s;
-			LOGGER* log;
-			f32 volume;
-	};
+class SOUND : public OBJECT
+{
+public:
+    SOUND();
+    SOUND(ISoundEngine* engine, LOGGER* log);
+    ~SOUND();
+    void onInit();
+    void onUpdate();
+    void onRender();
+    std::string getOType();
+    void load(std::string filename, bool loop);
+    void setVolume(f32 volume);
+    ISound* getSound();
+private:
+    ISoundEngine* engine;
+    ISound* s;
+    LOGGER* log;
+    f32 volume;
+};
 }
 #endif

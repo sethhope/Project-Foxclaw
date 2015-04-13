@@ -13,27 +13,27 @@
 #define ALL 3
 namespace FCE
 {
-	class LOGGER
-	{
-		public:
-			LOGGER();
-			~LOGGER();
-			int init(std::string filename);
-			void logData(std::string data);
-			void logData(std::string data, float num);
-			void logData(std::string data1, std::string data2);
-			void logData(std::string data1, char* data2);
-			void debugData(int level, std::string data);
-			void debugData(int level, std::string data, float num);
-			void debugData(int level, std::string data1, std::string data2);
-			void debugData(int level, std::string data1, char* data2);
-			void setDebug(int debug);
-			std::string backlog[10];
-		private:
-			int debug;
-			std::ofstream file;
-			
-			
-	};
+class LOGGER
+{
+public:
+    LOGGER();
+    ~LOGGER();
+    int init(std::string filename);
+    void logData(std::string data);
+    void logData(std::string data, float num);
+    void logData(std::string data1, std::string data2);
+    void logData(std::string data1, char* data2);
+    void debugData(int level, std::string data);
+    void debugData(int level, std::string data, float num);
+    void debugData(int level, std::string data1, std::string data2);
+    void debugData(int level, std::string data1, char* data2);
+    void setDebug(int debug);
+    std::string backlog[10];
+private:
+    int debug;
+    std::ofstream file;
+
+
+};
 }
 #endif //_LOGGER_H_

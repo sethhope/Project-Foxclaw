@@ -7,27 +7,27 @@ using namespace irr;
 using namespace core;
 namespace FCE
 {
-	class MESH : public OBJECT
-	{
-		public:
-			MESH(scene::ISceneManager* manager, LOGGER* log);
-			~MESH();
-			void onInit();
-			void onUpdate();
-			void onRender();
-			std::string getOType();
-			
-			u8 load(std::string filename);
-			std::string getFilename();
-			scene::IAnimatedMesh* getMesh();
-			//scene::IAnimatedMeshSceneNode* getNode();
-			
-		private:
-			u32 id;
-			LOGGER* log;
-			std::string filename;
-			scene::IAnimatedMesh* mesh;
-			scene::ISceneManager* manager;
-	};
+class MESH : public OBJECT
+{
+public:
+    MESH(scene::ISceneManager* manager, LOGGER* log);
+    ~MESH();
+    void onInit();
+    void onUpdate();
+    void onRender();
+    std::string getOType();
+
+    u8 load(std::string filename);
+    std::string getFilename();
+    scene::IAnimatedMesh* getMesh();
+    //scene::IAnimatedMeshSceneNode* getNode();
+
+private:
+    u32 id;
+    LOGGER* log;
+    std::string filename;
+    scene::IAnimatedMesh* mesh;
+    scene::ISceneManager* manager;
+};
 }
 #endif
