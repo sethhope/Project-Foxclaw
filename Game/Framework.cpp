@@ -32,7 +32,7 @@ int FRAMEWORK::init()
 	//Create graphics driver
 	//Check for opengl (Only OpenGL and software for now. DirectX may come later)
 	log->logData("Trying OpenGL");
-	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(SCREENWIDTH, SCREENHEIGHT), 32, false, true, true, &receiver);
+	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(SCREENWIDTH, SCREENHEIGHT), 32, false, false, true, &receiver);
 	if(!device)
 	{
 		//OpenGL failed. Try software renderer

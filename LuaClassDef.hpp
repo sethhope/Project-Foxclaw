@@ -118,6 +118,19 @@ int Scene_SSlog(lua_State* L)
     s->getLog()->logData(luaL_checkstring(L, 2), luaL_checkstring(L, 3));
     return 0;
 }
+int Scene_getBacklog(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    lua_newtable(L);
+    for(int i = 0; i < 10; i++)
+    {
+        lua_pushnumber(L, i+1);
+        lua_pushstring(L, s->getLog()->backlog[i].c_str());
+        lua_settable(L, -3);
+    }
+    lua_pushnumber(L, 11);
+    return 2;
+}
 int Scene_setDebug(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
@@ -1028,6 +1041,22 @@ int Object_getUpVector(lua_State* L)
     lua_pushnumber(L, uv.Z);
     return 3;
 }
+int Object_getChildren(lua_State* L)
+{
+    OBJECT* o = luaW_check<OBJECT>(L, 1);
+    std::vector<NODE*> c = o->children;
+    u32 key = 1;
+    lua_newtable(L);
+    for(std::vector<NODE*>::iterator it = c.begin(); it < c.end(); it++)
+    {
+        lua_pushnumber(L, key);
+        luaW_push<OBJECT>(L, (OBJECT*)(*it));
+        lua_settable(L, -3);
+        key++;
+    }
+    lua_pushnumber(L, key-1);
+    return 2;
+}
 COLLIDER* Collider_new(lua_State* L)
 {
     return 0;
@@ -1754,6 +1783,12 @@ int GUI_remove(lua_State* L)
     GUI* g = luaW_check<GUI>(L, 1);
     g->element->setVisible(false);
     return 0;
+}
+int GUI_getCaller(lua_State* L)
+{
+    GUI* g = luaW_check<GUI>(L, 1);
+    lua_pushnumber(L, g->guiCaller);
+    return 1;
 }
 int GUI_setTitle(lua_State* L)
 {

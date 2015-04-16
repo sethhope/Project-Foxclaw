@@ -16,17 +16,17 @@ namespace FCE
 			void attachTo(NODE* node);
 			void detach();
 			scene::ISceneNode* getIrrNode();
-			
+			std::vector<NODE*> children;
 			void addChild(NODE* n);
 			void removeChild(u32 id);
 		private:
 			NODE* parent;
-			
+
   		protected:
   			u32 cID;
 			u32 _cID;
 			scene::ISceneNode* thisNode;
-			std::vector<NODE*> children;
+
 	};
 }
 #endif //_NODE_H_

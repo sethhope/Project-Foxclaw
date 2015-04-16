@@ -4,6 +4,7 @@ using namespace irr;
 
 GUI::GUI(gui::IGUIEnvironment* environment, LOGGER* log)
 {
+    //initialize all values to their starting values
     this->log = log;
     this->env = environment;
     hasFocus = false;
@@ -12,13 +13,17 @@ GUI::GUI(gui::IGUIEnvironment* environment, LOGGER* log)
 
 GUI::~GUI()
 {
+    //nothing yet.
 }
 
 void GUI::addScript(SCRIPT* script)
 {
+    //set s to script... pretty simple, right?
     this->s = script;
 }
-
+//===================================
+//BEGIN GUI INITIALIZATION FUNCTIONS
+//===================================
 void GUI::initButton(u32 id, core::stringw text, core::stringw text2, rect<s32> position, gui::IGUIElement* parent)
 {
     type = FBUTTON;
@@ -102,9 +107,12 @@ void GUI::removeItemFromList(u32 id)
 {
     ((gui::IGUIListBox*)element)->removeItem(id);
 }
-
+//=======================================
+//END INITIALIZATION FUNCTIONS
+//=======================================
 void GUI::setTransparency(s32 alpha)
 {
+    //sets the transparency for all GUI objects to (alpha)
     for(s32 i = 0; i < irr::gui::EGDC_COUNT; i++)
     {
         video::SColor col = skin->getColor((gui::EGUI_DEFAULT_COLOR)i);
@@ -115,10 +123,12 @@ void GUI::setTransparency(s32 alpha)
 
 void GUI::setParent(GUI* parent)
 {
+    //Read the function name... It does that.
     parent->element->addChild(this->element);
     this->parent = parent;
     parent->children.push_back(this);
 }
+
 bool GUI::OnEvent(const SEvent& event)
 {
     if(event.EventType == EET_GUI_EVENT)

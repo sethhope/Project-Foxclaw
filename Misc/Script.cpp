@@ -49,6 +49,7 @@ void SCRIPT::onInit()
         {"SLog", Scene_Slog},
         {"SNLog", Scene_SNlog},
         {"SSLog", Scene_SSlog},
+        {"getBacklog", Scene_getBacklog},
         {"setDebug", Scene_setDebug},
         {"addMesh", Scene_addMesh},
         {"getMesh", Scene_getMesh},
@@ -217,6 +218,7 @@ void SCRIPT::onInit()
         {"setMetaData", Object_setMetaData},
         {"getMetaData", Object_getMetaData},
         {"getUpVector", Object_getUpVector},
+        {"getChildren", Object_getChildren},
         {NULL, NULL}
     };
     static luaL_Reg Collider_table[] =
@@ -248,6 +250,7 @@ void SCRIPT::onInit()
     static luaL_Reg GUI_table[] =
     {
         {"setText", GUI_setText},
+        {"getID", GUI_getCaller},
         {"setTitle", GUI_setTitle},
         {"removeElement", GUI_remove},
         {NULL, NULL}
