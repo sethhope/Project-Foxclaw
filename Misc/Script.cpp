@@ -99,6 +99,8 @@ void SCRIPT::onInit()
         {"setGravity", Scene_setGravity},
         {"getGUIObject", Scene_getGUIObject},
         {"setFog", Scene_setFog},
+        {"addArchive", Scene_addZip},
+        {"removeArchive", Scene_removeZip},
         {NULL, NULL}
     };
     static luaL_Reg Mesh_metatable[] =

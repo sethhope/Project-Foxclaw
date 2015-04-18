@@ -409,7 +409,7 @@ void SCENE::setDebug(bool debug)
 }
 void SCENE::setSkydome(std::string filename)
 {
-	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()), 64, 64, 1, 2.0);
+	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()), 16, 8, 1, 2.0);
 	skyFile = filename;
 }
 void SCENE::removeObject(u32 id)
@@ -565,8 +565,7 @@ void SCENE::load(std::string filename)
 					core::vector3df pos;
 					core::vector3df rot;
 					core::vector3df scale;
-					core::stringw vs;
-					core::stringw ps;
+					core::stringw shaderFile;
 					int id;
 					int parentID;
 					bool hasShader=false;
@@ -609,8 +608,7 @@ void SCENE::load(std::string filename)
                                     if(core::stringw(L"true").equals_ignore_case(xml->getAttributeValue(0)))
                                     {
                                         hasShader = true;
-                                        vs = xml->getAttributeValue(1);
-                                        ps = xml->getAttributeValue(2);
+                                        shaderFile = xml->getAttributeValue(1);
                                     }
                                 }
 								if(core::stringw(L"Collider").equals_ignore_case(xml->getNodeName()))
@@ -653,9 +651,8 @@ void SCENE::load(std::string filename)
 					}
 					if(hasShader)
                     {
-                        core::stringc vs1 = core::stringc(vs);
-                        core::stringc ps1 = core::stringc(ps);
-                        ((OBJECT*)tmpMesh)->useShader(device, vs1.c_str(), ps1.c_str());
+                        core::stringc shaderFile1 = core::stringc(shaderFile);
+                        ((OBJECT*)tmpMesh)->useShader(device, getLog(), shaderFile1.c_str());
                         log->debugData(MAJOR, "Loading shaders for", tmpMesh->getID());
                     }
 					objects.push_back(tmpMesh);
@@ -670,8 +667,7 @@ void SCENE::load(std::string filename)
 					core::vector3df pos;
 					core::vector3df rot;
 					core::vector3df scale;
-					core::stringw vs;
-					core::stringw ps;
+					core::stringw shaderFile;
 					int id;
 					int parentID;
 					bool hasCollider=false;
@@ -714,8 +710,7 @@ void SCENE::load(std::string filename)
                                     if(core::stringw(L"true").equals_ignore_case(xml->getAttributeValue(0)))
                                     {
                                         hasShader = true;
-                                        vs = xml->getAttributeValue(1);
-                                        ps = xml->getAttributeValue(2);
+                                        shaderFile = xml->getAttributeValue(1);
                                     }
                                 }
 								if(core::stringw(L"Collider").equals_ignore_case(xml->getNodeName()))
@@ -757,9 +752,8 @@ void SCENE::load(std::string filename)
 					}
 					if(hasShader)
                     {
-                        core::stringc vs1 = core::stringc(vs);
-                        core::stringc ps1 = core::stringc(ps);
-                        ((OBJECT*)tmpMesh)->useShader(device, vs1.c_str(), ps1.c_str());
+                        core::stringc shaderFile1 = core::stringc(shaderFile);
+                        ((OBJECT*)tmpMesh)->useShader(device, getLog(), shaderFile1.c_str());
                         log->debugData(MAJOR, "Loading shaders for", tmpMesh->getID());
                     }
 					objects.push_back(tmpMesh);
@@ -1092,7 +1086,7 @@ void SCENE::save(std::string filename)
 			xml->writeLineBreak();
 			if((*it)->hasShader)
             {
-                xml->writeElement(L"Shader", true, L"hasShader", L"true", L"VertexShader", core::stringw((*it)->vsName.c_str()).c_str(), L"FragmentShader", core::stringw((*it)->fsName.c_str()).c_str());
+                xml->writeElement(L"Shader", true, L"hasShader", L"true", L"FileName", core::stringw((*it)->shaderName.c_str()).c_str());
             }else
             {
                 xml->writeElement(L"Shader", true, L"hasShader", L"false");
@@ -1135,7 +1129,7 @@ void SCENE::save(std::string filename)
 			xml->writeLineBreak();
 			if((*it)->hasShader)
             {
-                xml->writeElement(L"Shader", true, L"hasShader", L"true", L"VertexShader", core::stringw((*it)->vsName.c_str()).c_str(), L"FragmentShader", core::stringw((*it)->fsName.c_str()).c_str());
+                xml->writeElement(L"Shader", true, L"hasShader", L"true", L"FileName", core::stringw((*it)->shaderName.c_str()).c_str());
             }else
             {
                 xml->writeElement(L"Shader", true, L"hasShader", L"false");

@@ -181,23 +181,12 @@ f32 OBJECT::getMetaData(std::string key)
 {
 	return metadata[key];
 }
-void OBJECT::useShader(IrrlichtDevice* device, std::string vsName, std::string fsName)
+void OBJECT::useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderName)
 {
-    this->vsName = vsName;
-    this->fsName = fsName;
     hasShader = true;
-    io::path vsFile = vsName.c_str();
-    io::path psFile = fsName.c_str();
-
-    ShaderCallback* scb = new ShaderCallback();
-    scb->device = device;
-    video::IGPUProgrammingServices* gpu = device->getVideoDriver()->getGPUProgrammingServices();
-    const video::E_GPU_SHADING_LANGUAGE sLang = video::EGSL_DEFAULT;
-    video::E_MATERIAL_TYPE currM = thisNode->getMaterial(0).MaterialType;
-    s32 mat1 = gpu->addHighLevelShaderMaterialFromFiles(vsFile, "vertexMain", video::EVST_VS_1_1, psFile, "pixelMain", video::EPST_PS_1_1, scb, currM, 0, sLang);
-
-    scb->drop();
-
+    this->shaderName = shaderName;
+    shader = new ShaderHandler(device, log);
+    shader->addShader(shaderName);
     thisNode->setMaterialFlag(video::EMF_LIGHTING, false);
-    thisNode->setMaterialType((video::E_MATERIAL_TYPE)mat1);
+    thisNode->setMaterialType((video::E_MATERIAL_TYPE)shader->getMaterial());
 }

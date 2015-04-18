@@ -37,4 +37,14 @@ void ShaderCallback::OnSetConstants(video::IMaterialRendererServices* services, 
     {
         services->setVertexShaderConstant(worldView.pointer(), 4, 4);
     }
+    for(std::map<std::string, f32>::iterator it = vsConstants.begin(); it != vsConstants.end(); it++)
+    {
+        f32 pt = it->second;
+        services->setVertexShaderConstant(it->first.c_str(), &pt, 1);
+    }
+    for(std::map<std::string, f32>::iterator it = fsConstants.begin(); it != fsConstants.end(); it++)
+    {
+        f32 pt = it->second;
+        services->setPixelShaderConstant(it->first.c_str(), &pt, 1);
+    }
 }

@@ -759,6 +759,18 @@ int Scene_setFog(lua_State* L)
     s->getDevice()->getVideoDriver()->setFog(c, video::EFT_FOG_LINEAR, luaL_checknumber(L, 6), luaL_checknumber(L, 7));
     return 0;
 }
+int Scene_addZip(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getDevice()->getFileSystem()->addFileArchive(s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 2)).c_str(), true, true, io::EFAT_ZIP);
+    return 0;
+}
+int Scene_removeZip(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getDevice()->getFileSystem()->removeFileArchive(s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 2)).c_str());
+    return 0;
+}
 OBJECT* Object_new(lua_State* L)
 {
     OBJECT* o = new OBJECT();
@@ -925,7 +937,7 @@ int Object_useShader(lua_State* L)
 {
     OBJECT* o = luaW_check<OBJECT>(L, 1);
     SCENE* s = luaW_check<SCENE>(L, 2);
-    o->useShader(s->getDevice(), luaL_checkstring(L, 3), luaL_checkstring(L, 4));
+    o->useShader(s->getDevice(), s->getLog(), s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 3)).c_str());
     return 0;
 }
 int Object_setMaterialFlag(lua_State* L)

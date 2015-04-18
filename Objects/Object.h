@@ -8,6 +8,7 @@
 #include "irrBullet.h"
 #include "Misc/Logger.h"
 #include "Game/ShaderCallback.h"
+#include "Game/ShaderHandler.h"
 using namespace irr;
 using namespace core;
 namespace FCE
@@ -31,7 +32,7 @@ namespace FCE
 			void addCollider(LOGGER* log, u16 type, scene::ISceneManager* manager, irrBulletWorld* world, f32 mass, scene::IMesh* colMesh);
 			void setMetaData(std::string key, f32 data);
 			f32 getMetaData(std::string key);
-			void useShader(IrrlichtDevice* device, std::string vsName, std::string fsName);
+			void useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderFile);
 			void setID(u32 id);
 			u32 getID();
 			COLLIDER* getCollider();
@@ -42,8 +43,8 @@ namespace FCE
 			bool hasCollider;
 			void setName(std::string name);
 			std::string getName();
-			std::string vsName;
-			std::string fsName;
+			std::string shaderName;
+            ShaderHandler* shader;
 			bool hasShader;
 		protected:
 			core::vector3df rotation;

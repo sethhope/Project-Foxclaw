@@ -34,8 +34,9 @@
 	"GUI.h"
 	"Misc/PostProcessing/PostProcessManager.h"
 
-1425621749 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shadercallback.h
+1429386281 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shadercallback.h
 	"stdafx.h"
+	<map>
 	"irrlicht.h"
 
 1426877383 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\eventreceiver.h
@@ -51,18 +52,18 @@
 	"irrlicht.h"
 	"lua.hpp"
 
-1426984830 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\eventreceiver.cpp
+1429145903 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\eventreceiver.cpp
 	"EventReceiver.h"
 
-1427570610 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\framework.cpp
+1429145510 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\framework.cpp
 	"Framework.h"
 
 1425621750 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\renderer.cpp
 
-1428449191 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\scene.cpp
+1429386220 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\scene.cpp
 	"Scene.h"
 
-1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shadercallback.cpp
+1429386876 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shadercallback.cpp
 	"ShaderCallback.h"
 
 1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\logger.cpp
@@ -92,7 +93,7 @@
 1425621856 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\postprocessing\shaderpostprocess.cpp
 	"ShaderPostProcess.h"
 
-1428448242 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\script.cpp
+1429154439 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\script.cpp
 	"Script.h"
 	"LuaClassDef.hpp"
 	"Game/Scene.h"
@@ -120,7 +121,7 @@
 	"Misc/Logger.h"
 	"Irrlicht.h"
 
-1426902586 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\object.h
+1429386220 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\object.h
 	"stdafx.h"
 	<map>
 	"node.h"
@@ -129,8 +130,9 @@
 	"irrBullet.h"
 	"Misc/Logger.h"
 	"Game/ShaderCallback.h"
+	"Game/ShaderHandler.h"
 
-1425621889 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\node.h
+1429148467 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\node.h
 	"stdafx.h"
 	"Irrlicht.h"
 
@@ -178,7 +180,7 @@
 1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\node.cpp
 	"NODE.h"
 
-1426902586 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\object.cpp
+1429386220 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\object.cpp
 	"Object.h"
 
 1425621884 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\particle.cpp
@@ -209,6 +211,1154 @@
 	"Misc/Logger.h"
 	"irrlicht.h"
 
-1428513897 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\gui.cpp
+1429146052 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\gui.cpp
 	"GUI.h"
+
+1425621938 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrlicht.h
+	"IrrCompileConfig.h"
+	"aabbox3d.h"
+	"CDynamicMeshBuffer.h"
+	"CIndexBuffer.h"
+	"CMeshBuffer.h"
+	"coreutil.h"
+	"CVertexBuffer.h"
+	"dimension2d.h"
+	"ECullingTypes.h"
+	"EDebugSceneTypes.h"
+	"EDriverFeatures.h"
+	"EDriverTypes.h"
+	"EGUIAlignment.h"
+	"EGUIElementTypes.h"
+	"EHardwareBufferFlags.h"
+	"EMaterialFlags.h"
+	"EMaterialTypes.h"
+	"EMeshWriterEnums.h"
+	"EMessageBoxFlags.h"
+	"ESceneNodeAnimatorTypes.h"
+	"ESceneNodeTypes.h"
+	"ETerrainElements.h"
+	"fast_atof.h"
+	"heapsort.h"
+	"IAnimatedMesh.h"
+	"IAnimatedMeshMD2.h"
+	"IAnimatedMeshMD3.h"
+	"IAnimatedMeshSceneNode.h"
+	"IAttributeExchangingObject.h"
+	"IAttributes.h"
+	"IBillboardSceneNode.h"
+	"IBillboardTextSceneNode.h"
+	"IBoneSceneNode.h"
+	"ICameraSceneNode.h"
+	"ICursorControl.h"
+	"IDummyTransformationSceneNode.h"
+	"IDynamicMeshBuffer.h"
+	"IEventReceiver.h"
+	"IFileList.h"
+	"IFileSystem.h"
+	"IGeometryCreator.h"
+	"IGPUProgrammingServices.h"
+	"IGUIButton.h"
+	"IGUICheckBox.h"
+	"IGUIColorSelectDialog.h"
+	"IGUIComboBox.h"
+	"IGUIContextMenu.h"
+	"IGUIEditBox.h"
+	"IGUIElement.h"
+	"IGUIElementFactory.h"
+	"IGUIEnvironment.h"
+	"IGUIFileOpenDialog.h"
+	"IGUIFont.h"
+	"IGUIFontBitmap.h"
+	"IGUIImage.h"
+	"IGUIInOutFader.h"
+	"IGUIListBox.h"
+	"IGUIMeshViewer.h"
+	"IGUIScrollBar.h"
+	"IGUISkin.h"
+	"IGUISpinBox.h"
+	"IGUISpriteBank.h"
+	"IGUIStaticText.h"
+	"IGUITabControl.h"
+	"IGUITable.h"
+	"IGUIToolbar.h"
+	"IGUIWindow.h"
+	"IGUITreeView.h"
+	"IImage.h"
+	"IImageLoader.h"
+	"IImageWriter.h"
+	"IIndexBuffer.h"
+	"ILightSceneNode.h"
+	"ILogger.h"
+	"IMaterialRenderer.h"
+	"IMaterialRendererServices.h"
+	"IMesh.h"
+	"IMeshBuffer.h"
+	"IMeshCache.h"
+	"IMeshLoader.h"
+	"IMeshManipulator.h"
+	"IMeshSceneNode.h"
+	"IMeshWriter.h"
+	"IColladaMeshWriter.h"
+	"IMetaTriangleSelector.h"
+	"IOSOperator.h"
+	"IParticleSystemSceneNode.h"
+	"IQ3LevelMesh.h"
+	"IQ3Shader.h"
+	"IReadFile.h"
+	"IReferenceCounted.h"
+	"irrArray.h"
+	"IRandomizer.h"
+	"IrrlichtDevice.h"
+	"irrList.h"
+	"irrMap.h"
+	"irrMath.h"
+	"irrString.h"
+	"irrTypes.h"
+	"path.h"
+	"irrXML.h"
+	"ISceneCollisionManager.h"
+	"ISceneLoader.h"
+	"ISceneManager.h"
+	"ISceneNode.h"
+	"ISceneNodeAnimator.h"
+	"ISceneNodeAnimatorCameraFPS.h"
+	"ISceneNodeAnimatorCameraMaya.h"
+	"ISceneNodeAnimatorCollisionResponse.h"
+	"ISceneNodeAnimatorFactory.h"
+	"ISceneNodeFactory.h"
+	"ISceneUserDataSerializer.h"
+	"IShaderConstantSetCallBack.h"
+	"IShadowVolumeSceneNode.h"
+	"ISkinnedMesh.h"
+	"ITerrainSceneNode.h"
+	"ITextSceneNode.h"
+	"ITexture.h"
+	"ITimer.h"
+	"ITriangleSelector.h"
+	"IVertexBuffer.h"
+	"IVideoDriver.h"
+	"IVideoModeList.h"
+	"IVolumeLightSceneNode.h"
+	"IWriteFile.h"
+	"IXMLReader.h"
+	"IXMLWriter.h"
+	"ILightManager.h"
+	"Keycodes.h"
+	"line2d.h"
+	"line3d.h"
+	"matrix4.h"
+	"plane3d.h"
+	"position2d.h"
+	"quaternion.h"
+	"rect.h"
+	"S3DVertex.h"
+	"SAnimatedMesh.h"
+	"SceneParameters.h"
+	"SColor.h"
+	"SExposedVideoData.h"
+	"SIrrCreationParameters.h"
+	"SKeyMap.h"
+	"SLight.h"
+	"SMaterial.h"
+	"SMesh.h"
+	"SMeshBuffer.h"
+	"SMeshBufferLightMap.h"
+	"SMeshBufferTangents.h"
+	"SParticle.h"
+	"SSharedMeshBuffer.h"
+	"SSkinMeshBuffer.h"
+	"SVertexIndex.h"
+	"SViewFrustum.h"
+	"triangle3d.h"
+	"vector2d.h"
+	"vector3d.h"
+	"SIrrCreationParameters.h"
+
+1425622086 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrcompileconfig.h
+	<stdio.h>
+	<xtl.h>
+	<tchar.h>
+
+1425622078 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\aabbox3d.h
+	"irrMath.h"
+	"plane3d.h"
+	"line3d.h"
+
+1425621945 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrmath.h
+	"IrrCompileConfig.h"
+	"irrTypes.h"
+	<math.h>
+	<float.h>
+	<stdlib.h>
+	<limits.h>
+
+1425621938 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrtypes.h
+	"IrrCompileConfig.h"
+	<wchar.h>
+	<crtdbg.h>
+	"assert.h"
+	<stdlib.h>
+	<crtdbg.h>
+
+1425621933 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\plane3d.h
+	"irrMath.h"
+	"vector3d.h"
+
+1425621925 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\vector3d.h
+	"irrMath.h"
+
+1425621936 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\line3d.h
+	"irrTypes.h"
+	"vector3d.h"
+
+1425622159 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\cdynamicmeshbuffer.h
+	"IDynamicMeshBuffer.h"
+	"CVertexBuffer.h"
+	"CIndexBuffer.h"
+
+1425622154 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\idynamicmeshbuffer.h
+	"IMeshBuffer.h"
+	"IVertexBuffer.h"
+	"IIndexBuffer.h"
+
+1425622143 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\imeshbuffer.h
+	"IReferenceCounted.h"
+	"SMaterial.h"
+	"aabbox3d.h"
+	"S3DVertex.h"
+	"SVertexIndex.h"
+	"EHardwareBufferFlags.h"
+	"EPrimitiveTypes.h"
+
+1425622134 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ireferencecounted.h
+	"irrTypes.h"
+
+1425622082 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\smaterial.h
+	"SColor.h"
+	"matrix4.h"
+	"irrArray.h"
+	"irrMath.h"
+	"EMaterialTypes.h"
+	"EMaterialFlags.h"
+	"SMaterialLayer.h"
+
+1425622084 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\scolor.h
+	"irrTypes.h"
+	"irrMath.h"
+
+1425621934 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\matrix4.h
+	"irrMath.h"
+	"vector3d.h"
+	"vector2d.h"
+	"plane3d.h"
+	"aabbox3d.h"
+	"rect.h"
+	"irrString.h"
+
+1425621926 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\vector2d.h
+	"irrMath.h"
+	"dimension2d.h"
+
+1425622078 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\dimension2d.h
+	"irrTypes.h"
+	"irrMath.h"
+
+1425621927 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\rect.h
+	"irrTypes.h"
+	"dimension2d.h"
+	"position2d.h"
+
+1425621933 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\position2d.h
+	"vector2d.h"
+
+1425621939 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrstring.h
+	"irrTypes.h"
+	"irrAllocator.h"
+	"irrMath.h"
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+
+1425622050 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrallocator.h
+	"irrTypes.h"
+	<new>
+	<memory.h>
+
+1425622050 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrarray.h
+	"irrTypes.h"
+	"heapsort.h"
+	"irrAllocator.h"
+	"irrMath.h"
+
+1425622077 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\heapsort.h
+	"irrTypes.h"
+
+1425622157 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ematerialtypes.h
+
+1425622157 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ematerialflags.h
+
+1425622081 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\smateriallayer.h
+	"matrix4.h"
+	"irrAllocator.h"
+
+1425622085 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\s3dvertex.h
+	"vector3d.h"
+	"vector2d.h"
+	"SColor.h"
+
+1425622079 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\svertexindex.h
+	"irrTypes.h"
+
+1425622157 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ehardwarebufferflags.h
+
+1425622156 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\eprimitivetypes.h
+
+1425622090 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ivertexbuffer.h
+	"IReferenceCounted.h"
+	"irrArray.h"
+	"S3DVertex.h"
+
+1425622145 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iindexbuffer.h
+	"IReferenceCounted.h"
+	"irrArray.h"
+	"SVertexIndex.h"
+
+1425622158 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\cvertexbuffer.h
+	"IVertexBuffer.h"
+
+1425622159 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\cindexbuffer.h
+	"IIndexBuffer.h"
+
+1425622158 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\cmeshbuffer.h
+	"irrArray.h"
+	"IMeshBuffer.h"
+
+1425622078 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\coreutil.h
+	"irrString.h"
+	"path.h"
+
+1425621933 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\path.h
+	"irrString.h"
+
+1425622158 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ecullingtypes.h
+	"irrTypes.h"
+
+1425622158 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\edebugscenetypes.h
+
+1425622158 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\edriverfeatures.h
+
+1425622158 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\edrivertypes.h
+
+1425622157 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\eguialignment.h
+
+1425622157 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\eguielementtypes.h
+	"irrTypes.h"
+
+1425622156 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\emeshwriterenums.h
+	"irrTypes.h"
+
+1425622156 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\emessageboxflags.h
+
+1425622156 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\escenenodeanimatortypes.h
+
+1425622156 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\escenenodetypes.h
+	"irrTypes.h"
+
+1425622156 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\eterrainelements.h
+
+1425622077 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\fast_atof.h
+	"irrMath.h"
+	"irrString.h"
+
+1425622156 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ianimatedmesh.h
+	"aabbox3d.h"
+	"IMesh.h"
+
+1425622144 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\imesh.h
+	"IReferenceCounted.h"
+	"SMaterial.h"
+	"EHardwareBufferFlags.h"
+
+1425622155 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ianimatedmeshmd2.h
+	"IAnimatedMesh.h"
+
+1425622155 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ianimatedmeshmd3.h
+	"IAnimatedMesh.h"
+	"IQ3Shader.h"
+	"quaternion.h"
+	"irrpack.h"
+	"irrunpack.h"
+
+1425622135 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iq3shader.h
+	"irrArray.h"
+	"fast_atof.h"
+	"IFileSystem.h"
+	"IVideoDriver.h"
+	"coreutil.h"
+
+1425622153 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ifilesystem.h
+	"IReferenceCounted.h"
+	"IXMLReader.h"
+	"IFileArchive.h"
+
+1425622087 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ixmlreader.h
+	"IReferenceCounted.h"
+	"irrXML.h"
+
+1425621938 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrxml.h
+	<stdio.h>
+	"IrrCompileConfig.h"
+	<irrXML.h>
+	<string>
+	<irrXML.h>
+	<irrXML.h>
+	<irrXML.h>
+
+1425622153 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ifilearchive.h
+	"IReadFile.h"
+	"IFileList.h"
+
+1425622135 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ireadfile.h
+	"IReferenceCounted.h"
+	"coreutil.h"
+
+1425622153 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ifilelist.h
+	"IReferenceCounted.h"
+	"path.h"
+
+1425622090 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ivideodriver.h
+	"rect.h"
+	"SColor.h"
+	"ITexture.h"
+	"irrArray.h"
+	"matrix4.h"
+	"plane3d.h"
+	"dimension2d.h"
+	"position2d.h"
+	"SMaterial.h"
+	"IMeshBuffer.h"
+	"triangle3d.h"
+	"EDriverTypes.h"
+	"EDriverFeatures.h"
+	"SExposedVideoData.h"
+
+1425622091 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\itexture.h
+	"IReferenceCounted.h"
+	"IImage.h"
+	"dimension2d.h"
+	"EDriverTypes.h"
+	"path.h"
+	"matrix4.h"
+
+1425622146 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iimage.h
+	"IReferenceCounted.h"
+	"position2d.h"
+	"rect.h"
+	"SColor.h"
+
+1425621926 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\triangle3d.h
+	"vector3d.h"
+	"line3d.h"
+	"plane3d.h"
+	"aabbox3d.h"
+
+1425622084 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\sexposedvideodata.h
+
+1425621932 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\quaternion.h
+	"irrTypes.h"
+	"irrMath.h"
+	"matrix4.h"
+	"vector3d.h"
+
+1425621938 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrpack.h
+
+1425621937 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrunpack.h
+
+1425622155 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ianimatedmeshscenenode.h
+	"ISceneNode.h"
+	"IBoneSceneNode.h"
+	"IAnimatedMeshMD2.h"
+	"IAnimatedMeshMD3.h"
+
+1425622133 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iscenenode.h
+	"IAttributeExchangingObject.h"
+	"ESceneNodeTypes.h"
+	"ECullingTypes.h"
+	"EDebugSceneTypes.h"
+	"ISceneNodeAnimator.h"
+	"ITriangleSelector.h"
+	"SMaterial.h"
+	"irrString.h"
+	"aabbox3d.h"
+	"matrix4.h"
+	"irrList.h"
+	"IAttributes.h"
+
+1425622155 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iattributeexchangingobject.h
+	"IReferenceCounted.h"
+
+1425622095 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iscenenodeanimator.h
+	"IReferenceCounted.h"
+	"vector3d.h"
+	"ESceneNodeAnimatorTypes.h"
+	"IAttributeExchangingObject.h"
+	"IEventReceiver.h"
+
+1425622154 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ieventreceiver.h
+	"ILogger.h"
+	"Keycodes.h"
+	"irrString.h"
+
+1425622145 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ilogger.h
+	"IReferenceCounted.h"
+
+1425622086 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\keycodes.h
+
+1425622090 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\itriangleselector.h
+	"IReferenceCounted.h"
+	"triangle3d.h"
+	"aabbox3d.h"
+	"matrix4.h"
+	"line3d.h"
+
+1425622048 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrlist.h
+	"irrTypes.h"
+	"irrAllocator.h"
+	"irrMath.h"
+
+1425622155 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iattributes.h
+	"IReferenceCounted.h"
+	"SColor.h"
+	"vector3d.h"
+	"vector2d.h"
+	"line2d.h"
+	"line3d.h"
+	"triangle3d.h"
+	"position2d.h"
+	"rect.h"
+	"dimension2d.h"
+	"matrix4.h"
+	"quaternion.h"
+	"plane3d.h"
+	"triangle3d.h"
+	"line2d.h"
+	"line3d.h"
+	"irrString.h"
+	"irrArray.h"
+	"IXMLReader.h"
+	"EAttributes.h"
+	"path.h"
+
+1425621936 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\line2d.h
+	"irrTypes.h"
+	"vector2d.h"
+
+1425622158 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\eattributes.h
+
+1425622154 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ibonescenenode.h
+	"ISceneNode.h"
+
+1425622155 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ibillboardscenenode.h
+	"ISceneNode.h"
+
+1425622154 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ibillboardtextscenenode.h
+	"IBillboardSceneNode.h"
+
+1425622154 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\icamerascenenode.h
+	"ISceneNode.h"
+	"IEventReceiver.h"
+
+1425622154 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\icursorcontrol.h
+	"IReferenceCounted.h"
+	"position2d.h"
+	"rect.h"
+
+1425622154 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\idummytransformationscenenode.h
+	"ISceneNode.h"
+
+1425622147 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\igeometrycreator.h
+	"IReferenceCounted.h"
+	"IMesh.h"
+	"IImage.h"
+
+1425622153 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\igpuprogrammingservices.h
+	"EShaderTypes.h"
+	"EMaterialTypes.h"
+	"EPrimitiveTypes.h"
+	"path.h"
+
+1425622156 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\eshadertypes.h
+	"irrTypes.h"
+
+1425622153 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguibutton.h
+	"IGUIElement.h"
+
+1425622152 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguielement.h
+	"IAttributeExchangingObject.h"
+	"irrList.h"
+	"rect.h"
+	"irrString.h"
+	"IEventReceiver.h"
+	"EGUIElementTypes.h"
+	"EGUIAlignment.h"
+	"IAttributes.h"
+
+1425622152 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguicheckbox.h
+	"IGUIElement.h"
+
+1425622153 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguicolorselectdialog.h
+	"IGUIElement.h"
+
+1425622152 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguicombobox.h
+	"IGUIElement.h"
+
+1425622152 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguicontextmenu.h
+	"IGUIElement.h"
+
+1425622152 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguieditbox.h
+	"IGUIElement.h"
+	"SColor.h"
+
+1425622152 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguielementfactory.h
+	"IReferenceCounted.h"
+	"EGUIElementTypes.h"
+
+1425622152 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguienvironment.h
+	"IReferenceCounted.h"
+	"IGUISkin.h"
+	"rect.h"
+	"EMessageBoxFlags.h"
+	"IEventReceiver.h"
+	"IXMLReader.h"
+	"path.h"
+
+1425622149 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguiskin.h
+	"IAttributeExchangingObject.h"
+	"EGUIAlignment.h"
+	"SColor.h"
+	"rect.h"
+
+1425622151 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguifileopendialog.h
+	"IGUIElement.h"
+	"path.h"
+
+1425622151 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguifont.h
+	"IReferenceCounted.h"
+	"SColor.h"
+	"rect.h"
+	"irrString.h"
+
+1425622151 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguifontbitmap.h
+	"IGUIFont.h"
+
+1425622151 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguiimage.h
+	"IGUIElement.h"
+
+1425622150 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguiinoutfader.h
+	"IGUIElement.h"
+	"SColor.h"
+
+1425622150 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguilistbox.h
+	"IGUIElement.h"
+	"SColor.h"
+
+1425622150 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguimeshviewer.h
+	"IGUIElement.h"
+
+1425622149 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguiscrollbar.h
+	"IGUIElement.h"
+
+1425622149 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguispinbox.h
+	"IGUIElement.h"
+
+1425622148 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguispritebank.h
+	"IReferenceCounted.h"
+	"irrArray.h"
+	"SColor.h"
+	"rect.h"
+
+1425622148 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguistatictext.h
+	"IGUIElement.h"
+	"SColor.h"
+
+1425622148 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguitabcontrol.h
+	"IGUIElement.h"
+	"SColor.h"
+	"IGUISkin.h"
+
+1425622148 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguitable.h
+	"IGUIElement.h"
+	"irrTypes.h"
+	"SColor.h"
+	"IGUISkin.h"
+
+1425622147 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguitoolbar.h
+	"IGUIElement.h"
+
+1425622147 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguiwindow.h
+	"IGUIElement.h"
+	"EMessageBoxFlags.h"
+
+1425622147 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguitreeview.h
+	"IGUIElement.h"
+	"IGUIImageList.h"
+	"irrTypes.h"
+
+1425622150 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iguiimagelist.h
+	"IGUIElement.h"
+	"rect.h"
+	"irrTypes.h"
+
+1425622146 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iimageloader.h
+	"IReferenceCounted.h"
+	"IImage.h"
+	"path.h"
+
+1425622146 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iimagewriter.h
+	"IReferenceCounted.h"
+	"irrString.h"
+	"coreutil.h"
+
+1425622145 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ilightscenenode.h
+	"ISceneNode.h"
+	"SLight.h"
+
+1425622082 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\slight.h
+	"SColor.h"
+
+1425622144 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\imaterialrenderer.h
+	"IReferenceCounted.h"
+	"SMaterial.h"
+	"S3DVertex.h"
+
+1425622144 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\imaterialrendererservices.h
+	"SMaterial.h"
+	"S3DVertex.h"
+
+1425622143 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\imeshcache.h
+	"IReferenceCounted.h"
+	"path.h"
+
+1425622143 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\imeshloader.h
+	"IReferenceCounted.h"
+	"path.h"
+
+1425622143 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\imeshmanipulator.h
+	"IReferenceCounted.h"
+	"vector3d.h"
+	"aabbox3d.h"
+	"matrix4.h"
+	"IAnimatedMesh.h"
+	"IMeshBuffer.h"
+	"SVertexManipulator.h"
+
+1425622079 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\svertexmanipulator.h
+	"S3DVertex.h"
+	"SColor.h"
+
+1425622142 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\imeshscenenode.h
+	"ISceneNode.h"
+
+1425622142 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\imeshwriter.h
+	"IReferenceCounted.h"
+	"EMeshWriterEnums.h"
+
+1425622154 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\icolladameshwriter.h
+	"IMeshWriter.h"
+	"ISceneNode.h"
+	"IAnimatedMesh.h"
+	"SMaterial.h"
+
+1425622142 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\imetatriangleselector.h
+	"ITriangleSelector.h"
+
+1425622142 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iosoperator.h
+	"IReferenceCounted.h"
+	"irrString.h"
+
+1425622138 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticlesystemscenenode.h
+	"ISceneNode.h"
+	"IParticleAnimatedMeshSceneNodeEmitter.h"
+	"IParticleBoxEmitter.h"
+	"IParticleCylinderEmitter.h"
+	"IParticleMeshEmitter.h"
+	"IParticleRingEmitter.h"
+	"IParticleSphereEmitter.h"
+	"IParticleAttractionAffector.h"
+	"IParticleFadeOutAffector.h"
+	"IParticleGravityAffector.h"
+	"IParticleRotationAffector.h"
+	"dimension2d.h"
+
+1425622141 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticleanimatedmeshscenenodeemitter.h
+	"IParticleEmitter.h"
+	"IAnimatedMeshSceneNode.h"
+
+1425622140 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticleemitter.h
+	"IAttributeExchangingObject.h"
+	"SParticle.h"
+
+1425622080 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\sparticle.h
+	"vector3d.h"
+	"dimension2d.h"
+	"SColor.h"
+
+1425622140 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticleboxemitter.h
+	"IParticleEmitter.h"
+	"aabbox3d.h"
+
+1425622140 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticlecylinderemitter.h
+	"IParticleEmitter.h"
+
+1425622139 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticlemeshemitter.h
+	"IParticleEmitter.h"
+	"IMesh.h"
+
+1425622139 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticleringemitter.h
+	"IParticleEmitter.h"
+
+1425622138 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticlesphereemitter.h
+	"IParticleEmitter.h"
+
+1425622141 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticleattractionaffector.h
+	"IParticleAffector.h"
+
+1425622141 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticleaffector.h
+	"IAttributeExchangingObject.h"
+	"SParticle.h"
+
+1425622139 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticlefadeoutaffector.h
+	"IParticleAffector.h"
+
+1425622139 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticlegravityaffector.h
+	"IParticleAffector.h"
+
+1425622138 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iparticlerotationaffector.h
+	"IParticleAffector.h"
+
+1425622137 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iq3levelmesh.h
+	"IAnimatedMesh.h"
+	"IQ3Shader.h"
+
+1425622135 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irandomizer.h
+	"IReferenceCounted.h"
+
+1425622086 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrlichtdevice.h
+	"IReferenceCounted.h"
+	"dimension2d.h"
+	"IVideoDriver.h"
+	"EDriverTypes.h"
+	"EDeviceTypes.h"
+	"IEventReceiver.h"
+	"ICursorControl.h"
+	"IVideoModeList.h"
+	"ITimer.h"
+	"IOSOperator.h"
+
+1425622158 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\edevicetypes.h
+
+1425622089 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ivideomodelist.h
+	"IReferenceCounted.h"
+	"dimension2d.h"
+
+1425622091 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\itimer.h
+	"IReferenceCounted.h"
+
+1425622047 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrmap.h
+	"irrTypes.h"
+	"irrMath.h"
+
+1425622134 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iscenecollisionmanager.h
+	"IReferenceCounted.h"
+	"vector3d.h"
+	"triangle3d.h"
+	"position2d.h"
+	"line3d.h"
+
+1425622134 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\isceneloader.h
+	"IReferenceCounted.h"
+	"path.h"
+
+1425622133 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iscenemanager.h
+	"IReferenceCounted.h"
+	"irrArray.h"
+	"irrString.h"
+	"path.h"
+	"vector3d.h"
+	"dimension2d.h"
+	"SColor.h"
+	"ETerrainElements.h"
+	"ESceneNodeTypes.h"
+	"ESceneNodeAnimatorTypes.h"
+	"EMeshWriterEnums.h"
+	"SceneParameters.h"
+	"IGeometryCreator.h"
+	"ISkinnedMesh.h"
+
+1425622079 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\sceneparameters.h
+
+1425622092 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iskinnedmesh.h
+	"irrArray.h"
+	"IBoneSceneNode.h"
+	"IAnimatedMesh.h"
+	"SSkinMeshBuffer.h"
+
+1425622080 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\sskinmeshbuffer.h
+	"IMeshBuffer.h"
+	"S3DVertex.h"
+
+1425622095 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iscenenodeanimatorcamerafps.h
+	"ISceneNodeAnimator.h"
+	"IEventReceiver.h"
+	"irrArray.h"
+
+1425622094 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iscenenodeanimatorcameramaya.h
+	"ISceneNodeAnimator.h"
+
+1425622094 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iscenenodeanimatorcollisionresponse.h
+	"ISceneNode.h"
+
+1425622094 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iscenenodeanimatorfactory.h
+	"IReferenceCounted.h"
+	"ESceneNodeAnimatorTypes.h"
+
+1425622093 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iscenenodefactory.h
+	"IReferenceCounted.h"
+	"ESceneNodeTypes.h"
+
+1425622093 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\isceneuserdataserializer.h
+	"IReferenceCounted.h"
+
+1425622093 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ishaderconstantsetcallback.h
+	"IReferenceCounted.h"
+
+1425622093 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ishadowvolumescenenode.h
+	"ISceneNode.h"
+
+1425622092 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iterrainscenenode.h
+	"ETerrainElements.h"
+	"ISceneNode.h"
+	"IDynamicMeshBuffer.h"
+	"irrArray.h"
+
+1425622092 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\itextscenenode.h
+	"ISceneNode.h"
+
+1425622088 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ivolumelightscenenode.h
+	"ISceneNode.h"
+
+1425622087 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\iwritefile.h
+	"IReferenceCounted.h"
+	"path.h"
+
+1425622087 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ixmlwriter.h
+	"IReferenceCounted.h"
+	"irrArray.h"
+	"irrString.h"
+
+1425622145 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ilightmanager.h
+	"IReferenceCounted.h"
+	"irrArray.h"
+
+1425622084 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\sanimatedmesh.h
+	"IAnimatedMesh.h"
+	"IMesh.h"
+	"aabbox3d.h"
+	"irrArray.h"
+
+1425622083 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\sirrcreationparameters.h
+	"EDriverTypes.h"
+	"EDeviceTypes.h"
+	"dimension2d.h"
+	"ILogger.h"
+
+1425622083 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\skeymap.h
+	"Keycodes.h"
+
+1425622081 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\smesh.h
+	"IMesh.h"
+	"IMeshBuffer.h"
+	"aabbox3d.h"
+	"irrArray.h"
+
+1425622081 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\smeshbuffer.h
+	"CMeshBuffer.h"
+
+1425622081 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\smeshbufferlightmap.h
+	"CMeshBuffer.h"
+
+1425622080 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\smeshbuffertangents.h
+	"CMeshBuffer.h"
+
+1425622080 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ssharedmeshbuffer.h
+	"irrArray.h"
+	"IMeshBuffer.h"
+
+1425622079 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\sviewfrustum.h
+	"plane3d.h"
+	"vector3d.h"
+	"line3d.h"
+	"aabbox3d.h"
+	"matrix4.h"
+	"IVideoDriver.h"
+
+1425621935 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\lua.hpp
+	"lua.h"
+	"lualib.h"
+	"lauxlib.h"
+
+1425621935 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\lua.h
+	<stdarg.h>
+	<stddef.h>
+	"luaconf.h"
+
+1425621935 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\luaconf.h
+	<limits.h>
+	<stddef.h>
+	<stdio.h>
+	<math.h>
+
+1425621935 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\lualib.h
+	"lua.h"
+
+1425621937 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\lauxlib.h
+	<stddef.h>
+	<stdio.h>
+	"lua.h"
+
+1425622050 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\irrklang.h
+	"ik_irrKlangTypes.h"
+	"ik_vec3d.h"
+	"ik_IRefCounted.h"
+	"ik_IVirtualRefCounted.h"
+	"ik_ESoundOutputDrivers.h"
+	"ik_ESoundEngineOptions.h"
+	"ik_EStreamModes.h"
+	"ik_SAudioStreamFormat.h"
+	"ik_ISoundEngine.h"
+	"ik_ISoundSource.h"
+	"ik_ISound.h"
+	"ik_IAudioStream.h"
+	"ik_IAudioStreamLoader.h"
+	"ik_ISoundEffectControl.h"
+	"ik_ISoundStopEventReceiver.h"
+	"ik_IFileFactory.h"
+	"ik_IFileReader.h"
+	"ik_ISoundDeviceList.h"
+	"ik_IAudioRecorder.h"
+	"ik_ISoundMixedOutputReceiver.h"
+
+1425622055 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_irrklangtypes.h
+	<wchar.h>
+
+1425622051 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_vec3d.h
+	<math.h>
+	"ik_irrKlangTypes.h"
+
+1425622075 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_irefcounted.h
+	"ik_irrKlangTypes.h"
+
+1425622056 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_ivirtualrefcounted.h
+	"ik_irrKlangTypes.h"
+
+1425622076 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_esoundoutputdrivers.h
+
+1425622077 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_esoundengineoptions.h
+
+1425622076 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_estreammodes.h
+
+1425622055 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_saudiostreamformat.h
+	"ik_IRefCounted.h"
+
+1425622074 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_isoundengine.h
+	"ik_IRefCounted.h"
+	"ik_vec3d.h"
+	"ik_ISoundSource.h"
+	"ik_ISound.h"
+	"ik_EStreamModes.h"
+	"ik_IFileFactory.h"
+	"ik_ISoundMixedOutputReceiver.h"
+
+1425622068 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_isoundsource.h
+	"ik_IVirtualRefCounted.h"
+	"ik_vec3d.h"
+	"ik_EStreamModes.h"
+	"ik_SAudioStreamFormat.h"
+
+1425622074 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_isound.h
+	"ik_IVirtualRefCounted.h"
+	"ik_ISoundEffectControl.h"
+	"ik_vec3d.h"
+
+1425622074 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_isoundeffectcontrol.h
+	"ik_IVirtualRefCounted.h"
+	"ik_vec3d.h"
+
+1425622075 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_ifilefactory.h
+	"ik_IRefCounted.h"
+
+1425622068 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_isoundmixedoutputreceiver.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1425622076 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_iaudiostream.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1425622075 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_iaudiostreamloader.h
+	"ik_IRefCounted.h"
+	"ik_IFileReader.h"
+
+1425622075 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_ifilereader.h
+	"ik_IRefCounted.h"
+
+1425622062 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_isoundstopeventreceiver.h
+	"ik_IRefCounted.h"
+	"ik_SAudioStreamFormat.h"
+
+1425622074 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_isounddevicelist.h
+	"ik_IRefCounted.h"
+
+1425622076 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\include\ik_iaudiorecorder.h
+	"ik_IRefCounted.h"
+	"ik_ISoundSource.h"
+
+1425620838 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\stdafx.h
+	<stdio.h>
+	<sstream>
+	<string>
+	<vector>
+	<stdlib.h>
+	<fstream>
+	<iostream>
+
+1425620838 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\luawrapper.hpp
+	"include/lua.h"
+	"include/lauxlib.h"
+
+1429385806 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shaderhandler.h
+	"ShaderCallback.h"
+	"Misc/Logger.h"
+	"stdafx.h"
+
+1429387630 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\luaclassdef.hpp
+	"lua.hpp"
+	"luawrapper.hpp"
+	"Irrlicht.h"
+	"Game/ShaderCallback.h"
+	"Objects/Object.h"
+	"Objects/Node.h"
+	"Objects/Mesh.h"
+	"Objects/Light.h"
+	"Objects/Particle.h"
+	"Objects/EmptyObject.h"
+	"Objects/AnimatedMesh.h"
+	"Objects/Terrain.h"
+	"Game/GUI.h"
+	"Misc/Logger.h"
+	"Game/Scene.h"
+	"Misc/PostProcessing/PostProcessManager.h"
+
+1429387418 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shaderhandler.cpp
+	"ShaderHandler.h"
 
