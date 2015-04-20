@@ -12,6 +12,11 @@
 				<Option object_output="BIN/obj" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="include" />
+					<Add directory="../Project-Foxclaw" />
+					<Add directory="Game" />
+				</Compiler>
 			</Target>
 			<Target title="Release">
 				<Option output="../ProjectFoxclawRelease" prefix_auto="1" extension_auto="1" />
@@ -21,6 +26,8 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-std=c++11" />
+					<Add directory="include" />
+					<Add directory="Game" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -46,6 +53,8 @@
 			<Add option="../libLinearMath.a" />
 			<Add option="../libBulletCollision.a" />
 		</Linker>
+		<Unit filename="Game/Config.cpp" />
+		<Unit filename="Game/Config.h" />
 		<Unit filename="Game/EventReceiver.cpp" />
 		<Unit filename="Game/EventReceiver.h" />
 		<Unit filename="Game/Framework.cpp" />
@@ -58,6 +67,8 @@
 		<Unit filename="Game/Scene.h" />
 		<Unit filename="Game/ShaderCallback.cpp" />
 		<Unit filename="Game/ShaderCallback.h" />
+		<Unit filename="Game/ShaderHandler.cpp" />
+		<Unit filename="Game/ShaderHandler.h" />
 		<Unit filename="LuaClassDef.hpp" />
 		<Unit filename="Main.cpp" />
 		<Unit filename="Misc/Logger.cpp" />
@@ -96,11 +107,18 @@
 		<Unit filename="luawrapper.hpp" />
 		<Unit filename="luawrapperutil.hpp" />
 		<Unit filename="stdafx.h" />
+		<Unit filename="version.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
 			<debugger />
 			<lib_finder disable_auto="1" />
+			<AutoVersioning>
+				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="10000" />
+				<Settings autoincrement="1" date_declarations="1" use_define="1" update_manifest="0" do_auto_increment="1" ask_to_increment="0" language="C++" svn="0" svn_directory="" header_path="version.h" />
+				<Changes_Log show_changes_editor="0" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
+				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="" />
+			</AutoVersioning>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

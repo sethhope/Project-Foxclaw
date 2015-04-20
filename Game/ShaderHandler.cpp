@@ -22,8 +22,6 @@ void ShaderHandler::addShader(std::string xmlFile)
     bool inShader = false;
     core::stringw vsfile;
     core::stringw fsfile;
-    std::map<std::string, f32> fsConstants;
-    std::map<std::string, f32> vsConstants;
     while(xml->read())
     {
         switch(xml->getNodeType())
@@ -68,17 +66,26 @@ void ShaderHandler::addShader(std::string xmlFile)
                     scb->fsConstants = fsConstants;
                     scb->vsConstants = vsConstants;
                     video::IGPUProgrammingServices* gpu = device->getVideoDriver()->getGPUProgrammingServices();
+                    u32 m;
                     const video::E_GPU_SHADING_LANGUAGE sLang = video::EGSL_DEFAULT;
-                    video::E_MATERIAL_TYPE currM = (video::E_MATERIAL_TYPE)material;
-                    material = gpu->addHighLevelShaderMaterialFromFiles(vsFile, "vertexMain", video::EVST_VS_1_1, psFile, "pixelMain", video::EPST_PS_1_1, scb, currM, 0, sLang);
+                    video::E_MATERIAL_TYPE currM = (video::E_MATERIAL_TYPE)m;
+                    m = gpu->addHighLevelShaderMaterialFromFiles(vsFile, "vertexMain", video::EVST_VS_1_1, psFile, "pixelMain", video::EPST_PS_1_1, scb, currM, 0, sLang);
                     scb->drop();
+                    materials.push_back(m);
                 }
             }break;
         }
     }
 }
 
-u32 ShaderHandler::getMaterial()
+void ShaderHandler::addConstant(u32 shader, std::string key, f32 data)
 {
-    return material;
+    if(shader == FCE_VERT)
+    {
+        vsConstants[key] = data;
+    }else if(shader == FCE_FRAG)
+    {
+        fsConstants[key] = data;
+    }
 }
+

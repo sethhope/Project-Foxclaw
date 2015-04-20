@@ -5,7 +5,7 @@ SCENE::SCENE()
 	//Should never be used
 }
 
-SCENE::SCENE(LOGGER* log, IrrlichtDevice* device)
+SCENE::SCENE(LOGGER* log, IrrlichtDevice* device, Config* config)
 {
 	//Set init variables from constructor
 	this->log = log;
@@ -13,7 +13,7 @@ SCENE::SCENE(LOGGER* log, IrrlichtDevice* device)
  	debug = false;
 	gui = device->getGUIEnvironment();
 	manager = device->getSceneManager();
-
+    this->config = config;
 }
 
 SCENE::~SCENE()
@@ -67,6 +67,7 @@ void SCENE::init(FEventReceiver receiver)
 	camera = new CAMERA(manager, log);
 	timeScale = 0.004;
 	lastGUI = 1;
+	skyboxType = NONE;
 	//load startup lua script
 	log->logData("Loading startup script");
 	//create new script
@@ -216,7 +217,11 @@ u32 SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 {
 	MESH* tmp = new MESH(manager, log);
 	tmp->setID(lastID);
-	tmp->load((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()));
+	u32 meshLoaded = tmp->load((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()));
+	if(meshLoaded!=0)
+    {
+        return 0;
+    }
 	tmp->setName("MESH");
 	tmp->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, true);
 	//tmp->getIrrNode()->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
@@ -250,7 +255,11 @@ u32 SCENE::addAnimatedMesh(std::string filename, core::vector3df pos, core::vect
 {
 	ANIMATEDMESH* tmp = new ANIMATEDMESH(manager, log);
 	tmp->setID(lastID);
-	tmp->load((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()));
+	u32 meshLoaded = tmp->load((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()));
+	if(meshLoaded != 0)
+    {
+        return 0;
+    }
 	tmp->setName("ANIMATED_MESH");
 	tmp->setPosition(pos);
 	tmp->setRotation(rot);
@@ -409,8 +418,30 @@ void SCENE::setDebug(bool debug)
 }
 void SCENE::setSkydome(std::string filename)
 {
+    device->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
 	skydome = manager->addSkyDomeSceneNode(manager->getVideoDriver()->getTexture(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()), 16, 8, 1, 2.0);
 	skyFile = filename;
+	skyboxType = SKYDOME;
+	device->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
+}
+void SCENE::setSkybox(std::string top, std::string bottom, std::string left, std::string right, std::string front, std::string back)
+{
+    device->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
+    skydome = manager->addSkyBoxSceneNode(
+                                          device->getVideoDriver()->getTexture(top.c_str()),
+                                          device->getVideoDriver()->getTexture(bottom.c_str()),
+                                          device->getVideoDriver()->getTexture(left.c_str()),
+                                          device->getVideoDriver()->getTexture(right.c_str()),
+                                          device->getVideoDriver()->getTexture(front.c_str()),
+                                          device->getVideoDriver()->getTexture(back.c_str()));
+    skybox[0] = top;
+    skybox[1] = bottom;
+    skybox[2] = left;
+    skybox[3] = right;
+    skybox[4] = front;
+    skybox[5] = back;
+    skyboxType = SKYBOX;
+    device->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 }
 void SCENE::removeObject(u32 id)
 {
@@ -526,6 +557,7 @@ void SCENE::load(std::string filename)
 					bool inConfig = true;
 					int last;
 					core::stringw skyfile;
+					core::stringw skyboxfile[6];
 					while(xml && xml->read() && inConfig)
 					{
 						switch(xml->getNodeType())
@@ -537,7 +569,17 @@ void SCENE::load(std::string filename)
 								}
 								if(core::stringw(L"skybox").equals_ignore_case(xml->getNodeName()))
 								{
-									skyfile = xml->getAttributeValue(0);
+								    if(!(xml->getAttributeValue(1)))
+                                    {
+                                        skyfile = xml->getAttributeValue(0);
+                                    }
+									else
+                                    {
+                                        for(int i = 0; i < 6; i++)
+                                        {
+                                            skyboxfile[i] = xml->getAttributeValue(i);
+                                        }
+                                    }
 								}
 							break;
 							case io::EXN_ELEMENT_END:
@@ -553,7 +595,16 @@ void SCENE::load(std::string filename)
 					{
 						core::stringc sfile = core::stringc(skyfile);
 						setSkydome(sfile.c_str());
+					}else if(!skyboxfile[0].empty())
+					{
+                        core::stringc skyboxfilec[6];
+                        for(int i = 0; i < 6; i++)
+                        {
+                            skyboxfilec[i] = skyboxfile[i].c_str();
+                        }
+                        setSkybox(skyboxfilec[0].c_str(), skyboxfilec[1].c_str(), skyboxfilec[2].c_str(), skyboxfilec[3].c_str(), skyboxfilec[4].c_str(), skyboxfilec[5].c_str());
 					}
+
 					lastID = last;
 				}
 				else if(core::stringw(L"MESH").equals_ignore_case(xml->getNodeName()))
@@ -1052,11 +1103,33 @@ void SCENE::save(std::string filename)
 	xml->writeLineBreak();
 	xml->writeElement(L"lastID", true, L"lastID", core::stringw(lastID).c_str());
 	xml->writeLineBreak();
-	if(!skyFile.empty())
+	if(skyboxType == SKYDOME)
 	{
 		xml->writeElement(L"skybox", true, L"filename", core::stringw(skyFile.c_str()).c_str());
 		xml->writeLineBreak();
 	}
+	else if(skyboxType == SKYBOX)
+    {
+        core::array<core::stringw> keys;
+        keys.push_back(L"top");
+        keys.push_back(L"bottom");
+        keys.push_back(L"left");
+        keys.push_back(L"right");
+        keys.push_back(L"front");
+        keys.push_back(L"back");
+
+        core::array<core::stringw> values;
+
+        values.push_back(core::stringw(skybox[0].c_str()));
+        values.push_back(core::stringw(skybox[1].c_str()));
+        values.push_back(core::stringw(skybox[2].c_str()));
+        values.push_back(core::stringw(skybox[3].c_str()));
+        values.push_back(core::stringw(skybox[4].c_str()));
+        values.push_back(core::stringw(skybox[5].c_str()));
+        xml->writeElement(L"skybox", true, keys, values);
+        xml->writeLineBreak();
+    }
+
 	xml->writeClosingTag(L"SCENECONFIG");
 	xml->writeLineBreak();
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)

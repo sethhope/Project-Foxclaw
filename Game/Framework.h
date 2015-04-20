@@ -7,11 +7,9 @@
 #include "Misc/Script.h"
 #include "EventReceiver.h"
 #include "Irrlicht.h"
+#include "Config.h"
+#include "version.h"
 
-#define SCREENWIDTH 1024
-#define SCREENHEIGHT 800
-
-#define BUILD "2.1.1"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #define PLAT "Win32"
 #elif defined(__APPLE__)
@@ -42,7 +40,7 @@ private:
     LOGGER* log;
     SCENE* scene;
     FEventReceiver receiver;
-
+    Config* config;
     //Irrlicht classes
     IrrlichtDevice *device;
     video::IVideoDriver* driver;

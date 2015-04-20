@@ -60,7 +60,12 @@ int Scene_Save(lua_State* L)
     s->save(luaL_checkstring(L, 2));
     return 0;
 }
-
+int Scene_getConfigValue(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    lua_pushnumber(L, s->config->data[luaL_checkstring(L, 2)]);
+    return 1;
+}
 int Scene_deltaTime(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
@@ -390,6 +395,12 @@ int Scene_setSkydome(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
     s->setSkydome(luaL_checkstring(L, 2));
+    return 0;
+}
+int Scene_setSkybox(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->setSkybox(luaL_checkstring(L, 2), luaL_checkstring(L, 3), luaL_checkstring(L, 4), luaL_checkstring(L, 5), luaL_checkstring(L, 6), luaL_checkstring(L, 7));
     return 0;
 }
 int Scene_removeObject(lua_State* L)

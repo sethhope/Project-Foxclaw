@@ -1,0 +1,5 @@
+<Config>
+	<setting name="height" value="900"/>
+	<setting name="width" value="1600"/>
+	<setting name="fullscreen" value="1"/>
+</Config>

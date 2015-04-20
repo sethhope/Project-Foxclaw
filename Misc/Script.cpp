@@ -73,6 +73,7 @@ void SCRIPT::onInit()
         {"getObject", Scene_getObject},
         {"setPhysicsDebug", Scene_setPhysicsDebug},
         {"setSkydome", Scene_setSkydome},
+        {"setSkybox", Scene_setSkybox},
         {"removeObject", Scene_removeObject},
         {"setTimeScale", Scene_setTimeScale},
         {"getTimeScale", Scene_getTimeScale},
@@ -101,6 +102,7 @@ void SCRIPT::onInit()
         {"setFog", Scene_setFog},
         {"addArchive", Scene_addZip},
         {"removeArchive", Scene_removeZip},
+        {"getConfigValue", Scene_getConfigValue},
         {NULL, NULL}
     };
     static luaL_Reg Mesh_metatable[] =

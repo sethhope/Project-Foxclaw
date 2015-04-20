@@ -3,6 +3,9 @@
 #include "stdafx.h"
 #define SCREENWIDTH 1024
 #define SCREENHEIGHT 800
+#define NONE 0
+#define SKYDOME 1
+#define SKYBOX 2
 #include <map>
 #include "ShaderCallback.h"
 #include "Misc/Script.h"
@@ -21,6 +24,7 @@
 #include "irrKlang.h"
 #include "irrBullet.h"
 #include "GUI.h"
+#include "Config.h"
 #include "Misc/PostProcessing/PostProcessManager.h"
 using namespace irr;
 using namespace core;
@@ -33,7 +37,7 @@ namespace FCE
     {
     public:
         SCENE();
-        SCENE(LOGGER* log, IrrlichtDevice* device);
+        SCENE(LOGGER* log, IrrlichtDevice* device, Config* config);
         ~SCENE();
         void init(FEventReceiver receiver);
         void update(FEventReceiver receiver);
@@ -51,6 +55,7 @@ namespace FCE
         void setCharacter(IKinematicCharacterController* character);
         void setDebug(bool debug);
         void setSkydome(std::string filename);
+        void setSkybox(std::string top, std::string bottom, std::string left, std::string right, std::string front, std::string back);
         u32 addGui(GUI* gui, u32 parentID);
         PARTICLE* editParticleSystem(u32 id);
         SOUND* editSound(u32 id);
@@ -81,6 +86,7 @@ namespace FCE
         f32 deltaTime;
         void load(std::string filename);
         CPostProcessManager* postManager;
+        Config* config;
     private:
 
         //Standard variables
@@ -90,6 +96,8 @@ namespace FCE
         u32 lastGUI;
         std::map<std::string, f32> metadata;
         std::string skyFile;
+        std::string skybox[6];
+        u32 skyboxType;
         bool debug;
 
         //Irrlicht Classes
@@ -107,7 +115,6 @@ namespace FCE
         CAMERA* camera;
         std::vector<OBJECT*> objects;
         FEventReceiver receiver;
-
     };
 }
 #endif // _SCENE_H_

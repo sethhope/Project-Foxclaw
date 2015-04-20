@@ -56,6 +56,14 @@ void OBJECT::update()
 void OBJECT::render()
 {
 	onRender();
+	if(hasShader)
+    {
+        for(std::vector<u32>::iterator it = shader->materials.begin(); it < shader->materials.end(); it++)
+        {
+            thisNode->setMaterialType((video::E_MATERIAL_TYPE)(*it));
+            thisNode->render();
+        }
+    }
 	if(!children.empty())
 	{
 		for(std::vector<NODE*>::iterator it = children.begin(); it < children.end(); it++)
@@ -186,7 +194,14 @@ void OBJECT::useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderNa
     hasShader = true;
     this->shaderName = shaderName;
     shader = new ShaderHandler(device, log);
+    for(int i = 0; i < 8; i++)
+    {
+        std::stringstream key;
+        key<<"mTexture";
+        key<<i;
+        shader->addConstant(FCE_FRAG, key.str(), i);
+    }
     shader->addShader(shaderName);
     thisNode->setMaterialFlag(video::EMF_LIGHTING, false);
-    thisNode->setMaterialType((video::E_MATERIAL_TYPE)shader->getMaterial());
+    thisNode->setMaterialType((video::E_MATERIAL_TYPE)shader->materials[0]);
 }

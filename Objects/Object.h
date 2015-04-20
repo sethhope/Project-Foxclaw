@@ -2,6 +2,7 @@
 #define _FOBJECT_H_
 #include "stdafx.h"
 #include <map>
+#include <sstream>
 #include "node.h"
 #include "Collider.h"
 #include "Irrlicht.h"

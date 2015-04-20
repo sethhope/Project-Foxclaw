@@ -26,18 +26,23 @@ int FRAMEWORK::init()
 	//log header data.
 	log->debugData(MINOR, "Logger initialized");
 	log->logData("Fox Claw Engine by Jcam Technologies");
-	log->logData("Engine build", BUILD);
+	log->logData("Engine build", FULLVERSION_STRING);
+	log->logData("Engine Version", STATUS);
 	log->logData("Platform", PLAT);
+	log->logData("Loading config");
+	config = new Config();
+	config->loadConfig((std::string)(device->getFileSystem()->getAbsolutePath("config.xml").c_str()));
 	log->logData("Creating Graphics Driver");
+	bool fullScreen = config->data["fullscreen"];
 	//Create graphics driver
 	//Check for opengl (Only OpenGL and software for now. DirectX may come later)
 	log->logData("Trying OpenGL");
-	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(SCREENWIDTH, SCREENHEIGHT), 32, false, false, true, &receiver);
+	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(config->data["width"], config->data["height"]), 32, fullScreen, false, true, &receiver);
 	if(!device)
 	{
 		//OpenGL failed. Try software renderer
 		log->logData("Trying Software Renderer");
-		device = createDevice(video::EDT_SOFTWARE, core::dimension2d<u32>(SCREENWIDTH, SCREENHEIGHT), 16, false, false, false, &receiver);
+		device = createDevice(video::EDT_SOFTWARE, core::dimension2d<u32>(config->data["width"], config->data["height"]), 16, fullScreen, false, false, &receiver);
 		if(!device)
 		{
 			//Failed to create driver
@@ -57,7 +62,7 @@ int FRAMEWORK::init()
 	gui = manager->getGUIEnvironment();
 	log->logData("Creating scene");
 	//Create a new scene object and initialize
-	scene = new SCENE(log, device);
+	scene = new SCENE(log, device, config);
 	scene->init(receiver);
 	//add debug camera.
 	log->logData("Scene created");
@@ -125,7 +130,7 @@ int FRAMEWORK::render()
 	if(device->isWindowActive())
 	{
 		//begin scene rendering. Clear screen to black first.
-		driver->beginScene(true, true, video::SColor(255, 0, 0, 0));
+		driver->beginScene(true, true, video::SColor(255, 50, 50, 50));
 		//render the scene
 		scene->render();
 		//finish rendering
@@ -136,7 +141,9 @@ int FRAMEWORK::render()
 		}
 		//This last block is adding the FPS to the window header.
 		u32 fps = driver->getFPS();
-        core::stringw str = L"FoxClaw Engine by Jcam Technologies [";
+        core::stringw str = L"FoxClaw Engine by Jcam Technologies ";
+        str += STATUS;
+        str += "[";
         str += driver->getName();
         str += "] FPS:";
         str += fps;
