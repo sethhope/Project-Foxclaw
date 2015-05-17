@@ -23,6 +23,7 @@ public:
     void setDirection(core::vector3df dir);
     void setColors(video::SColor color1, video::SColor color2);
     void addAffector(std::string type);
+    void addAffectorsFromVector();
     void setRate(u32 rateMin, u32 rateMax);
     void setSize(core::dimension2df sizeMin, core::dimension2df sizeMax);
     void setAge(u32 minAge, u32 maxAge);
@@ -35,6 +36,7 @@ public:
     u32 minAge, maxAge;
     core::dimension2df sizeMin, sizeMax;
     std::string getFilename();
+    std::vector<std::string> affectors;
 private:
     std::string filename;
     video::SColor color1, color2;

@@ -12,6 +12,7 @@ FRAMEWORK::~FRAMEWORK()
 
 	delete scene;
 	delete log;
+	delete config;
 	device->drop(); //Drop the irrlicht device
 }
 
@@ -26,18 +27,23 @@ int FRAMEWORK::init()
 	//log header data.
 	log->debugData(MINOR, "Logger initialized");
 	log->logData("Fox Claw Engine by Jcam Technologies");
-	log->logData("Engine build", FULLVERSION_STRING);
-	log->logData("Engine Version", STATUS);
+	log->logData("Engine build", VERSION_FULLVERSION_STRING);
+	log->logData("Engine Version", VERSION_STATUS);
 	log->logData("Platform", PLAT);
-	log->logData("Loading config");
-	config = new Config();
+	log->logData("Loading config", (std::string)(device->getFileSystem()->getAbsolutePath("config.xml").c_str()));
+	config = new Config(device, log);
 	config->loadConfig((std::string)(device->getFileSystem()->getAbsolutePath("config.xml").c_str()));
+	for(std::map<std::string, f32>::iterator it = config->data.begin(); it != config->data.end(); it++)
+    {
+        log->logData(it->first.c_str(), it->second);
+    }
 	log->logData("Creating Graphics Driver");
 	bool fullScreen = config->data["fullscreen"];
+	bool vSync = config->data["vsync"];
 	//Create graphics driver
 	//Check for opengl (Only OpenGL and software for now. DirectX may come later)
 	log->logData("Trying OpenGL");
-	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(config->data["width"], config->data["height"]), 32, fullScreen, false, true, &receiver);
+	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(config->data["width"], config->data["height"]), 32, fullScreen, false, vSync, &receiver);
 	if(!device)
 	{
 		//OpenGL failed. Try software renderer
@@ -75,6 +81,7 @@ int FRAMEWORK::update()
 	run = device->run();
 	//update the scene
 	scene->update(receiver);
+	run = !scene->exit;
 	log->debugData(EXTRA, "Updating GUI");
 	receiver.callers = scene->callers;
 	std::vector<GUI*>::iterator it = scene->callers.begin();
@@ -135,14 +142,10 @@ int FRAMEWORK::render()
 		scene->render();
 		//finish rendering
 		driver->endScene();
-		if(receiver.KeyDown(irr::KEY_ESCAPE))
-		{
-			run = false;
-		}
 		//This last block is adding the FPS to the window header.
 		u32 fps = driver->getFPS();
         core::stringw str = L"FoxClaw Engine by Jcam Technologies ";
-        str += STATUS;
+        str += VERSION_STATUS;
         str += "[";
         str += driver->getName();
         str += "] FPS:";

@@ -14,6 +14,7 @@ SCENE::SCENE(LOGGER* log, IrrlichtDevice* device, Config* config)
 	gui = device->getGUIEnvironment();
 	manager = device->getSceneManager();
     this->config = config;
+    exit = false;
 }
 
 SCENE::~SCENE()
@@ -920,6 +921,8 @@ void SCENE::load(std::string filename)
 					f32 sizeMin, sizeMax;
 					int id;
 					int parentID;
+					std::vector<std::string> affectors;
+					affectors.clear();
 					while(xml && xml->read() && inPart)
 					{
 						switch(xml->getNodeType())
@@ -966,6 +969,10 @@ void SCENE::load(std::string filename)
 								{
 									scale = core::vector3df(xml->getAttributeValueAsFloat(0), xml->getAttributeValueAsFloat(1), xml->getAttributeValueAsFloat(2));
 								}
+								if(core::stringw(L"affector").equals_ignore_case(xml->getNodeName()))
+                                {
+                                    affectors.push_back(core::stringc(xml->getAttributeValue(0)).c_str());
+                                }
 							break;
 							case io::EXN_ELEMENT_END:
 								if(core::stringw(L"PARTICLE").equals_ignore_case(xml->getNodeName()))
@@ -989,6 +996,8 @@ void SCENE::load(std::string filename)
 					tmpPart->setSize(core::dimension2df(sizeMin, sizeMin), core::dimension2df(sizeMax,sizeMax));
 					tmpPart->setAge(ageMin, ageMax);
 					tmpPart->setRate(rateMin, rateMax);
+					tmpPart->affectors = affectors;
+					tmpPart->addAffectorsFromVector();
 					tmpPart->update();
 					objects.push_back(tmpPart);
 				}
@@ -1300,7 +1309,7 @@ void SCENE::save(std::string filename)
 			xml->writeLineBreak();
 			xml->writeElement(L"rate", true, L"rateMin", core::stringw(((PARTICLE*)(*it))->rateMin).c_str(), L"rateMax", core::stringw(((PARTICLE*)(*it))->rateMax).c_str());
 			xml->writeLineBreak();
-			xml->writeElement(L"age", true, L"ageMin", core::stringw(((PARTICLE*)(*it))->minAge).c_str(), L"ageMax", core::stringw(((PARTICLE*)(*it))->minAge).c_str());
+			xml->writeElement(L"age", true, L"ageMin", core::stringw(((PARTICLE*)(*it))->minAge).c_str(), L"ageMax", core::stringw(((PARTICLE*)(*it))->maxAge).c_str());
 			xml->writeLineBreak();
 			xml->writeElement(L"size", true, L"sizeMin", core::stringw(((PARTICLE*)(*it))->sizeMin.Height).c_str(), L"sizeMax", core::stringw(((PARTICLE*)(*it))->sizeMax.Height).c_str());
 			xml->writeLineBreak();
@@ -1312,6 +1321,11 @@ void SCENE::save(std::string filename)
 			xml->writeLineBreak();
 			xml->writeElement(L"scale", true, L"x", core::stringw((*it)->getScale().X).c_str(), L"y", core::stringw((*it)->getScale().Y).c_str(), L"z", core::stringw((*it)->getScale().Z).c_str());
 			xml->writeLineBreak();
+			for(std::vector<std::string>::iterator af = ((PARTICLE*)(*it))->affectors.begin(); af < ((PARTICLE*)(*it))->affectors.end(); af++)
+            {
+                xml->writeElement(L"affector", true, L"type", core::stringw((*af).c_str()).c_str());
+                xml->writeLineBreak();
+            }
 			xml->writeClosingTag(L"PARTICLE");
 			xml->writeLineBreak();
 			xml->writeLineBreak();

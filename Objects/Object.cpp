@@ -52,7 +52,6 @@ void OBJECT::update()
 		rotation=getIrrNode()->getRotation();
 	}
 }
-
 void OBJECT::render()
 {
 	onRender();
@@ -72,7 +71,6 @@ void OBJECT::render()
 		}
 	}
 }
-
 void OBJECT::setPosition(core::vector3df pos)
 {
 	core::vector3df lastPos = position;

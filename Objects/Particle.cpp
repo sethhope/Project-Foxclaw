@@ -20,12 +20,13 @@ PARTICLE::PARTICLE(IrrlichtDevice* device, LOGGER* log)
 	position = core::vector3df(0, 0, 0);
 	rotation = core::vector3df(0, 0, 0);
 	scale = core::vector3df(1, 1, 1);
+	affectors.clear();
 	log->debugData(MAJOR, "Instantiated particle system");
 }
 
 PARTICLE::~PARTICLE()
 {
-	
+
 }
 
 void PARTICLE::onInit()
@@ -51,7 +52,7 @@ void PARTICLE::onUpdate()
 
 void PARTICLE::onRender()
 {
-	
+
 }
 
 void PARTICLE::loadTexture(std::string filename)
@@ -120,7 +121,39 @@ void PARTICLE::addAffector(std::string type)
 		log->debugData(MINOR, "Invalid affector type");
 		return;
 	}
+	affectors.push_back(type);
 	log->debugData(MAJOR, "Affector added");
+}
+void PARTICLE::addAffectorsFromVector()
+{
+    for(std::vector<std::string>::iterator it = affectors.begin(); it != affectors.end(); it++)
+    {
+        std::string type = (*it);
+        log->debugData(MINOR, "Adding affector to", id);
+        log->debugData(MAJOR, "Affector type", type);
+        if(type == "fade")
+        {
+            scene::IParticleAffector* paf = ps->createFadeOutParticleAffector();
+            ps->addAffector(paf);
+            paf->drop();
+        }
+        else if(type == "gravity")
+        {
+            scene::IParticleAffector* paf = ps->createGravityAffector();
+            ps->addAffector(paf);
+            paf->drop();
+        }
+        else if(type == "rise")
+        {
+            scene::IParticleAffector* paf = ps->createGravityAffector(core::vector3df(0, 0.03, 0));
+            ps->addAffector(paf);
+            paf->drop();
+        }else
+        {
+            log->debugData(MINOR, "Invalid affector type");
+            return;
+        }
+    }
 }
 void PARTICLE::setAge(u32 minAge, u32 maxAge)
 {

@@ -14,6 +14,7 @@ namespace FCE
             ~ShaderHandler();
             void addShader(std::string xmlFile);
             void addConstant(u32 shader, std::string key, f32 data);
+            std::vector<ShaderCallback*> shaders;
             std::vector<u32> materials;
         protected:
         private:

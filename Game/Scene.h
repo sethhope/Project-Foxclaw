@@ -87,6 +87,7 @@ namespace FCE
         void load(std::string filename);
         CPostProcessManager* postManager;
         Config* config;
+        bool exit;
     private:
 
         //Standard variables

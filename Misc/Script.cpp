@@ -39,6 +39,7 @@ void SCRIPT::onInit()
 
     static luaL_Reg Scene_metatable[] =
     {
+        {"quit", Scene_quit},
         {"load", Scene_Load},
         {"save", Scene_Save},
         {"Objects", Scene_Objects},
@@ -103,6 +104,8 @@ void SCRIPT::onInit()
         {"addArchive", Scene_addZip},
         {"removeArchive", Scene_removeZip},
         {"getConfigValue", Scene_getConfigValue},
+        {"setConfigValue", Scene_setConfigValue},
+        {"saveConfig", Scene_saveConfig},
         {NULL, NULL}
     };
     static luaL_Reg Mesh_metatable[] =

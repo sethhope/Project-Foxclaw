@@ -48,6 +48,12 @@ SCENE* Scene_new(lua_State* L)
     SCENE* s = new SCENE();
     return s;
 }
+int Scene_quit(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->exit = true;
+    return 0;
+}
 int Scene_Load(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
@@ -65,6 +71,18 @@ int Scene_getConfigValue(lua_State* L)
     SCENE* s = luaW_check<SCENE>(L, 1);
     lua_pushnumber(L, s->config->data[luaL_checkstring(L, 2)]);
     return 1;
+}
+int Scene_setConfigValue(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->config->data[luaL_checkstring(L, 2)] = luaL_checknumber(L, 3);
+    return 0;
+}
+int Scene_saveConfig(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->config->saveConfig((std::string)(s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 2)).c_str()));
+    return 0;
 }
 int Scene_deltaTime(lua_State* L)
 {

@@ -46,7 +46,6 @@ private:
     video::IVideoDriver* driver;
     gui::IGUIEnvironment* gui;
     scene::ISceneManager* manager;
-    io::IXMLReader* settings;
 
 };
 }
