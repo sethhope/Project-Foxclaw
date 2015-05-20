@@ -119,7 +119,6 @@
 		<Unit filename="luawrapper.hpp" />
 		<Unit filename="luawrapperutil.hpp" />
 		<Unit filename="stdafx.h" />
-		<Unit filename="version.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

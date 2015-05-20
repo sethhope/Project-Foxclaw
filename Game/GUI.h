@@ -37,6 +37,7 @@ public:
     void initFileDiag(u32 id, core::stringw title, gui::IGUIElement* parent = 0);
     void setTransparency(s32 alpha);
     u32 addItemToList(core::stringw text);
+    u32 insertItemToList(u32 index, core::stringw text);
     void removeItemFromList(u32 id);
     bool OnEvent(const SEvent& event);
     void addScript(SCRIPT* script);

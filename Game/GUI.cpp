@@ -102,7 +102,10 @@ u32 GUI::addItemToList(core::stringw text)
 {
     return ((gui::IGUIListBox*)element)->addItem(text.c_str());
 }
-
+u32 GUI::insertItemToList(u32 index, core::stringw text)
+{
+    return ((gui::IGUIListBox*)element)->insertItem(index, text.c_str(), -1);
+}
 void GUI::removeItemFromList(u32 id)
 {
     ((gui::IGUIListBox*)element)->removeItem(id);
@@ -277,6 +280,24 @@ bool GUI::OnEvent(const SEvent& event)
                 }
                 env->getFileSystem()->changeWorkingDirectoryTo(workingDir);
                 guiCaller = 0;
+            }
+            return true;
+            break;
+        case gui::EGET_CHECKBOX_CHANGED :
+            if(id == element->getID() && type == FCHECK)
+            {
+                lua_getglobal(s->L, "onChange");
+                int tmp = 0;
+                if(((gui::IGUICheckBox*)element)->isChecked())
+                {
+                    tmp = 1;
+                }
+                lua_pushnumber(s->L, ((gui::IGUICheckBox*)element)->isChecked());
+                if(lua_pcall(s->L, 1, 0, 0) != 0)
+                {
+                    log->logData("Failed to run onChange function", lua_tostring(s->L, -1));
+                    return false;
+                }
             }
             return true;
             break;

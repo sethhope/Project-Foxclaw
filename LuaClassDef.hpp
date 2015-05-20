@@ -568,6 +568,36 @@ int Scene_addImage(lua_State* L)
     u32 list = s->addGui(g, parent);
     return 0;
 }
+int Scene_addCheckBox(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getLog()->debugData(MAJOR, "Creating checkbox");
+    GUI* g = new GUI(s->getDevice()->getGUIEnvironment(), s->getLog());
+    u32 x1 = luaL_checknumber(L, 2);
+    u32 y1 = luaL_checknumber(L, 3);
+    u32 x2 = luaL_checknumber(L, 4);
+    u32 y2 = luaL_checknumber(L, 5);
+    u32 checked = luaL_checknumber(L, 6);
+    std::string text = luaL_checkstring(L, 7);
+    u32 parent = luaL_checknumber(L, 8);
+    std::string script = luaL_checkstring(L, 9);
+    SCRIPT* guiScript = new SCRIPT(s->getLog());
+    guiScript->init();
+    luaW_push<SCENE>(guiScript->L, s);
+    lua_setglobal(guiScript->L, "MainScene");
+    guiScript->run((std::string)(s->getDevice()->getFileSystem()->getAbsolutePath(script.c_str()).c_str()));
+    g->addScript(guiScript);
+    bool ch = false;
+    if(checked != 0)
+    {
+        ch = true;
+    }
+    core::stringw tx = core::stringw(text.c_str());
+    g->initCheckBox(0, ch, tx, core::rect<s32>(x1, y1, x2, y2));
+    u32 ed = s->addGui(g, parent);
+    lua_pushnumber(L, ed);
+    return 1;
+}
 int Scene_addFileDiag(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
@@ -586,6 +616,42 @@ int Scene_addFileDiag(lua_State* L)
     g->addScript(guiScript);
     u32 list = s->addGui(g, parent);
     return 0;
+}
+int Scene_insertListItem(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getLog()->debugData(MAJOR, "Adding list item");
+    core::stringw itemName = luaL_checkstring(L, 2);
+    u32 index = luaL_checknumber(L, 3);
+    u32 itemID = luaL_checknumber(L, 4);
+    u32 retID = 0;
+    bool found = false;
+    for(std::vector<GUI*>::iterator it = s->callers.begin(); it < s->callers.end(); it++)
+    {
+        if((*it)->guiCaller == itemID)
+        {
+            found = true;
+            retID = (*it)->insertItemToList(index, itemName);
+        }
+    }
+    if(!found)
+    {
+        for(std::vector<GUI*>::iterator it = s->guiObjects.begin(); it < s->guiObjects.end(); it++)
+        {
+            if((*it)->guiCaller == itemID)
+            {
+                found = true;
+                retID = (*it)->addItemToList(itemName);
+            }
+        }
+    }
+    if(!found)
+    {
+        s->getLog()->debugData(MAJOR, "Item not found");
+        return 0;
+    }
+    lua_pushnumber(L, retID);
+    return 1;
 }
 int Scene_addListItem(lua_State* L)
 {
@@ -1043,10 +1109,6 @@ int Object_setMaterialFlag(lua_State* L)
         if(type == "antialias")
         {
             o->getIrrNode()->setMaterialFlag(video::EMF_ANTI_ALIASING, value);
-        }
-        if(type == "Material_parameter")
-        {
-            o->getIrrNode()->getMaterial(0).MaterialTypeParam = value;
         }
         if(type == "castshadow")
         {

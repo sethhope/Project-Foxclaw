@@ -52,8 +52,8 @@ void SOUND::load(std::string filename, bool loop)
 
 void SOUND::setVolume(f32 volume)
 {
-    log->debugData(MINOR, "Setting volume of", this->id);
-    log->debugData(MAJOR, "Setting to", volume);
+    log->debugData(EXTRA, "Setting volume of", this->id);
+    log->debugData(EXTRA, "Setting to", volume);
     this->volume = volume;
 }
 ISound* SOUND::getSound()
