@@ -20,7 +20,7 @@ subject to the following restrictions:
 #include "BulletCollision/CollisionDispatch/btSimulationIslandManager.h"
 #include "LinearMath/btQuickprof.h"
 #include "btMultiBodyConstraint.h"
-
+#include "LinearMath/btIDebugDraw.h"
 	
 
 
@@ -455,7 +455,6 @@ void	btMultiBodyDynamicsWorld::solveConstraints(btContactSolverInfo& solverInfo)
 				scratch_v.resize(bod->getNumLinks()+1);
 				scratch_m.resize(bod->getNumLinks()+1);
 
-				bod->clearForcesAndTorques();
 				bod->addBaseForce(m_gravity * bod->getBaseMass());
 
 				for (int j = 0; j < bod->getNumLinks(); ++j) 
@@ -468,7 +467,9 @@ void	btMultiBodyDynamicsWorld::solveConstraints(btContactSolverInfo& solverInfo)
 				if(bod->isMultiDof())
 				{
 					if(!bod->isUsingRK4Integration())
+					{
 						bod->stepVelocitiesMultiDof(solverInfo.m_timeStep, scratch_r, scratch_v, scratch_m);
+					}
 					else
 					{						
 						//
@@ -613,7 +614,7 @@ void	btMultiBodyDynamicsWorld::solveConstraints(btContactSolverInfo& solverInfo)
 								pRealBuf[i] = delta_q[i];
 
 							//bod->stepPositionsMultiDof(1, 0, &delta_q[0]);
-							bod->__posUpdated = true;							
+							bod->setPosUpdated(true);							
 						}
 
 						//ugly hack which resets the cached data to t0 (needed for constraint solver)
@@ -625,9 +626,12 @@ void	btMultiBodyDynamicsWorld::solveConstraints(btContactSolverInfo& solverInfo)
 						
 					}
 				}
-				else
+				else//if(bod->isMultiDof())
+				{
 					bod->stepVelocities(solverInfo.m_timeStep, scratch_r, scratch_v, scratch_m);
-			}
+				}
+				bod->clearForcesAndTorques();
+			}//if (!isSleeping)
 		}
 	}
 
@@ -672,7 +676,7 @@ void	btMultiBodyDynamicsWorld::integrateTransforms(btScalar timeStep)
 
 				if(bod->isMultiDof())
 				{
-					if(!bod->__posUpdated)
+					if(!bod->isPosUpdated())
 						bod->stepPositionsMultiDof(timeStep);
 					else
 					{
@@ -680,7 +684,7 @@ void	btMultiBodyDynamicsWorld::integrateTransforms(btScalar timeStep)
 						pRealBuf += 6 + bod->getNumDofs() + bod->getNumDofs()*bod->getNumDofs();
 
 						bod->stepPositionsMultiDof(1, 0, pRealBuf);
-						bod->__posUpdated = false;
+						bod->setPosUpdated(false);
 					}
 				}
 				else
@@ -692,8 +696,8 @@ void	btMultiBodyDynamicsWorld::integrateTransforms(btScalar timeStep)
 				if (bod->getBaseCollider())
 				{
 					btVector3 posr = local_origin[0];
-					float pos[4]={posr.x(),posr.y(),posr.z(),1};
-					float quat[4]={-world_to_local[0].x(),-world_to_local[0].y(),-world_to_local[0].z(),world_to_local[0].w()};
+				//	float pos[4]={posr.x(),posr.y(),posr.z(),1};
+					btScalar quat[4]={-world_to_local[0].x(),-world_to_local[0].y(),-world_to_local[0].z(),world_to_local[0].w()};
 					btTransform tr;
 					tr.setIdentity();
 					tr.setOrigin(posr);
@@ -722,8 +726,8 @@ void	btMultiBodyDynamicsWorld::integrateTransforms(btScalar timeStep)
 						int index = link+1;
 
 						btVector3 posr = local_origin[index];
-						float pos[4]={posr.x(),posr.y(),posr.z(),1};
-						float quat[4]={-world_to_local[index].x(),-world_to_local[index].y(),-world_to_local[index].z(),world_to_local[index].w()};
+			//			float pos[4]={posr.x(),posr.y(),posr.z(),1};
+						btScalar quat[4]={-world_to_local[index].x(),-world_to_local[index].y(),-world_to_local[index].z(),world_to_local[index].w()};
 						btTransform tr;
 						tr.setIdentity();
 						tr.setOrigin(posr);
@@ -750,4 +754,93 @@ void	btMultiBodyDynamicsWorld::addMultiBodyConstraint( btMultiBodyConstraint* co
 void	btMultiBodyDynamicsWorld::removeMultiBodyConstraint( btMultiBodyConstraint* constraint)
 {
 	m_multiBodyConstraints.remove(constraint);
+}
+
+void btMultiBodyDynamicsWorld::debugDrawMultiBodyConstraint(btMultiBodyConstraint* constraint)
+{
+	constraint->debugDraw(getDebugDrawer());
+}
+
+
+void	btMultiBodyDynamicsWorld::debugDrawWorld()
+{
+	BT_PROFILE("btMultiBodyDynamicsWorld debugDrawWorld");
+
+	bool drawConstraints = false;
+	if (getDebugDrawer())
+	{
+		int mode = getDebugDrawer()->getDebugMode();
+		if (mode  & (btIDebugDraw::DBG_DrawConstraints | btIDebugDraw::DBG_DrawConstraintLimits))
+		{
+			drawConstraints = true;
+		}
+
+		if (drawConstraints)
+		{
+			BT_PROFILE("btMultiBody debugDrawWorld");
+			
+			btAlignedObjectArray<btQuaternion> world_to_local;
+			btAlignedObjectArray<btVector3> local_origin;
+
+			for (int c=0;c<m_multiBodyConstraints.size();c++)
+			{
+				btMultiBodyConstraint* constraint = m_multiBodyConstraints[c];
+				debugDrawMultiBodyConstraint(constraint);
+			}
+
+			for (int b = 0; b<m_multiBodies.size(); b++)
+			{
+				btMultiBody* bod = m_multiBodies[b];
+				int nLinks = bod->getNumLinks();
+
+				///base + num m_links
+				world_to_local.resize(nLinks + 1);
+				local_origin.resize(nLinks + 1);
+
+					
+				world_to_local[0] = bod->getWorldToBaseRot();
+				local_origin[0] = bod->getBasePos();
+
+				
+				{
+					btVector3 posr = local_origin[0];
+					//	float pos[4]={posr.x(),posr.y(),posr.z(),1};
+					btScalar quat[4] = { -world_to_local[0].x(), -world_to_local[0].y(), -world_to_local[0].z(), world_to_local[0].w() };
+					btTransform tr;
+					tr.setIdentity();
+					tr.setOrigin(posr);
+					tr.setRotation(btQuaternion(quat[0], quat[1], quat[2], quat[3]));
+
+					getDebugDrawer()->drawTransform(tr, 0.1);
+
+				}
+
+				for (int k = 0; k<bod->getNumLinks(); k++)
+				{
+					const int parent = bod->getParent(k);
+					world_to_local[k + 1] = bod->getParentToLocalRot(k) * world_to_local[parent + 1];
+					local_origin[k + 1] = local_origin[parent + 1] + (quatRotate(world_to_local[k + 1].inverse(), bod->getRVector(k)));
+				}
+
+
+				for (int m = 0; m<bod->getNumLinks(); m++)
+				{
+					int link = m;
+					int index = link + 1;
+
+					btVector3 posr = local_origin[index];
+					//			float pos[4]={posr.x(),posr.y(),posr.z(),1};
+					btScalar quat[4] = { -world_to_local[index].x(), -world_to_local[index].y(), -world_to_local[index].z(), world_to_local[index].w() };
+					btTransform tr;
+					tr.setIdentity();
+					tr.setOrigin(posr);
+					tr.setRotation(btQuaternion(quat[0], quat[1], quat[2], quat[3]));
+
+					getDebugDrawer()->drawTransform(tr, 0.1);
+				}
+			}
+		}
+	}
+
+	btDiscreteDynamicsWorld::debugDrawWorld();
 }

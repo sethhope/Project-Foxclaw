@@ -27,6 +27,7 @@ public:
     scene::IAnimatedMesh* getMesh();
     scene::IAnimatedMeshSceneNode* getNode();
 
+
 private:
     LOGGER* log;
     u32 flbegin, flend;

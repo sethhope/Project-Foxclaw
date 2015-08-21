@@ -12,9 +12,16 @@ TERRAIN::TERRAIN(scene::ISceneManager* manager, LOGGER* log)
 
 TERRAIN::~TERRAIN()
 {
-
+    mesh->drop();
+    log->debugData(MAJOR, "DROPPING MESH");
 }
-
+void TERRAIN::onDeconstruct()
+{
+    log->debugData(MAJOR, "DROPPING MESH");
+    mesh->clear();
+    //mesh->drop();
+    //m->remove();
+}
 void TERRAIN::onInit()
 {
     hMap = new HEIGHTMAP(100, 100);
@@ -63,8 +70,9 @@ void TERRAIN::load(std::string filename)
     makeMesh();
 }
 
-void TERRAIN::empty(u32 width, u32 height)
+void TERRAIN::empty(u32 width, u32 height, u32 tilefactor)
 {
+    this->tilefactor = tilefactor;
     mesh->clear();
     fromFile = false;
     log->debugData(MAJOR, "making empty heightmap");
@@ -110,8 +118,7 @@ void TERRAIN::makeMesh()
     mesh->setDirty();
     mesh->recalculateBoundingBox();
 
-    scene::IMeshSceneNode* m = manager->addMeshSceneNode(mesh);
-    thisNode = m;
+    thisNode = manager->addMeshSceneNode(mesh);
 }
 
 void TERRAIN::remakeMesh()
@@ -141,9 +148,8 @@ void TERRAIN::remakeMesh()
     mesh->setDirty();
     mesh->recalculateBoundingBox();
 
-    scene::IMeshSceneNode* m = manager->addMeshSceneNode(mesh);
     manager->addToDeletionQueue(thisNode);
-    thisNode = m;
+    thisNode = manager->addMeshSceneNode(mesh);
     thisNode->setPosition(position);
     thisNode->setRotation(rotation);
     thisNode->setScale(scale);
@@ -170,14 +176,14 @@ void TERRAIN::addstrip(u32 y0, u32 y1, u32 bufNum)
         for (u32 x = 0; x < hMap->getWidth(); ++x)
         {
 
-            const f32 xx = (f32)x/(f32)hMap->getWidth();
-            const f32 yy = (f32)y/(f32)hMap->getHeight();
+            const f32 xx = (f32)((f32)x/(f32)hMap->getWidth());
+            const f32 yy = (f32)((f32)y/(f32)hMap->getHeight());
             const f32 z = hMap->getData(x, y);
             video::S3DVertex& v = buf->Vertices[i++];
             v.Pos.set(x, 0.2 * z, y);
             v.Normal.set(hMap->getNormal(x, y, 0.2));
             v.Color=video::SColor(255,255,255,255);
-            v.TCoords.set(xx, yy);
+            v.TCoords.set(xx*tilefactor, yy*tilefactor);
         }
     }
 
@@ -218,7 +224,15 @@ void TERRAIN::setHeight(u32 x, u32 y, f32 height)
     mesh->clear();
     remakeMesh();
 }
-
+void TERRAIN::setHeightNoRebuild(u32 x, u32 y, f32 height)
+{
+    hMap->setHeight(x, y, height);
+}
+void TERRAIN::rebuild()
+{
+    mesh->clear();
+    remakeMesh();
+}
 scene::IAnimatedMesh* TERRAIN::getMesh()
 {
     return (scene::IAnimatedMesh*)(((scene::IMeshSceneNode*)thisNode)->getMesh());

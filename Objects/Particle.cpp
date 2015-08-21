@@ -31,7 +31,6 @@ PARTICLE::~PARTICLE()
 
 void PARTICLE::onInit()
 {
-	log->logData("Initiating particle system", id);
 	ps = device->getSceneManager()->addParticleSystemSceneNode(true);
 	scene::IParticleEmitter* em = ps->createBoxEmitter(size, dir, rateMin, rateMax, color1,color2, minAge, maxAge, 0, sizeMin, sizeMax);
 	ps->setEmitter(em);
@@ -116,7 +115,18 @@ void PARTICLE::addAffector(std::string type)
 		scene::IParticleAffector* paf = ps->createGravityAffector(core::vector3df(0, 0.03, 0));
 		ps->addAffector(paf);
 		paf->drop();
-	}else
+	}else if(type == "attract")
+    {
+        scene::IParticleAffector* paf = ps->createAttractionAffector(core::vector3df(rotation.X, rotation.Y, rotation.Z));
+        ps->addAffector(paf);
+        paf->drop();
+    }else if(type == "exploded")
+    {
+        scene::IParticleAttractionAffector* paf = ps->createAttractionAffector(core::vector3df(rotation.X, rotation.Y, rotation.Z));
+        paf->setAttract(false);
+        ps->addAffector(paf);
+        paf->drop();
+    }else
 	{
 		log->debugData(MINOR, "Invalid affector type");
 		return;
@@ -146,6 +156,17 @@ void PARTICLE::addAffectorsFromVector()
         else if(type == "rise")
         {
             scene::IParticleAffector* paf = ps->createGravityAffector(core::vector3df(0, 0.03, 0));
+            ps->addAffector(paf);
+            paf->drop();
+        }else if(type == "attract")
+        {
+            scene::IParticleAffector* paf = ps->createAttractionAffector(core::vector3df(rotation.X, rotation.Y, rotation.Z));
+            ps->addAffector(paf);
+            paf->drop();
+        }else if(type == "exploded")
+        {
+            scene::IParticleAttractionAffector* paf = ps->createAttractionAffector(core::vector3df(rotation.X, rotation.Y, rotation.Z));
+            paf->setAttract(false);
             ps->addAffector(paf);
             paf->drop();
         }else

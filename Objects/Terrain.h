@@ -41,7 +41,8 @@ public:
     void onInit();
     void onUpdate();
     void onRender();
-    void empty(u32 width, u32 height);
+    void onDeconstruct();
+    void empty(u32 width, u32 height, u32 tilefactor = 1);
     void load(std::string filename);
     std::string getOType();
     HEIGHTMAP* getHeightmap()
@@ -51,7 +52,8 @@ public:
     std::string getFilename();
     bool fromFile;
     void setHeight(u32 x, u32 y, f32 height);
-
+    void setHeightNoRebuild(u32 x, u32 y, f32 height);
+    void rebuild();
     scene::IAnimatedMesh* getMesh();
 private:
     void addstrip(u32 y0, u32 y1, u32 bufNum);
@@ -62,6 +64,7 @@ private:
     LOGGER* log;
     HEIGHTMAP* hMap;
     scene::ISceneManager* manager;
+    u32 tilefactor;
 };
 }
 #endif

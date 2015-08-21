@@ -22,10 +22,12 @@ namespace FCE
 			virtual void onInit(){};
 			virtual void onUpdate(){};
 			virtual void onRender(){};
+			virtual void onDeconstruct(){};
 			virtual std::string getOType(){return "OBJECT";};
 			void init();
 			void update();
 			void render();
+			void deconstruct();
 			void setPosition(core::vector3df pos);
 			void setRotation(core::vector3df rot);
 			void setScale(core::vector3df scale);
@@ -45,18 +47,22 @@ namespace FCE
 			void setName(std::string name);
 			std::string getName();
 			std::string shaderName;
+			void setShaderConstant(u32 shader, std::string key, f32 data);
             ShaderHandler* shader;
 			bool hasShader;
+			bool boneAttached;
+			bool uDa;
 		protected:
 			core::vector3df rotation;
 			core::vector3df position;
 			core::vector3df scale;
 			std::string name;
 			COLLIDER* collider;
-			bool uDa;
 			u32 id;
 		private:
 			std::map<std::string, f32> metadata;
+			std::map<std::string, f32> vsshaderConstants;
+			std::map<std::string, f32> fsshaderConstants;
 			bool initialized;
 
 

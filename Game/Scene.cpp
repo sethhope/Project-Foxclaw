@@ -48,6 +48,7 @@ void SCENE::init(FEventReceiver receiver)
 	std::string bulVer_ = bulVer.str();
 	log->debugData(MINOR, "Initialized Physics version", bulVer_);
 	world->setGravity(core::vector3df(0, -10, 0));
+	world->getSoftBodyWorldInfo().air_density = 0.05;
 	log->logData("Initializing Sound Engine");
 	//create sound driver
 	sound = createIrrKlangDevice();
@@ -69,6 +70,10 @@ void SCENE::init(FEventReceiver receiver)
 	timeScale = 0.004;
 	lastGUI = 1;
 	skyboxType = NONE;
+
+	log->logData("Initializing network");
+	net = new NETWORK(log);
+	log->logData("Network initialized");
 	//load startup lua script
 	log->logData("Loading startup script");
 	//create new script
@@ -95,14 +100,13 @@ void SCENE::update(FEventReceiver receiver)
 	deltaTime = device->getTimer()->getTime() - timeStamp;
 	timeStamp = device->getTimer()->getTime();
 	log->debugData(EXTRA, "Updating Physics");
-	world->stepSimulation(deltaTime/timeScale, 4);
+	world->stepSimulation(deltaTime/timeScale, 10);
 	log->debugData(EXTRA, "Updating script");
 	//run the update function within the main script
 	mainScript->update();
 	log->debugData(EXTRA, "Updating objects");
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
-		log->debugData(EXTRA, (*it)->getName());
 		(*it)->update();
 	}
 	log->debugData(EXTRA, "updating sound");
@@ -115,10 +119,19 @@ void SCENE::update(FEventReceiver receiver)
 	sound->setListenerPosition(manager->getActiveCamera()->getAbsolutePosition(), manager->getActiveCamera()->getTarget());
 
 }
+/*
+float SelfiePony = 0;
+float bum = 1;
+if(SelfiePony <= bum)
+{
+    return ISSelfiePony;
+}
 
+Confused Programmers: II
+*/
 void SCENE::render()
 {
-	postManager->prepare(false);
+	postManager->prepare(true);
 	//draw all things in the manager and GUI.
 	manager->drawAll();
 	//run the render function in the main script
@@ -128,6 +141,7 @@ void SCENE::render()
 		log->debugData(EXTRA, (*it)->getName());
 		(*it)->render();
 	}
+
 	if(debug)
 	{
 		world->debugDrawWorld(true);
@@ -288,6 +302,44 @@ ANIMATEDMESH* SCENE::editAnimatedMesh(u32 id)
 	log->logData("Couldn't find animated mesh", id);
 	return NULL;
 }
+
+u32 SCENE::addBoneAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale)
+{
+	BONEANIMATEDMESH* tmp = new BONEANIMATEDMESH(manager, log);
+	tmp->setID(lastID);
+	u32 meshLoaded = tmp->load((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()));
+	if(meshLoaded != 0)
+    {
+        return 0;
+    }
+	tmp->setName("BONE_ANIMATED_MESH");
+	tmp->setPosition(pos);
+	tmp->setRotation(rot);
+	tmp->setScale(scale);
+	tmp->init();
+	tmp->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, true);
+	//tmp->getIrrNode()->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
+	tmp->getIrrNode()->setMaterialType(video::EMT_SOLID);
+	lastID++;
+	objects.push_back(tmp);
+	tmp->update();
+	postManager->addNodeToDepthPass(tmp->getIrrNode());
+	return lastID-1;
+}
+
+BONEANIMATEDMESH* SCENE::editBoneAnimatedMesh(u32 id)
+{
+	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if(((BONEANIMATEDMESH*)(*it))->getID()==id)
+		{
+			return ((BONEANIMATEDMESH*)(*it));
+		}
+	}
+	log->logData("Couldn't find bone animated mesh", id);
+	return NULL;
+}
+
 u32 SCENE::addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, f32 dropoff, video::E_LIGHT_TYPE type)
 {
 	LIGHT* temp = new LIGHT(manager, log);
@@ -377,6 +429,42 @@ TERRAIN* SCENE::getTerrain(u32 id)
 	log->logData("Terrain not found. ID", id);
 	return NULL;
 }
+
+u32 SCENE::addSoftMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale)
+{
+    SOFTMESH* tmp = new SOFTMESH(manager, world, log);
+	tmp->setID(lastID);
+	u32 meshLoaded = tmp->load((std::string)(device->getFileSystem()->getAbsolutePath(filename.c_str()).c_str()), 1);
+	if(meshLoaded!=0)
+    {
+        return 0;
+    }
+	tmp->setName("SOFTMESH");
+	tmp->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, true);
+	//tmp->getIrrNode()->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
+	//tmp->getIrrNode()->setMaterialType(video::EMT_SOLID);
+    tmp->setPosition(pos);
+	tmp->setRotation(rot);
+	tmp->setScale(scale);
+	tmp->init();
+	lastID++;
+	objects.push_back(tmp);
+	tmp->update();
+	postManager->addNodeToDepthPass(tmp->getIrrNode());
+	return lastID-1;
+}
+SOFTMESH* SCENE::getSoftBody(u32 id)
+{
+    for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if(((SOFTMESH*)(*it))->getID()==id)
+		{
+			return ((SOFTMESH*)(*it));
+		}
+	}
+	log->logData("Couldn't find Softbody mesh", id);
+	return NULL;
+}
 OBJECT* SCENE::getObject(u32 id)
 {
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
@@ -450,7 +538,9 @@ void SCENE::removeObject(u32 id)
 	{
 		if((*it)->getID()==id)
 		{
+			postManager->removeNodeFromDepthPass((*it)->getIrrNode());
 			manager->addToDeletionQueue((*it)->getIrrNode());
+			(*it)->deconstruct();
 			(*it)->~OBJECT();
 			objects.erase(it);
 			return;
@@ -529,7 +619,7 @@ void SCENE::load(std::string filename)
 		if((*it)->getOType() != "CAMERA")
 		{
 			manager->addToDeletionQueue((*it)->getIrrNode());
-			postManager->addNodeToDepthPass((*it)->getIrrNode());
+			postManager->removeNodeFromDepthPass((*it)->getIrrNode());
 			if((*it)->hasCollider)
 			{
 				world->removeCollisionObject((*it)->getCollider()->body);
@@ -697,6 +787,7 @@ void SCENE::load(std::string filename)
 					tmpMesh->getIrrNode()->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
 					tmpMesh->getIrrNode()->setMaterialType(video::EMT_SOLID);
 					tmpMesh->update();
+					postManager->addNodeToDepthPass(tmpMesh->getIrrNode());
 					if(hasCollider)
 					{
 						tmpMesh->addCollider(log, colliderType, manager, world, mass, tmpMesh->getMesh());
@@ -798,6 +889,7 @@ void SCENE::load(std::string filename)
 					tmpMesh->getIrrNode()->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
 					tmpMesh->getIrrNode()->setMaterialType(video::EMT_SOLID);
 					tmpMesh->update();
+					postManager->addNodeToDepthPass(tmpMesh->getIrrNode());
 					if(hasCollider)
 					{
 						tmpMesh->addCollider(log, colliderType, manager, world, mass, tmpMesh->getMesh());

@@ -45,11 +45,11 @@ public:
     gui::IGUIEnvironment* env;
     gui::IGUIElement* element;
     u32 guiCaller;
+    gui::IGUISkin* skin;
     std::vector<GUI*> children;
 private:
     bool hasFocus;
     u8 type;
-    gui::IGUISkin* skin;
     SCRIPT* s;
     LOGGER* log;
     GUI* parent;

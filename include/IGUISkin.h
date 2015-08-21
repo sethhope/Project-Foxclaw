@@ -534,7 +534,7 @@ namespace gui
 		\param tabHeight Height of tab.
 		\param alignment Alignment of GUI element. */
 		virtual void draw3DTabBody(IGUIElement* element, bool border, bool background,
-			const core::rect<s32>& rect, const core::rect<s32>* clip=0, s32 tabHeight=-1, gui::EGUI_ALIGNMENT alignment=EGUIA_UPPERLEFT ) = 0;
+			const core::rect<s32>& rect, const core::rect<s32>* clip=0, s32 tabHeight=-1, gui::EGUI_ALIGNMENT alignment=EGUIA_UPPERLEFT );
 
 		//! draws an icon, usually from the skin's sprite bank
 		/** \param element: Pointer to the element which wishes to draw this icon.

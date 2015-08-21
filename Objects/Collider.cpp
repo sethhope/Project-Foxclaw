@@ -16,13 +16,15 @@ COLLIDER::COLLIDER(scene::ISceneNode* parent, scene::ISceneManager* manager, irr
     this->node = parent;
     this->mass = mass;
     this->log = log;
+    this->manager = manager;
 }
 
 COLLIDER::~COLLIDER()
 {
-
+    body->setActivationState(EActivationState::EAS_ACTIVE);
+    manager->addToDeletionQueue(node);
     world->removeCollisionObject(body, true);
-    body->remove();
+    //body->remove();
 }
 
 void COLLIDER::init()
@@ -69,6 +71,15 @@ void COLLIDER::init()
         ICollisionShape* shape = new ICapsuleShape(node, mass);
         body = world->addRigidBody(shape);
     }
+    if(type == COL_SOFTBODY)
+    {
+        log->debugData(MAJOR, "Creating softbody collider");
+        sbody = world->addSoftBody((scene::IMeshSceneNode*)node);
+        sbody->getConfiguration().poseMatchingCoefficient = 0.0;
+        sbody->updateConfiguration();
+        sbody->generateBendingConstraints(1);
+        sbody->randomizeConstraints();
+    }
     log->debugData(EXTRA, "Finished collider init");
 }
 
@@ -101,6 +112,9 @@ void COLLIDER::setFriction(float friction)
     if(type != COL_LIQUID && type != COL_SOFTBODY)
     {
         body->setFriction(friction);
+    }else if(type == COL_SOFTBODY)
+    {
+        sbody->setFriction(friction);
     }
 }
 
@@ -124,10 +138,10 @@ void COLLIDER::setVelocity(core::vector3df velocity)
     log->debugData(MAJOR, "Setting collider velocity");
     if(type != COL_LIQUID && type != COL_SOFTBODY)
     {
-        body->setActivationState(EAS_ACTIVE);
+        body->setActivationState(EActivationState::EAS_ACTIVE);
         if(local)
         {
-            body->setLinearVelocity(velocity, ERBTS_LOCAL);
+            body->setLinearVelocity(velocity, ERBTransformSpace::ERBTS_LOCAL);
         }
         else
         {
@@ -140,10 +154,10 @@ void COLLIDER::setAVelocity(core::vector3df velocity)
     log->debugData(MAJOR, "Setting collider AVelocity");
     if(type != COL_LIQUID && type != COL_SOFTBODY)
     {
-        body->setActivationState(EAS_ACTIVE);
+        body->setActivationState(EActivationState::EAS_ACTIVE);
         if(local)
         {
-            body->setAngularVelocity(velocity, ERBTS_LOCAL);
+            body->setAngularVelocity(velocity, ERBTransformSpace::ERBTS_LOCAL);
         }
         else
         {
@@ -155,10 +169,10 @@ void COLLIDER::setAVelocity(core::vector3df velocity)
 
 void COLLIDER::addCentralForce(core::vector3df force)
 {
-    body->setActivationState(EAS_ACTIVE);
+    body->setActivationState(EActivationState::EAS_ACTIVE);
     if(local)
     {
-        body->applyCentralForce(force, ERBTS_LOCAL);
+        body->applyCentralForce(force, ERBTransformSpace::ERBTS_LOCAL);
     }
     else
     {
@@ -168,10 +182,10 @@ void COLLIDER::addCentralForce(core::vector3df force)
 
 void COLLIDER::addForce(core::vector3df force, core::vector3df position)
 {
-    body->setActivationState(EAS_ACTIVE);
+    body->setActivationState(EActivationState::EAS_ACTIVE);
     if(local)
     {
-        body->applyForce(force, position, ERBTS_LOCAL);
+        body->applyForce(force, position, ERBTransformSpace::ERBTS_LOCAL);
     }
     else
     {
@@ -181,10 +195,10 @@ void COLLIDER::addForce(core::vector3df force, core::vector3df position)
 
 void COLLIDER::addTorque(core::vector3df torque)
 {
-    body->setActivationState(EAS_ACTIVE);
+    body->setActivationState(EActivationState::EAS_ACTIVE);
     if(local)
     {
-        body->applyTorque(torque, ERBTS_LOCAL);
+        body->applyTorque(torque, ERBTransformSpace::ERBTS_LOCAL);
     }
     else
     {

@@ -37,9 +37,9 @@ btScalar btMultiBodyConstraintSolver::solveSingleIteration(int iteration, btColl
 			//resolveSingleConstraintRowGenericMultiBody(constraint);
 		resolveSingleConstraintRowGeneric(constraint);
 		if(constraint.m_multiBodyA) 
-			constraint.m_multiBodyA->__posUpdated = false;
+			constraint.m_multiBodyA->setPosUpdated(false);
 		if(constraint.m_multiBodyB) 
-			constraint.m_multiBodyB->__posUpdated = false;
+			constraint.m_multiBodyB->setPosUpdated(false);
 	}
 
 	//solve featherstone normal contact
@@ -50,9 +50,9 @@ btScalar btMultiBodyConstraintSolver::solveSingleIteration(int iteration, btColl
 			resolveSingleConstraintRowGeneric(constraint);
 
 		if(constraint.m_multiBodyA) 
-			constraint.m_multiBodyA->__posUpdated = false;
+			constraint.m_multiBodyA->setPosUpdated(false);
 		if(constraint.m_multiBodyB) 
-			constraint.m_multiBodyB->__posUpdated = false;
+			constraint.m_multiBodyB->setPosUpdated(false);
 	}
 	
 	//solve featherstone frictional contact
@@ -71,9 +71,9 @@ btScalar btMultiBodyConstraintSolver::solveSingleIteration(int iteration, btColl
 				resolveSingleConstraintRowGeneric(frictionConstraint);
 
 				if(frictionConstraint.m_multiBodyA) 
-					frictionConstraint.m_multiBodyA->__posUpdated = false;
+					frictionConstraint.m_multiBodyA->setPosUpdated(false);
 				if(frictionConstraint.m_multiBodyB) 
-					frictionConstraint.m_multiBodyB->__posUpdated = false;
+					frictionConstraint.m_multiBodyB->setPosUpdated(false);
 			}
 		}
 	}
@@ -402,24 +402,16 @@ void btMultiBodyConstraintSolver::setupMultiBodyContactConstraint(btMultiBodySol
 			}
 		}
 
-		 if (multiBodyA && (multiBodyA==multiBodyB))
-		 {
-            // ndof1 == ndof2 in this case
-            for (int i = 0; i < ndofA; ++i) 
-			{
-                denom1 += jacB[i] * lambdaA[i];
-                denom1 += jacA[i] * lambdaB[i];
-            }
-        }
+		 
 
 		 btScalar d = denom0+denom1;
-		 if (btFabs(d)>SIMD_EPSILON)
+		 if (d>SIMD_EPSILON)
 		 {
-			 
-			 solverConstraint.m_jacDiagABInv = relaxation/(d);
+			solverConstraint.m_jacDiagABInv = relaxation/(d);
 		 } else
 		 {
-			solverConstraint.m_jacDiagABInv  = 1.f;
+			//disable the constraint row to handle singularity/redundant constraint
+			solverConstraint.m_jacDiagABInv  = 0.f;
 		 }
 		
 	}
@@ -629,15 +621,15 @@ void	btMultiBodyConstraintSolver::convertMultiBodyContact(btPersistentManifold* 
 	int solverBodyIdA = mbA? -1 : getOrInitSolverBody(*colObj0,infoGlobal.m_timeStep);
 	int solverBodyIdB = mbB ? -1 : getOrInitSolverBody(*colObj1,infoGlobal.m_timeStep);
 
-	btSolverBody* solverBodyA = mbA ? 0 : &m_tmpSolverBodyPool[solverBodyIdA];
-	btSolverBody* solverBodyB = mbB ? 0 : &m_tmpSolverBodyPool[solverBodyIdB];
+//	btSolverBody* solverBodyA = mbA ? 0 : &m_tmpSolverBodyPool[solverBodyIdA];
+//	btSolverBody* solverBodyB = mbB ? 0 : &m_tmpSolverBodyPool[solverBodyIdB];
 
 
 	///avoid collision response between two static objects
 //	if (!solverBodyA || (solverBodyA->m_invMass.isZero() && (!solverBodyB || solverBodyB->m_invMass.isZero())))
 	//	return;
 
-	int rollingFriction=1;
+
 
 	for (int j=0;j<manifold->getNumContacts();j++)
 	{
@@ -653,8 +645,8 @@ void	btMultiBodyConstraintSolver::convertMultiBodyContact(btPersistentManifold* 
 
 			btMultiBodySolverConstraint& solverConstraint = m_multiBodyNormalContactConstraints.expandNonInitializing();
 
-			btRigidBody* rb0 = btRigidBody::upcast(colObj0);
-			btRigidBody* rb1 = btRigidBody::upcast(colObj1);
+	//		btRigidBody* rb0 = btRigidBody::upcast(colObj0);
+	//		btRigidBody* rb1 = btRigidBody::upcast(colObj1);
 			solverConstraint.m_solverBodyIdA = solverBodyIdA;
 			solverConstraint.m_solverBodyIdB = solverBodyIdB;
 			solverConstraint.m_multiBodyA = mbA;
@@ -678,6 +670,7 @@ void	btMultiBodyConstraintSolver::convertMultiBodyContact(btPersistentManifold* 
 #ifdef ENABLE_FRICTION
 			solverConstraint.m_frictionIndex = frictionIndex;
 #if ROLLING_FRICTION
+	int rollingFriction=1;
 			btVector3 angVelA(0,0,0),angVelB(0,0,0);
 			if (rb0)
 				angVelA = rb0->getAngularVelocity();
@@ -795,7 +788,7 @@ void	btMultiBodyConstraintSolver::convertMultiBodyContact(btPersistentManifold* 
 
 void btMultiBodyConstraintSolver::convertContacts(btPersistentManifold** manifoldPtr,int numManifolds, const btContactSolverInfo& infoGlobal)
 {
-	btPersistentManifold* manifold = 0;
+	//btPersistentManifold* manifold = 0;
 
 	for (int i=0;i<numManifolds;i++)
 	{
@@ -836,7 +829,7 @@ btScalar btMultiBodyConstraintSolver::solveGroup(btCollisionObject** bodies,int 
 btScalar btMultiBodyConstraintSolver::solveGroupCacheFriendlyFinish(btCollisionObject** bodies,int numBodies,const btContactSolverInfo& infoGlobal)
 {
 	int numPoolConstraints = m_multiBodyNormalContactConstraints.size();
-	int i,j;
+	int j;
 
 	if (infoGlobal.m_solverMode & SOLVER_USE_WARMSTARTING)
 	{

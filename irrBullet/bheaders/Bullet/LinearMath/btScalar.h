@@ -48,6 +48,11 @@ inline int	btGetVersion()
 			#define ATTRIBUTE_ALIGNED16(a) a
 			#define ATTRIBUTE_ALIGNED64(a) a
 			#define ATTRIBUTE_ALIGNED128(a) a
+		#elif (_M_ARM)
+			#define SIMD_FORCE_INLINE __forceinline
+			#define ATTRIBUTE_ALIGNED16(a) __declspec() a
+			#define ATTRIBUTE_ALIGNED64(a) __declspec() a
+			#define ATTRIBUTE_ALIGNED128(a) __declspec () a
 		#else
 			//#define BT_HAS_ALIGNED_ALLOCATOR
 			#pragma warning(disable : 4324) // disable padding warning
@@ -67,7 +72,9 @@ inline int	btGetVersion()
  			#define btFsel(a,b,c) __fsel((a),(b),(c))
 		#else
 
-#if (defined (_WIN32) && (_MSC_VER) && _MSC_VER >= 1400) && (!defined (BT_USE_DOUBLE_PRECISION))
+#if defined (_M_ARM)
+            //Do not turn SSE on for ARM (may want to turn on BT_USE_NEON however)
+#elif (defined (_WIN32) && (_MSC_VER) && _MSC_VER >= 1400) && (!defined (BT_USE_DOUBLE_PRECISION))
 			#if _MSC_VER>1400
 				#define BT_USE_SIMD_VECTOR3
 			#endif
@@ -97,7 +104,7 @@ inline int	btGetVersion()
 #ifdef BT_DEBUG
 	#ifdef _MSC_VER
 		#include <stdio.h>
-		#define btAssert(x) { if(!(x)){printf("Assert " __FILE__  ":%u ("#x")\n", __LINE__);__debugbreak();	}}
+		#define btAssert(x) { if(!(x)){printf("Assert "__FILE__ ":%u ("#x")\n", __LINE__);__debugbreak();	}}
 	#else//_MSC_VER
 		#include <assert.h>
 		#define btAssert assert
@@ -125,7 +132,7 @@ inline int	btGetVersion()
 #ifdef __SPU__
 #include <spu_printf.h>
 #define printf spu_printf
-	#define btAssert(x) {if(!(x)){printf("Assert " __FILE__  ":%u ("#x")\n", __LINE__);spu_hcmpeq(0,0);}}
+	#define btAssert(x) {if(!(x)){printf("Assert "__FILE__ ":%u ("#x")\n", __LINE__);spu_hcmpeq(0,0);}}
 #else
 	#define btAssert assert
 #endif
@@ -343,12 +350,23 @@ inline __m128 operator * (const __m128 A, const __m128 B)
 #else//BT_USE_NEON
 
 	#ifndef BT_INFINITY
-	static  int btInfinityMask = 0x7F800000;
-	#define BT_INFINITY (*(float*)&btInfinityMask)
-	inline int btGetInfinityMask()//suppress stupid compiler warning
-	{
-		return btInfinityMask;
-	}
+		struct btInfMaskConverter
+		{
+		        union {
+		                float mask;
+		                int intmask;
+		        };
+		        btInfMaskConverter(int mask=0x7F800000)
+		        :intmask(mask)
+		        {
+		        }
+		};
+		static btInfMaskConverter btInfinityMask = 0x7F800000;
+		#define BT_INFINITY (btInfinityMask.mask)
+		inline int btGetInfinityMask()//suppress stupid compiler warning
+		{
+		        return btInfinityMask.intmask;
+		}
 	#endif
 #endif//BT_USE_NEON
 
@@ -400,19 +418,30 @@ SIMD_FORCE_INLINE btScalar btFmod(btScalar x,btScalar y) { return fmod(x,y); }
 SIMD_FORCE_INLINE btScalar btSqrt(btScalar y) 
 { 
 #ifdef USE_APPROXIMATION
+#ifdef __LP64__
+    float xhalf = 0.5f*y;
+    int i = *(int*)&y;
+    i = 0x5f375a86 - (i>>1);
+    y = *(float*)&i;
+    y = y*(1.5f - xhalf*y*y);
+    y = y*(1.5f - xhalf*y*y);
+    y = y*(1.5f - xhalf*y*y);
+    y=1/y;
+    return y;
+#else
     double x, z, tempf;
     unsigned long *tfptr = ((unsigned long *)&tempf) + 1;
-
-	tempf = y;
-	*tfptr = (0xbfcdd90a - *tfptr)>>1; /* estimate of 1/sqrt(y) */
-	x =  tempf;
-	z =  y*btScalar(0.5);
-	x = (btScalar(1.5)*x)-(x*x)*(x*z);         /* iteration formula     */
-	x = (btScalar(1.5)*x)-(x*x)*(x*z);
-	x = (btScalar(1.5)*x)-(x*x)*(x*z);
-	x = (btScalar(1.5)*x)-(x*x)*(x*z);
-	x = (btScalar(1.5)*x)-(x*x)*(x*z);
-	return x*y;
+    tempf = y;
+    *tfptr = (0xbfcdd90a - *tfptr)>>1; /* estimate of 1/sqrt(y) */
+    x =  tempf;
+    z =  y*btScalar(0.5);
+    x = (btScalar(1.5)*x)-(x*x)*(x*z);         /* iteration formula     */
+    x = (btScalar(1.5)*x)-(x*x)*(x*z);
+    x = (btScalar(1.5)*x)-(x*x)*(x*z);
+    x = (btScalar(1.5)*x)-(x*x)*(x*z);
+    x = (btScalar(1.5)*x)-(x*x)*(x*z);
+    return x*y;
+#endif
 #else
 	return sqrtf(y); 
 #endif
@@ -457,9 +486,17 @@ SIMD_FORCE_INLINE btScalar btFmod(btScalar x,btScalar y) { return fmodf(x,y); }
 #ifdef BT_USE_DOUBLE_PRECISION
 #define SIMD_EPSILON      DBL_EPSILON
 #define SIMD_INFINITY     DBL_MAX
+#define BT_ONE			1.0
+#define BT_ZERO			0.0
+#define BT_TWO			2.0
+#define BT_HALF			0.5
 #else
 #define SIMD_EPSILON      FLT_EPSILON
 #define SIMD_INFINITY     FLT_MAX
+#define BT_ONE			1.0f
+#define BT_ZERO			0.0f
+#define BT_TWO			2.0f
+#define BT_HALF			0.5f
 #endif
 
 SIMD_FORCE_INLINE btScalar btAtan2Fast(btScalar y, btScalar x) 

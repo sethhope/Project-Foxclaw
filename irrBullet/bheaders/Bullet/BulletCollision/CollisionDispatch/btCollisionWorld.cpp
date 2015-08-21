@@ -292,7 +292,7 @@ void	btCollisionWorld::rayTestSingleInternal(const btTransform& rayFromTrans,con
 		btGjkConvexCast	gjkConvexCaster(castShape,convexShape,&simplexSolver);
 		
 		//btContinuousConvexCollision convexCaster(castShape,convexShape,&simplexSolver,0);
-		bool condition = true;
+
 		btConvexCast* convexCasterPtr = 0;
 		//use kF_UseSubSimplexConvexCastRaytest by default
 		if (resultCallback.m_flags & btTriangleRaycastCallback::kF_UseGjkConvexCastRaytest)
@@ -309,6 +309,7 @@ void	btCollisionWorld::rayTestSingleInternal(const btTransform& rayFromTrans,con
 			{
 				if (castResult.m_fraction < resultCallback.m_closestHitFraction)
 				{
+					//todo: figure out what this is about. When is rayFromTest.getBasis() not identity?
 #ifdef USE_SUBSIMPLEX_CONVEX_CAST
 					//rotate normal into worldspace
 					castResult.m_normal = rayFromTrans.getBasis() * castResult.m_normal;
@@ -1245,7 +1246,10 @@ public:
 void btCollisionWorld::debugDrawObject(const btTransform& worldTransform, const btCollisionShape* shape, const btVector3& color)
 {
 	// Draw a small simplex at the center of the object
-	getDebugDrawer()->drawTransform(worldTransform,1);
+	if (getDebugDrawer() && getDebugDrawer()->getDebugMode() & btIDebugDraw::DBG_DrawFrames)
+	{
+		getDebugDrawer()->drawTransform(worldTransform,1);
+	}
 
 	if (shape->getShapeType() == COMPOUND_SHAPE_PROXYTYPE)
 	{
@@ -1509,15 +1513,6 @@ void	btCollisionWorld::debugDrawWorld()
 void	btCollisionWorld::serializeCollisionObjects(btSerializer* serializer)
 {
 	int i;
-	//serialize all collision objects
-	for (i=0;i<m_collisionObjects.size();i++)
-	{
-		btCollisionObject* colObj = m_collisionObjects[i];
-		if (colObj->getInternalType() == btCollisionObject::CO_COLLISION_OBJECT)
-		{
-			colObj->serializeSingleObject(serializer);
-		}
-	}
 
 	///keep track of shapes already serialized
 	btHashMap<btHashPtr,btCollisionShape*>	serializedShapes;
@@ -1534,6 +1529,15 @@ void	btCollisionWorld::serializeCollisionObjects(btSerializer* serializer)
 		}
 	}
 
+	//serialize all collision objects
+	for (i=0;i<m_collisionObjects.size();i++)
+	{
+		btCollisionObject* colObj = m_collisionObjects[i];
+		if (colObj->getInternalType() == btCollisionObject::CO_COLLISION_OBJECT)
+		{
+			colObj->serializeSingleObject(serializer);
+		}
+	}
 }
 
 

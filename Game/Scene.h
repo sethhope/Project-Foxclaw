@@ -19,6 +19,9 @@
 #include "Objects/Camera.h"
 #include "Objects/AnimatedMesh.h"
 #include "Objects/Terrain.h"
+#include "Objects/SoftMesh.h"
+#include "Objects/BoneAnimatedMesh.h"
+#include "network.h"
 #include "EventReceiver.h"
 #include "Irrlicht.h"
 #include "irrKlang.h"
@@ -51,7 +54,9 @@ namespace FCE
         u32 addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, f32 dropoff, video::E_LIGHT_TYPE type);
         u32 addEmptyObject(core::vector3df pos, core::vector3df rot, core::vector3df scale);
         u32 addAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
+        u32 addBoneAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
         u32 addTerrain(core::vector3df pos, core::vector3df rot, core::vector3df scale);
+        u32 addSoftMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
         void setCharacter(IKinematicCharacterController* character);
         void setDebug(bool debug);
         void setSkydome(std::string filename);
@@ -63,9 +68,11 @@ namespace FCE
         LIGHT* editLight(u32 id);
         EMPTYOBJECT* editEmpty(u32 id);
         ANIMATEDMESH* editAnimatedMesh(u32 id);
+        BONEANIMATEDMESH* editBoneAnimatedMesh(u32 id);
         CAMERA* getCamera();
         OBJECT* getObject(u32 id);
         TERRAIN* getTerrain(u32 id);
+        SOFTMESH* getSoftBody(u32 id);
         IKinematicCharacterController* getCharacter();
         irrBulletWorld* getWorld();
         IrrlichtDevice* getDevice();
@@ -88,6 +95,7 @@ namespace FCE
         CPostProcessManager* postManager;
         Config* config;
         bool exit;
+        NETWORK* getNetwork(){return net;}
     private:
 
         //Standard variables
@@ -116,6 +124,7 @@ namespace FCE
         CAMERA* camera;
         std::vector<OBJECT*> objects;
         FEventReceiver receiver;
+        NETWORK* net;
     };
 }
 #endif // _SCENE_H_

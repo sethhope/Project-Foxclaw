@@ -618,7 +618,7 @@ cl_program b3OpenCLUtils_compileCLProgramFromString(cl_context clContext, cl_dev
 		strippedName = strip2(clFileNameForCaching,"\\");
 		strippedName = strip2(strippedName,"/");
 	
-#ifdef _WIN32
+#ifdef _MSVC_VER
 		sprintf_s(binaryFileName,B3_MAX_STRING_LENGTH,"%s/%s.%s.%s.bin",sCachedBinaryPath,strippedName, deviceName,driverVersion );
 #else
 		sprintf(binaryFileName,"%s/%s.%s.%s.bin",sCachedBinaryPath,strippedName, deviceName,driverVersion );
@@ -765,7 +765,7 @@ cl_program b3OpenCLUtils_compileCLProgramFromString(cl_context clContext, cl_dev
 	
 	if( fileUpToDate)
 	{
-#ifdef _WIN32
+#ifdef _MSC_VER
 		FILE* file;
 		if (fopen_s(&file,binaryFileName, "rb")!=0)
 			file=0;
@@ -782,7 +782,8 @@ cl_program b3OpenCLUtils_compileCLProgramFromString(cl_context clContext, cl_dev
 			binarySize = ftell( file );
 			rewind( file );
 			binary = (char*)malloc(sizeof(char)*binarySize);
-			fread( binary, sizeof(char), binarySize, file );
+			int bytesRead;
+			bytesRead = fread( binary, sizeof(char), binarySize, file );
 			fclose( file );
 			
 			m_cpProgram = clCreateProgramWithBinary( clContext, 1,&device, &binarySize, (const unsigned char**)&binary, 0, &status );
@@ -891,7 +892,7 @@ cl_program b3OpenCLUtils_compileCLProgramFromString(cl_context clContext, cl_dev
 
         		flagsize = sizeof(char)*(strlen(additionalMacros) + strlen(flags) + 5);
 		compileFlags = (char*) malloc(flagsize);
-#ifdef _WIN32
+#ifdef _MSC_VER
 		sprintf_s(compileFlags,flagsize, "%s %s", flags, additionalMacros);
 #else
 		sprintf(compileFlags, "%s %s", flags, additionalMacros);
@@ -940,7 +941,7 @@ cl_program b3OpenCLUtils_compileCLProgramFromString(cl_context clContext, cl_dev
 
 				{
 					FILE* file=0;
-#ifdef _WIN32
+#ifdef _MSC_VER
 					if (fopen_s(&file,binaryFileName, "wb")!=0)
 						file=0;
 #else

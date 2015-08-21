@@ -18,6 +18,7 @@ subject to the following restrictions:
 #include "btMultiBodyPoint2Point.h"
 #include "btMultiBodyLinkCollider.h"
 #include "BulletDynamics/Dynamics/btRigidBody.h"
+#include "LinearMath/btIDebugDraw.h"
 
 #ifndef BTMBP2PCONSTRAINT_BLOCK_ANGULAR_MOTION_TEST
 	#define BTMBP2PCONSTRAINT_DIM 3
@@ -43,6 +44,11 @@ btMultiBodyPoint2Point::btMultiBodyPoint2Point(btMultiBody* bodyA, int linkA, bt
 {
 }
 
+void btMultiBodyPoint2Point::finalizeMultiDof()
+{
+	//not implemented yet
+	btAssert(0);
+}
 
 btMultiBodyPoint2Point::~btMultiBodyPoint2Point()
 {
@@ -119,7 +125,6 @@ int numDim = BTMBP2PCONSTRAINT_DIM;
 		contactNormalOnB[i%3] = -1;
 #endif
 
-		btScalar penetration = 0;
 
 		 // Convert local points back to world
 		btVector3 pivotAworld = m_pivotInA;
@@ -176,5 +181,37 @@ int numDim = BTMBP2PCONSTRAINT_DIM;
 													-m_maxAppliedImpulse, m_maxAppliedImpulse
 													);
 #endif
+	}
+}
+
+void btMultiBodyPoint2Point::debugDraw(class btIDebugDraw* drawer)
+{
+	btTransform tr;
+	tr.setIdentity();
+
+	if (m_rigidBodyA)
+	{
+		btVector3 pivot = m_rigidBodyA->getCenterOfMassTransform() * m_pivotInA;
+		tr.setOrigin(pivot);
+		drawer->drawTransform(tr, 0.1);
+	}
+	if (m_bodyA)
+	{
+		btVector3 pivotAworld = m_bodyA->localPosToWorld(m_linkA, m_pivotInA);
+		tr.setOrigin(pivotAworld);
+		drawer->drawTransform(tr, 0.1);
+	}
+	if (m_rigidBodyB)
+	{
+		// that ideally should draw the same frame
+		btVector3 pivot = m_rigidBodyB->getCenterOfMassTransform() * m_pivotInB;
+		tr.setOrigin(pivot);
+		drawer->drawTransform(tr, 0.1);
+	}
+	if (m_bodyB)
+	{
+		btVector3 pivotBworld = m_bodyB->localPosToWorld(m_linkB, m_pivotInB);
+		tr.setOrigin(pivotBworld);
+		drawer->drawTransform(tr, 0.1);
 	}
 }

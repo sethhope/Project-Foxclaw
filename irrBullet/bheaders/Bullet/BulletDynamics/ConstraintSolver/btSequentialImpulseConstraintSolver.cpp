@@ -364,9 +364,9 @@ void	btSequentialImpulseConstraintSolver::resolveSplitPenetrationImpulseCacheFri
 
 
  btSequentialImpulseConstraintSolver::btSequentialImpulseConstraintSolver()
-	 :m_btSeed2(0),
-	 m_resolveSingleConstraintRowGeneric(gResolveSingleConstraintRowGeneric_scalar_reference),
-	 m_resolveSingleConstraintRowLowerLimit(gResolveSingleConstraintRowLowerLimit_scalar_reference)
+	 : m_resolveSingleConstraintRowGeneric(gResolveSingleConstraintRowGeneric_scalar_reference),
+	 m_resolveSingleConstraintRowLowerLimit(gResolveSingleConstraintRowLowerLimit_scalar_reference),
+	 m_btSeed2(0)
  {
 
 #ifdef USE_SIMD
@@ -761,8 +761,8 @@ void btSequentialImpulseConstraintSolver::setupContactConstraint(btSolverConstra
 																 const btVector3& rel_pos1, const btVector3& rel_pos2)
 {
 
-			const btVector3& pos1 = cp.getPositionWorldOnA();
-			const btVector3& pos2 = cp.getPositionWorldOnB();
+		//	const btVector3& pos1 = cp.getPositionWorldOnA();
+		//	const btVector3& pos2 = cp.getPositionWorldOnB();
 
 			btSolverBody* bodyA = &m_tmpSolverBodyPool[solverBodyIdA];
 			btSolverBody* bodyB = &m_tmpSolverBodyPool[solverBodyIdB];
@@ -1259,6 +1259,7 @@ btScalar btSequentialImpulseConstraintSolver::solveGroupCacheFriendlySetup(btCol
 
 	//convert all bodies
 
+
 	for (int i=0;i<numBodies;i++)
 	{
 		int bodyId = getOrInitSolverBody(*bodies[i],infoGlobal.m_timeStep);
@@ -1268,11 +1269,24 @@ btScalar btSequentialImpulseConstraintSolver::solveGroupCacheFriendlySetup(btCol
 		{
 			btSolverBody& solverBody = m_tmpSolverBodyPool[bodyId];
 			btVector3 gyroForce (0,0,0);
-			if (body->getFlags()&BT_ENABLE_GYROPSCOPIC_FORCE)
+			if (body->getFlags()&BT_ENABLE_GYROSCOPIC_FORCE_EXPLICIT)
 			{
-				gyroForce = body->computeGyroscopicForce(infoGlobal.m_maxGyroscopicForce);
+				gyroForce = body->computeGyroscopicForceExplicit(infoGlobal.m_maxGyroscopicForce);
 				solverBody.m_externalTorqueImpulse -= gyroForce*body->getInvInertiaTensorWorld()*infoGlobal.m_timeStep;
 			}
+			if (body->getFlags()&BT_ENABLE_GYROSCOPIC_FORCE_IMPLICIT_WORLD)
+			{
+				gyroForce = body->computeGyroscopicImpulseImplicit_World(infoGlobal.m_timeStep);
+				solverBody.m_externalTorqueImpulse += gyroForce;
+			}
+			if (body->getFlags()&BT_ENABLE_GYROSCOPIC_FORCE_IMPLICIT_BODY)
+			{
+				gyroForce = body->computeGyroscopicImpulseImplicit_Body(infoGlobal.m_timeStep);
+				solverBody.m_externalTorqueImpulse += gyroForce;
+
+			}
+			
+
 		}
 	}
 

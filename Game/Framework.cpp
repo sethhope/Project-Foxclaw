@@ -40,22 +40,60 @@ int FRAMEWORK::init()
 	log->logData("Creating Graphics Driver");
 	bool fullScreen = config->data["fullscreen"];
 	bool vSync = config->data["vsync"];
-	//Create graphics driver
-	//Check for opengl (Only OpenGL and software for now. DirectX may come later)
-	log->logData("Trying OpenGL");
-	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(config->data["width"], config->data["height"]), 32, fullScreen, false, vSync, &receiver);
-	if(!device)
-	{
-		//OpenGL failed. Try software renderer
-		log->logData("Trying Software Renderer");
-		device = createDevice(video::EDT_SOFTWARE, core::dimension2d<u32>(config->data["width"], config->data["height"]), 16, fullScreen, false, false, &receiver);
-		if(!device)
-		{
-			//Failed to create driver
-			log->logData("Could not create video driver");
-			return 1;
-		}
-	}
+	u32 d = config->data["driver"];
+	video::E_DRIVER_TYPE dType;
+	if(d == 1)
+        dType = video::EDT_DIRECT3D9;
+    if(d == 2)
+        dType = video::EDT_OPENGL;
+    if(d == 3)
+        dType = video::EDT_BURNINGSVIDEO;
+
+    if(dType!=NULL)
+    {
+        log->logData("Trying driver", d);
+        log->logData("1=DX9, 2=OGL, 3=SOFTWARE");
+        SIrrlichtCreationParameters p;
+        p.DriverType = dType;
+        p.WindowSize = core::dimension2d<u32>(config->data["width"], config->data["height"]);
+        p.Bits = (u8)32;
+        p.Fullscreen = fullScreen;
+        p.Stencilbuffer = true;
+        p.Vsync = vSync;
+        p.EventReceiver = &receiver;
+        p.HighPrecisionFPU = true;
+        device = createDeviceEx(p);
+        if(!device)
+        {
+            if(!device)
+            {
+                log->logData("Trying Software Renderer");
+                device = createDevice(video::EDT_SOFTWARE, core::dimension2d<u32>(config->data["width"], config->data["height"]), 16, fullScreen, false, false, &receiver);
+                if(!device)
+                {
+                    //Failed to create driver
+                    log->logData("Could not create video driver");
+                    return 1;
+                }
+            }
+        }
+    }else
+    {
+        log->logData("Trying OpenGL");
+        device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(config->data["width"], config->data["height"]), 32, fullScreen, false, vSync, &receiver);
+        if(!device)
+        {
+            //OpenGL failed. Try software renderer
+            log->logData("Trying Software Renderer");
+            device = createDevice(video::EDT_SOFTWARE, core::dimension2d<u32>(config->data["width"], config->data["height"]), 16, fullScreen, false, false, &receiver);
+            if(!device)
+            {
+                //Failed to create driver
+                log->logData("Could not create video driver");
+                return 1;
+            }
+        }
+    }
 	//set top of window
 	device->setWindowCaption(L"FoxClaw Engine by Jcam Technologies");
 

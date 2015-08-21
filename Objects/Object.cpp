@@ -13,6 +13,7 @@ OBJECT::OBJECT()
 	hasCollider = false;
 	hasShader = false;
 	initialized = false;
+	boneAttached = false;
 }
 
 OBJECT::~OBJECT()
@@ -20,7 +21,7 @@ OBJECT::~OBJECT()
 	detach();
 	if(hasCollider)
 	{
-		delete collider;
+		collider->~COLLIDER();
 	}
 }
 
@@ -33,7 +34,7 @@ void OBJECT::init()
 void OBJECT::update()
 {
 	onUpdate();
-	if((this->getIrrNode() && !getParent() && !hasCollider) && uDa)
+	if((this->getIrrNode() && !getParent() && !hasCollider && !boneAttached) && uDa)
 	{
 		getIrrNode()->setPosition(position);
 		getIrrNode()->setRotation(rotation);
@@ -46,7 +47,7 @@ void OBJECT::update()
 			((OBJECT*)(*it))->update();
 		}
 	}
-	if(hasCollider)
+	if(hasCollider || boneAttached)
 	{
 		position=getIrrNode()->getPosition();
 		rotation=getIrrNode()->getRotation();
@@ -59,6 +60,7 @@ void OBJECT::render()
     {
         for(std::vector<u32>::iterator it = shader->materials.begin(); it < shader->materials.end(); it++)
         {
+
             thisNode->setMaterialType((video::E_MATERIAL_TYPE)(*it));
             thisNode->render();
         }
@@ -70,6 +72,10 @@ void OBJECT::render()
 			((OBJECT*)(*it))->render();
 		}
 	}
+}
+void OBJECT::deconstruct()
+{
+    onDeconstruct();
 }
 void OBJECT::setPosition(core::vector3df pos)
 {
@@ -189,17 +195,43 @@ f32 OBJECT::getMetaData(std::string key)
 }
 void OBJECT::useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderName)
 {
-    hasShader = true;
-    this->shaderName = shaderName;
-    shader = new ShaderHandler(device, log);
-    for(int i = 0; i < 8; i++)
+    if(device->getVideoDriver()->getDriverType() == video::EDT_OPENGL)
     {
-        std::stringstream key;
-        key<<"mTexture";
-        key<<i;
-        shader->addConstant(FCE_FRAG, key.str(), i);
+        hasShader = true;
+        this->shaderName = shaderName;
+        shader = new ShaderHandler(device, log);
+        for(int i = 0; i < 8; i++)
+        {
+            std::stringstream key;
+            key<<"mTexture";
+            key<<i;
+            shader->addConstant(FCE_FRAG, key.str(), i);
+        }
+        for(std::map<std::string, f32>::iterator it = vsshaderConstants.begin(); it != vsshaderConstants.end(); it++)
+        {
+            f32 pt = it->second;
+            shader->addConstant(FCE_VERT, it->first.c_str(), pt);
+        }
+        for(std::map<std::string, f32>::iterator it = fsshaderConstants.begin(); it != fsshaderConstants.end(); it++)
+        {
+            f32 pt = it->second;
+            shader->addConstant(FCE_FRAG, it->first.c_str(), pt);
+        }
+        shader->addShader(shaderName, thisNode->getMaterial(0).MaterialType);
+        thisNode->setMaterialFlag(video::EMF_LIGHTING, false);
+        thisNode->setMaterialType((video::E_MATERIAL_TYPE)shader->materials[0]);
+    }else
+    {
+        log->logData("Running DirectX");
     }
-    shader->addShader(shaderName);
-    thisNode->setMaterialFlag(video::EMF_LIGHTING, false);
-    thisNode->setMaterialType((video::E_MATERIAL_TYPE)shader->materials[0]);
+}
+void OBJECT::setShaderConstant(u32 shader, std::string key, f32 data)
+{
+    if(shader == FCE_FRAG)
+    {
+        fsshaderConstants[key] = data;
+    }else if(shader == FCE_VERT)
+    {
+        vsshaderConstants[key] = data;
+    }
 }

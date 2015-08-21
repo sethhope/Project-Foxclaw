@@ -45,14 +45,40 @@
 					<Add directory="Game" />
 				</Compiler>
 			</Target>
+			<Target title="PonyDebug">
+				<Option output="../../FoxClaw Experiments/Beyond Equestria/Project Foxclaw" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../FoxClaw Experiments/Beyond Equestria" />
+				<Option object_output="BIN/obj" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="include" />
+					<Add directory="../Project-Foxclaw" />
+					<Add directory="Game" />
+				</Compiler>
+			</Target>
+			<Target title="PonyDebug DX">
+				<Option output="../../FoxClaw Experiments/Beyond Equestria/Project FoxclawDX" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../FoxClaw Experiments/Beyond Equestria" />
+				<Option object_output="BIN/obj" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="include" />
+					<Add directory="../Project-Foxclaw" />
+					<Add directory="Game" />
+				</Compiler>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-std=c++11" />
-			<Add directory='&quot;C:/Users/Seth/Desktop/Game Dev/FoxClawIrrlicht/Project-Foxclaw/irrBullet&quot;' />
-			<Add directory='&quot;C:/Users/Seth/Desktop/Game Dev/FoxClawIrrlicht/Project-Foxclaw/include&quot;' />
-			<Add directory='&quot;C:/Users/Seth/Desktop/Game Dev/FoxClawIrrlicht/Project-Foxclaw/irrBullet/bheaders&quot;' />
-			<Add directory='&quot;C:/Users/Seth/Desktop/Game Dev/FoxClawIrrlicht/Project-Foxclaw/irrBullet/bheaders/Bullet&quot;' />
+			<Add option="-fpermissive" />
 			<Add directory='&quot;C:/Users/Seth/Desktop/Game Dev/FoxClawIrrlicht/Project-Foxclaw&quot;' />
+			<Add directory="irrBullet" />
+			<Add directory="irrBullet/bheaders/Bullet" />
+			<Add directory="include" />
+			<Add directory="irrBullet/bheaders" />
+			<Add directory="../../RakNet-master/Source" />
 		</Compiler>
 		<Linker>
 			<Add option="../libirrKlang.a" />
@@ -64,6 +90,7 @@
 			<Add option="../libGIMPACTUtils.a" />
 			<Add option="../libLinearMath.a" />
 			<Add option="../libBulletCollision.a" />
+			<Add library="..\..\RakNet-master\Lib\DLL\Lib\lib_DLL_vc9_Debug Win32_Win32.a" />
 		</Linker>
 		<Unit filename="Game/Config.cpp" />
 		<Unit filename="Game/Config.h" />
@@ -81,6 +108,8 @@
 		<Unit filename="Game/ShaderCallback.h" />
 		<Unit filename="Game/ShaderHandler.cpp" />
 		<Unit filename="Game/ShaderHandler.h" />
+		<Unit filename="Game/network.cpp" />
+		<Unit filename="Game/network.h" />
 		<Unit filename="LuaClassDef.hpp" />
 		<Unit filename="Main.cpp" />
 		<Unit filename="Misc/Logger.cpp" />
@@ -94,8 +123,13 @@
 		<Unit filename="Misc/PostProcessing/ShaderPostProcess.h" />
 		<Unit filename="Misc/Script.cpp" />
 		<Unit filename="Misc/Script.h" />
+		<Unit filename="Misc/util.h" />
 		<Unit filename="Objects/AnimatedMesh.cpp" />
 		<Unit filename="Objects/AnimatedMesh.h" />
+		<Unit filename="Objects/Bone.cpp" />
+		<Unit filename="Objects/Bone.h" />
+		<Unit filename="Objects/BoneAnimatedMesh.cpp" />
+		<Unit filename="Objects/BoneAnimatedMesh.h" />
 		<Unit filename="Objects/Camera.cpp" />
 		<Unit filename="Objects/Camera.h" />
 		<Unit filename="Objects/Collider.cpp" />
@@ -112,6 +146,8 @@
 		<Unit filename="Objects/Object.h" />
 		<Unit filename="Objects/Particle.cpp" />
 		<Unit filename="Objects/Particle.h" />
+		<Unit filename="Objects/SoftMesh.cpp" />
+		<Unit filename="Objects/SoftMesh.h" />
 		<Unit filename="Objects/Sound.cpp" />
 		<Unit filename="Objects/Sound.h" />
 		<Unit filename="Objects/Terrain.cpp" />
@@ -125,8 +161,8 @@
 			<debugger />
 			<lib_finder disable_auto="1" />
 			<AutoVersioning>
-				<Scheme minor_max="10" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="10000" />
-				<Settings autoincrement="0" date_declarations="1" use_define="1" update_manifest="0" do_auto_increment="1" ask_to_increment="1" language="C++" svn="0" svn_directory="" header_path="version.h" />
+				<Scheme minor_max="100" build_max="0" rev_max="0" rev_rand_max="10" build_times_to_increment_minor="10000" />
+				<Settings autoincrement="0" date_declarations="1" use_define="1" update_manifest="1" do_auto_increment="1" ask_to_increment="0" language="C" svn="0" svn_directory="" header_path="version.h" />
 				<Changes_Log show_changes_editor="0" app_title="released version %M.%m.%b of %p" changeslog_path="ChangesLog.txt" />
 				<Code header_guard="VERSION_H" namespace="AutoVersion" prefix="VERSION" />
 			</AutoVersioning>

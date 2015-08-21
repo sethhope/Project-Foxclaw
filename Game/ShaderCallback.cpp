@@ -37,6 +37,13 @@ void ShaderCallback::OnSetConstants(video::IMaterialRendererServices* services, 
     {
         services->setVertexShaderConstant(worldView.pointer(), 4, 4);
     }
+
+    f32 timept = device->getTimer()->getTime();
+    if(useHighLevel)
+    {
+        services->setVertexShaderConstant("mWorldTime", &timept, 1);
+    }
+
     for(std::map<std::string, f32>::iterator it = vsConstants.begin(); it != vsConstants.end(); it++)
     {
         f32 pt = it->second;

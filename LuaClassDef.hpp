@@ -14,10 +14,11 @@
 #include "Objects/EmptyObject.h"
 #include "Objects/AnimatedMesh.h"
 #include "Objects/Terrain.h"
+#include "Objects/SoftMesh.h"
 #include "Game/GUI.h"
 #include "Misc/Logger.h"
 #include "Game/Scene.h"
-
+#include "Misc/util.h"
 #include "Misc/PostProcessing/PostProcessManager.h"
 using namespace irr;
 using namespace FCE;
@@ -186,6 +187,32 @@ int Scene_getAnimatedMesh(lua_State* L)
     luaW_push<ANIMATEDMESH>(L, s->editAnimatedMesh(luaL_checknumber(L, 2)));
     return 1;
 }
+int Scene_addBoneAnimatedMesh(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    int mesh = s->addBoneAnimatedMesh(luaL_checkstring(L, 2), core::vector3df(luaL_checknumber(L,3),luaL_checknumber(L,4),luaL_checknumber(L,5)), core::vector3df(luaL_checknumber(L,6),luaL_checknumber(L,7),luaL_checknumber(L,8)),core::vector3df(luaL_checknumber(L,9),luaL_checknumber(L,10),luaL_checknumber(L,11)));
+    lua_pushnumber(L,mesh);
+    return 1;
+}
+int Scene_getBoneAnimatedMesh(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    luaW_push<BONEANIMATEDMESH>(L, s->editBoneAnimatedMesh(luaL_checknumber(L, 2)));
+    return 1;
+}
+int Scene_addSoftmesh(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    int mesh = s->addSoftMesh(luaL_checkstring(L, 2), core::vector3df(luaL_checknumber(L,3),luaL_checknumber(L,4),luaL_checknumber(L,5)), core::vector3df(luaL_checknumber(L,6),luaL_checknumber(L,7),luaL_checknumber(L,8)),core::vector3df(luaL_checknumber(L,9),luaL_checknumber(L,10),luaL_checknumber(L,11)));
+    lua_pushnumber(L,mesh);
+    return 1;
+}
+int Scene_getSoftmesh(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    luaW_push<SOFTMESH>(L, s->getSoftBody(luaL_checknumber(L, 2)));
+    return 1;
+}
 int Scene_addParticle(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
@@ -333,6 +360,14 @@ int Scene_modifyCharacter(lua_State* L)
     if(f == "warp")
     {
         s->getCharacter()->warp(core::vector3df(luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5)));
+    }
+    if(f == "fallspeed")
+    {
+        s->getCharacter()->setFallSpeed(luaL_checknumber(L, 3));
+    }
+    if(f == "setgravity")
+    {
+        s->getCharacter()->setGravity(luaL_checknumber(L, 3));
     }
     return 0;
 }
@@ -566,7 +601,8 @@ int Scene_addImage(lua_State* L)
     u32 parent = luaL_checknumber(L, 7);
     g->initImage(0, s->getDevice()->getVideoDriver()->getTexture(filename.c_str()), core::rect<s32>(x1, y1, x2, y2));
     u32 list = s->addGui(g, parent);
-    return 0;
+    lua_pushnumber(L, list);
+    return 1;
 }
 int Scene_addCheckBox(lua_State* L)
 {
@@ -866,6 +902,70 @@ int Scene_removeZip(lua_State* L)
     s->getDevice()->getFileSystem()->removeFileArchive(s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 2)).c_str());
     return 0;
 }
+int Scene_setNetIP(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getNetwork()->setConnectionIP(luaL_checkstring(L, 2));
+    return 0;
+}
+int Scene_setNetPort(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getNetwork()->setPort(luaL_checknumber(L, 2));
+    return 0;
+}
+int Scene_setNetMode(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getNetwork()->setMode(luaL_checknumber(L, 2));
+    return 0;
+}
+int Scene_setNetMaxClients(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getNetwork()->setMaxClients(luaL_checknumber(L, 2));
+    return 0;
+}
+int Scene_initNet(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    luaW_push<SCENE>(s->getNetwork()->script->L, s);
+    lua_setglobal(s->getNetwork()->script->L, "MainScene");
+    s->getNetwork()->init(luaL_checkstring(L, 2));
+    return 0;
+}
+int Scene_updateNet(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getNetwork()->update();
+}
+int Scene_createPacket(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    NETPACKET* n = s->getNetwork()->createPacket();
+    luaW_push<NETPACKET>(L, n);
+    return 1;
+}
+int Scene_sendPacket(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    RakNet::SystemAddress a;
+    if(luaL_checkstring(L, 3) != "server")
+    {
+        a.FromString(luaL_checkstring(L, 3));
+    }
+    else
+    {
+        a = s->getNetwork()->peer->GetSystemAddressFromIndex(1);
+    }
+    s->getNetwork()->sendPacket(luaW_check<NETPACKET>(L, 2), a);
+    return 0;
+}
+int Scene_broadcastPacket(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getNetwork()->broadcastPacket(luaW_check<NETPACKET>(L, 2));
+}
 OBJECT* Object_new(lua_State* L)
 {
     OBJECT* o = new OBJECT();
@@ -1118,11 +1218,47 @@ int Object_setMaterialFlag(lua_State* L)
     }
     return 0;
 }
+int Object_setMaterialData(lua_State* L)
+{
+    OBJECT* o = luaW_check<OBJECT>(L, 1);
+    u32 material = luaL_checknumber(L, 2);
+    std::string key = luaL_checkstring(L, 3);
+    if(key == "diffuse_color")
+    {
+        o->getIrrNode()->getMaterial(material).DiffuseColor = video::SColor(luaL_checknumber(L, 4), luaL_checknumber(L, 5), luaL_checknumber(L, 6), luaL_checknumber(L, 7));
+        o->getIrrNode()->getMaterial(material).ColorMaterial = video::ECM_NONE;
+    }
+    if(key == "ambient_color")
+    {
+        o->getIrrNode()->getMaterial(material).AmbientColor = video::SColor(luaL_checknumber(L, 4), luaL_checknumber(L, 5), luaL_checknumber(L, 6), luaL_checknumber(L, 7));
+    }
+    if(key == "texture")
+    {
+        SCENE* s = luaW_check<SCENE>(L, 4);
+        o->getIrrNode()->getMaterial(material).setTexture(luaL_checknumber(L, 5), s->getDevice()->getSceneManager()->getVideoDriver()->getTexture(luaL_checkstring(L, 6)));
+    }
+    if(key == "translate_texture")
+    {
+        o->getIrrNode()->getMaterial(material).getTextureMatrix(luaL_checknumber(L, 4)).setTextureTranslate(luaL_checknumber(L, 5), luaL_checknumber(L, 6));
+    }
+    if(key == "scale_texture")
+    {
+        o->getIrrNode()->getMaterial(material).getTextureMatrix(luaL_checknumber(L, 4)).setTextureScale(luaL_checknumber(L, 5), luaL_checknumber(L, 6));
+    }
+    if(key == "hue")
+    {
+        video::SColor curDiffuse = o->getIrrNode()->getMaterial(material).DiffuseColor;
+        o->getIrrNode()->getMaterial(material).DiffuseColor = hueShift(curDiffuse, luaL_checknumber(L, 4));
+    }
+    return 0;
+}
 int Object_setTexture(lua_State* L)
 {
     OBJECT* o = luaW_check<OBJECT>(L, 1);
     SCENE* s = luaW_check<SCENE>(L, 2);
-    if(o->getIrrNode()->getType() == scene::ESNT_CUBE || o->getIrrNode()->getType() == scene::ESNT_MESH || o->getIrrNode()->getType() == scene::ESNT_ANIMATED_MESH || o->getIrrNode()->getType() == scene::ESNT_BILLBOARD || o->getIrrNode()->getType() == scene::ESNT_WATER_SURFACE || o->getIrrNode()->getType() == scene::ESNT_SPHERE)
+    if(o->getIrrNode()->getType() == scene::ESNT_CUBE || o->getIrrNode()->getType() == scene::ESNT_MESH
+       || o->getIrrNode()->getType() == scene::ESNT_ANIMATED_MESH || o->getIrrNode()->getType() == scene::ESNT_BILLBOARD
+       || o->getIrrNode()->getType() == scene::ESNT_WATER_SURFACE || o->getIrrNode()->getType() == scene::ESNT_SPHERE)
     {
         o->getIrrNode()->setMaterialTexture(luaL_checknumber(L, 3), s->getDevice()->getSceneManager()->getVideoDriver()->getTexture(luaL_checkstring(L, 4)));
     }
@@ -1159,6 +1295,12 @@ int Object_getChildren(lua_State* L)
     }
     lua_pushnumber(L, key-1);
     return 2;
+}
+int Object_setShaderConstant(lua_State* L)
+{
+    OBJECT* o = luaW_check<OBJECT>(L, 1);
+    o->setShaderConstant(luaL_checknumber(L, 2), luaL_checkstring(L, 3), luaL_checknumber(L, 4));
+    return 0;
 }
 COLLIDER* Collider_new(lua_State* L)
 {
@@ -1201,15 +1343,15 @@ int Collider_setState(lua_State* L)
     std::string state = luaL_checkstring(L, 2);
     if(state == "ACTIVE")
     {
-        c->body->setActivationState(EAS_ACTIVE);
+        c->body->setActivationState(EActivationState::EAS_ACTIVE);
     }
     if(state == "NO_DEACTIVATION")
     {
-        c->body->setActivationState(EAS_DISABLE_DEACTIVATION);
+        c->body->setActivationState(EActivationState::EAS_DISABLE_DEACTIVATION);
     }
     if(state == "SLEEPING")
     {
-        c->body->setActivationState(EAS_SLEEPING);
+        c->body->setActivationState(EActivationState::EAS_SLEEPING);
     }
     return 0;
 }
@@ -1365,6 +1507,7 @@ int AnimatedMesh_addCollider(lua_State* L)
     {
         m->addCollider(s->getLog(), COL_MESH_GIMPACT, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4), m->getMesh());
     }
+
     return 0;
 }
 int AnimatedMesh_setFrameLoop(lua_State* L)
@@ -1393,6 +1536,106 @@ int AnimatedMesh_toObject(lua_State* L)
     return 1;
 }
 
+BONEANIMATEDMESH* BoneAnimatedMesh_new(lua_State* L)
+{
+    return 0;
+}
+int BoneAnimatedMesh_setPos(lua_State* L)
+{
+    BONEANIMATEDMESH* m = luaW_check<BONEANIMATEDMESH>(L, 1);
+    m->setPosition(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L,3), luaL_checknumber(L, 4)));
+    return 0;
+}
+int BoneAnimatedMesh_setRot(lua_State* L)
+{
+    BONEANIMATEDMESH* m = luaW_check<BONEANIMATEDMESH>(L, 1);
+    m->setRotation(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L,3), luaL_checknumber(L,4)));
+    return 0;
+}
+int BoneAnimatedMesh_setScale(lua_State* L)
+{
+    BONEANIMATEDMESH* m = luaW_check<BONEANIMATEDMESH>(L, 1);
+    m->setScale(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L,3), luaL_checknumber(L,4)));
+    return 0;
+}
+
+int BoneAnimatedMesh_addCollider(lua_State* L)
+{
+    BONEANIMATEDMESH* m = luaW_check<BONEANIMATEDMESH>(L, 1);
+    SCENE* s = luaW_check<SCENE>(L, 2);
+    std::string type = luaL_checkstring(L, 3);
+    if(type == "CUBE")
+    {
+        m->addCollider(s->getLog(), COL_CUBE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+    }
+    if(type == "SPHERE")
+    {
+        m->addCollider(s->getLog(), COL_SPHERE, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4));
+    }
+    if(type == "MESH_CONVEXHULL")
+    {
+        m->addCollider(s->getLog(), COL_MESH_CONVEXHULL, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4), m->getMesh());
+    }
+    if(type == "MESH_TRIMESH")
+    {
+        m->addCollider(s->getLog(), COL_MESH_TRIMESH, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4), m->getMesh());
+    }
+    if(type == "MESH_GIMPACT")
+    {
+        m->addCollider(s->getLog(), COL_MESH_GIMPACT, s->getDevice()->getSceneManager(), s->getWorld(), luaL_checknumber(L, 4), m->getMesh());
+    }
+
+    return 0;
+}
+int BoneAnimatedMesh_setFrameLoop(lua_State* L)
+{
+    BONEANIMATEDMESH* m = luaW_check<BONEANIMATEDMESH>(L, 1);
+    m->setFrameLoop(luaL_checknumber(L, 2), luaL_checknumber(L, 3));
+    return 0;
+}
+int BoneAnimatedMesh_setSpeed(lua_State* L)
+{
+    BONEANIMATEDMESH* m = luaW_check<BONEANIMATEDMESH>(L, 1);
+    m->setSpeed(luaL_checknumber(L, 2));
+    return 0;
+}
+int BoneAnimatedMesh_getFrame(lua_State* L)
+{
+    BONEANIMATEDMESH* m = luaW_check<BONEANIMATEDMESH>(L, 1);
+    u32 frame = m->getCurrentFrame();
+    lua_pushnumber(L, frame);
+    return 1;
+}
+int BoneAnimatedMesh_toObject(lua_State* L)
+{
+    BONEANIMATEDMESH* m = luaW_check<BONEANIMATEDMESH>(L, 1);
+    luaW_push<OBJECT>(L, (OBJECT*)m);
+    return 1;
+}
+int BoneAnimatedMesh_addAnimation(lua_State* L)
+{
+    BONEANIMATEDMESH* m = luaW_check<BONEANIMATEDMESH>(L, 1);
+    m->addAnimation(luaL_checkstring(L, 2), luaL_checkstring(L, 3));
+    return 0;
+}
+int BoneAnimatedMesh_setAnimation(lua_State* L)
+{
+    BONEANIMATEDMESH* m = luaW_check<BONEANIMATEDMESH>(L, 1);
+    m->setCurrentAnimation(luaL_checkstring(L, 2));
+    return 0;
+}
+
+int BoneAnimatedMesh_attachToBone(lua_State* L)
+{
+    BONEANIMATEDMESH* m = luaW_check<BONEANIMATEDMESH>(L, 1);
+    m->attachToBone(luaW_check<OBJECT>(L, 2), luaL_checkstring(L, 3));
+    return 0;
+}
+
+SOFTMESH* Softmesh_new(lua_State* L)
+{
+    return 0;
+}
 
 PARTICLE* Particle_new(lua_State* L)
 {
@@ -1695,6 +1938,12 @@ int Camera_setTarget(lua_State* L)
     c->setTarget(luaW_check<OBJECT>(L, 2));
     return 0;
 }
+int Camera_setTargetPos(lua_State* L)
+{
+    CAMERA* c = luaW_check<CAMERA>(L, 1);
+    c->setTarget(core::vector3df(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+    return 0;
+}
 int Camera_setAspect(lua_State* L)
 {
     CAMERA* c = luaW_check<CAMERA>(L, 1);
@@ -1806,10 +2055,16 @@ TERRAIN* Terrain_new(lua_State* L)
 {
     return 0;
 }
+int Terrain_getID(lua_State* L)
+{
+    TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+    lua_pushnumber(L, t->getID());
+    return 1;
+}
 int Terrain_newEmpty(lua_State* L)
 {
     TERRAIN* t = luaW_check<TERRAIN>(L, 1);
-    t->empty(luaL_checknumber(L, 2), luaL_checknumber(L, 3));
+    t->empty(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4));
     return 0;
 }
 int Terrain_load(lua_State* L)
@@ -1828,6 +2083,18 @@ int Terrain_setHeight(lua_State* L)
 {
     TERRAIN* t = luaW_check<TERRAIN>(L, 1);
     t->setHeight(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4));
+    return 0;
+}
+int Terrain_setHeightNoRebuild(lua_State* L)
+{
+    TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+    t->setHeightNoRebuild(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4));
+    return 0;
+}
+int  Terrain_rebuild(lua_State* L)
+{
+    TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+    t->rebuild();
     return 0;
 }
 int Terrain_getSizeX(lua_State* L)
@@ -1898,5 +2165,46 @@ int GUI_setTitle(lua_State* L)
     GUI* g = luaW_check<GUI>(L, 1);
     g->element->setName(core::stringw(luaL_checkstring(L, 2)).c_str());
     return 0;
+}
+int GUI_setColor(lua_State* L)
+{
+    GUI* g = luaW_check<GUI>(L, 1);
+
+    g->skin->setColor(gui::EGDC_3D_FACE, video::SColor(255, luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+    return 0;
+}
+NETPACKET* PACKET_newPacket(lua_State* L)
+{
+    return NULL;
+}
+int PACKET_writeNumber(lua_State* L)
+{
+    NETPACKET* p = luaW_check<NETPACKET>(L, 1);
+    f32 tmp = luaL_checknumber(L, 2);
+    p->pack.Write(tmp);
+    return 0;
+}
+int PACKET_writeString(lua_State* L)
+{
+    NETPACKET* p = luaW_check<NETPACKET>(L, 1);
+    RakNet::RakString s(luaL_checkstring(L, 2));
+    p->pack.Write(s);
+    return 0;
+}
+int PACKET_readNumber(lua_State* L)
+{
+    NETPACKET* p = luaW_check<NETPACKET>(L, 1);
+    f32 tmp;
+    p->pack.Read(tmp);
+    lua_pushnumber(L, tmp);
+    return 1;
+}
+int PACKET_readString(lua_State* L)
+{
+    NETPACKET* p = luaW_check<NETPACKET>(L, 1);
+    RakNet::RakString tmp;
+    p->pack.Read(tmp);
+    lua_pushstring(L, tmp.C_String());
+    return 1;
 }
 #endif

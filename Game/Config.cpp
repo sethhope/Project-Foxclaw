@@ -38,7 +38,7 @@ void Config::loadConfig(std::string filename)
                 core::stringw name = xml->getAttributeValue(L"name");
                 f32 value = xml->getAttributeValueAsFloat(L"value");
                 core::stringc namec = name.c_str();
-                std::string names = namec.make_lower().c_str();
+                std::string names = namec.c_str();
                 data[names] = value;
                 log->debugData(MINOR, "Found setting", names);
             }

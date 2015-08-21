@@ -56,6 +56,10 @@ void SCRIPT::onInit()
         {"getMesh", Scene_getMesh},
         {"addAnimatedMesh", Scene_addAnimatedMesh},
         {"getAnimatedMesh", Scene_getAnimatedMesh},
+        {"addBoneAnimatedMesh", Scene_addBoneAnimatedMesh},
+        {"getBoneAnimatedMesh", Scene_getBoneAnimatedMesh},
+        {"addSoftmesh", Scene_addSoftmesh},
+        {"getSoftmesh", Scene_getSoftmesh},
         {"addParticle", Scene_addParticle},
         {"getParticle", Scene_getParticle},
         {"addEmpty", Scene_addEmpty},
@@ -108,6 +112,15 @@ void SCRIPT::onInit()
         {"getConfigValue", Scene_getConfigValue},
         {"setConfigValue", Scene_setConfigValue},
         {"saveConfig", Scene_saveConfig},
+        {"initNet",Scene_initNet},
+        {"updateNet",Scene_updateNet},
+        {"setMaxClients",Scene_setNetMaxClients},
+        {"setIP",Scene_setNetIP},
+        {"setPort",Scene_setNetPort},
+        {"setNetMode",Scene_setNetMode},
+        {"createPacket", Scene_createPacket},
+        {"sendPacket", Scene_sendPacket},
+        {"broadcastPacket", Scene_broadcastPacket},
         {NULL, NULL}
     };
     static luaL_Reg Mesh_metatable[] =
@@ -129,6 +142,21 @@ void SCRIPT::onInit()
         {"setSpeed", AnimatedMesh_setSpeed},
         {"getFrame", AnimatedMesh_getFrame},
         {"toObject", AnimatedMesh_toObject},
+        {NULL, NULL}
+    };
+    static luaL_Reg BoneAnimatedMesh_metatable[] =
+    {
+        {"setPos", BoneAnimatedMesh_setPos},
+        {"setRot", BoneAnimatedMesh_setRot},
+        {"setScale", BoneAnimatedMesh_setScale},
+        {"addCollider", BoneAnimatedMesh_addCollider},
+        {"setFrameLoop", BoneAnimatedMesh_setFrameLoop},
+        {"setSpeed", BoneAnimatedMesh_setSpeed},
+        {"getFrame", BoneAnimatedMesh_getFrame},
+        {"toObject", BoneAnimatedMesh_toObject},
+        {"addAnimation", BoneAnimatedMesh_addAnimation},
+        {"setAnimation", BoneAnimatedMesh_setAnimation},
+        {"attachToBone", BoneAnimatedMesh_attachToBone},
         {NULL, NULL}
     };
     static luaL_Reg Particle_metatable[] =
@@ -174,6 +202,7 @@ void SCRIPT::onInit()
         {"setClipping", Camera_setClipping},
         {"getClipping", Camera_getClipping},
         {"setTarget", Camera_setTarget},
+        {"setTargetPos", Camera_setTargetPos},
         {"setAspect", Camera_setAspect},
         {"setOffset", Camera_setOffset},
         {"setPosition", Camera_setPosition},
@@ -222,6 +251,7 @@ void SCRIPT::onInit()
         {"setMaterial", Object_setMaterial},
         {"setMaterialFlag", Object_setMaterialFlag},
         {"setMaterialTexture", Object_setTexture},
+        {"setMaterialData", Object_setMaterialData},
         {"useShader", Object_useShader},
         {"attachTo", Object_attachTo},
         {"setMetaData", Object_setMetaData},
@@ -251,9 +281,12 @@ void SCRIPT::onInit()
         {"load", Terrain_load},
         {"getHeight", Terrain_getHeight},
         {"setHeight", Terrain_setHeight},
+        {"setHeightNoRebuild", Terrain_setHeightNoRebuild},
+        {"rebuild", Terrain_rebuild},
         {"getSizeX", Terrain_getSizeX},
         {"getSizeY", Terrain_getSizeY},
         {"addCollider", Terrain_addCollider},
+        {"getID", Terrain_getID},
         {NULL, NULL}
     };
     static luaL_Reg GUI_table[] =
@@ -262,10 +295,20 @@ void SCRIPT::onInit()
         {"getID", GUI_getCaller},
         {"setTitle", GUI_setTitle},
         {"removeElement", GUI_remove},
+        {"setColor", GUI_setColor},
+        {NULL, NULL}
+    };
+    static luaL_Reg NETPACK_table[] =
+    {
+        {"writeNumber", PACKET_writeNumber},
+        {"writeString", PACKET_writeString},
+        {"readNumber", PACKET_readNumber},
+        {"readString", PACKET_readString},
         {NULL, NULL}
     };
     lua_pushcfunction(L, System_run);
     lua_setglobal(L, "System_run");
+    luaW_register<SOFTMESH>(L, "SOFTMESH", Empty_table, Empty_table, Softmesh_new);
     luaW_register<GUI>(L, "GUI", Empty_table, GUI_table, GUI_new);
     luaW_register<TERRAIN>(L, "TERRAIN", Empty_table, Terrain_table, Terrain_new);
     luaW_register<LIGHT>(L, "LIGHT", Empty_table, Light_metatable, Light_new);
@@ -277,6 +320,8 @@ void SCRIPT::onInit()
     luaW_register<PARTICLE>(L, "PARTICLE", Empty_table, Particle_metatable, Particle_new);
     luaW_register<MESH>(L, "MESH", Empty_table, Mesh_metatable, Mesh_new);
     luaW_register<ANIMATEDMESH>(L, "ANIMATEDMESH", Empty_table, AnimatedMesh_metatable, AnimatedMesh_new);
+    luaW_register<BONEANIMATEDMESH>(L, "BONEANIMATEDMESH", Empty_table, BoneAnimatedMesh_metatable, BoneAnimatedMesh_new);
+    luaW_register<NETPACKET>(L, "NETPACKET", Empty_table, NETPACK_table, PACKET_newPacket);
     luaW_register<SCENE>(L, "SCENE", Empty_table, Scene_metatable, Scene_new);
 
 }

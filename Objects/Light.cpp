@@ -48,6 +48,7 @@ void LIGHT::onInit()
     scene::ILightSceneNode* tmp;
     tmp = manager->addLightSceneNode(NULL, position, color, dropoff);
     tmp->setLightType(type);
+    tmp->enableCastShadow(true);
     thisNode = tmp;
     thisNode->setScale(scale);
     if(!thisNode)

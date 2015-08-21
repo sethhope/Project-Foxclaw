@@ -9,12 +9,12 @@ CShaderMaterial::CShaderMaterial(IrrlichtDevice* device, const core::stringw& na
 	s32 userdata = 0;
 	io::path vsPath;
 	io::path psPath;
-	
+
 	// log action
 	core::stringw msg = core::stringw("compiling material ") + name;
 	Device->getLogger()->log(msg.c_str(), ELL_INFORMATION);
 
-	// create destination path for (driver specific) shader files 
+	// create destination path for (driver specific) shader files
 	if(Device->getVideoDriver()->getDriverType() == video::EDT_OPENGL)
 	{
 		vsPath = core::stringc("Shaders/glsl/") + vsFile;
@@ -27,7 +27,7 @@ CShaderMaterial::CShaderMaterial(IrrlichtDevice* device, const core::stringw& na
 		psPath=core::stringc("Shaders/hlsl/") + psFile;
 		userdata = 0;
 	}
-	
+
 	// create shader material
 	video::IGPUProgrammingServices* gpu = Device->getVideoDriver()->getGPUProgrammingServices();
 	s32 matID = gpu->addHighLevelShaderMaterialFromFiles(
@@ -37,7 +37,7 @@ CShaderMaterial::CShaderMaterial(IrrlichtDevice* device, const core::stringw& na
 
 	// set material type
 	Material.MaterialType = (video::E_MATERIAL_TYPE)matID;
-	
+
 	// set the default texturenames and texture wrap
 	// these are overridden by the effect.xml configuration
 	for (u32 i=0; i<video::MATERIAL_MAX_TEXTURES; ++i)
@@ -50,15 +50,15 @@ CShaderMaterial::CShaderMaterial(IrrlichtDevice* device, const core::stringw& na
 
 void CShaderMaterial::OnSetConstants(video::IMaterialRendererServices* services, s32 userdata)
 {
-	// set the constants for the pixelshader 
+	// set the constants for the pixelshader
 	if(PixelShaderConstant.size())
 	{
 		core::map<core::stringc, f32>::Iterator psParamIter = PixelShaderConstant.getIterator();
 		for(; !psParamIter.atEnd(); psParamIter++)
 		{
 			services->setPixelShaderConstant(
-				psParamIter.getNode()->getKey().c_str(), 
-				&psParamIter.getNode()->getValue(), 
+				psParamIter.getNode()->getKey().c_str(),
+				&psParamIter.getNode()->getValue(),
 				1);
 		}
 	}
@@ -68,21 +68,21 @@ void CShaderMaterial::OnSetConstants(video::IMaterialRendererServices* services,
 		for(; !psParamIter.atEnd(); psParamIter++)
 		{
 			services->setPixelShaderConstant(
-				psParamIter.getNode()->getKey().c_str(), 
-				psParamIter.getNode()->getValue().ParamPointer, 
+				psParamIter.getNode()->getKey().c_str(),
+				psParamIter.getNode()->getValue().ParamPointer,
 				psParamIter.getNode()->getValue().ParamCount);
 		}
 	}
 
-	// set the constants for the vertexshader 
+	// set the constants for the vertexshader
 	if(VertexShaderConstant.size())
 	{
 		core::map<core::stringc, f32>::Iterator vsParamIter = VertexShaderConstant.getIterator();
 		for(; !vsParamIter.atEnd(); vsParamIter++)
 		{
 			services->setVertexShaderConstant(
-				vsParamIter.getNode()->getKey().c_str(), 
-				&vsParamIter.getNode()->getValue(), 
+				vsParamIter.getNode()->getKey().c_str(),
+				&vsParamIter.getNode()->getValue(),
 				1);
 		}
 	}
@@ -92,8 +92,8 @@ void CShaderMaterial::OnSetConstants(video::IMaterialRendererServices* services,
 		for(; !vsParamIter.atEnd(); vsParamIter++)
 		{
 			services->setVertexShaderConstant(
-				vsParamIter.getNode()->getKey().c_str(), 
-				vsParamIter.getNode()->getValue().ParamPointer, 
+				vsParamIter.getNode()->getKey().c_str(),
+				vsParamIter.getNode()->getValue().ParamPointer,
 				vsParamIter.getNode()->getValue().ParamCount);
 		}
 	}
@@ -106,12 +106,12 @@ void CShaderMaterial::OnSetConstants(video::IMaterialRendererServices* services,
 		services->setPixelShaderConstant("ElapsedTime", &elapsedTime, 1);
 	if(getVertexShaderFlag(ESC_TIME))
 		services->setVertexShaderConstant("ElapsedTime", &elapsedTime, 1);
-		
+
 	if(getPixelShaderFlag(ESC_TIME))
 		services->setPixelShaderConstant("DeltaTime", &deltaTime, 1);
 	if(getVertexShaderFlag(ESC_TIME))
 		services->setVertexShaderConstant("DeltaTime", &deltaTime, 1);
-		
+
 	// set a random value if the shader wants it
 	f32 random = (f32) rand() / (f32) RAND_MAX;
 	if(getPixelShaderFlag(ESC_RANDOM))
@@ -175,7 +175,7 @@ void CShaderMaterial::OnSetConstants(video::IMaterialRendererServices* services,
 	{
 		f32 width = (f32) Material.TextureLayer[0].Texture->getSize().Width;
 		f32 height = (f32) Material.TextureLayer[0].Texture->getSize().Height;
-		
+
 		// set buffer width if the shader wants it
 		if(getPixelShaderFlag(ESC_BUFFERWIDTH))
 			services->setPixelShaderConstant("BufferWidth", &width, 1);
@@ -196,7 +196,7 @@ void CShaderMaterial::OnSetConstants(video::IMaterialRendererServices* services,
 		for (u32 i=0; i<video::MATERIAL_MAX_TEXTURES; ++i)
 		{
 			if(Material.TextureLayer[i].Texture != NULL)
-				services->setPixelShaderConstant(TextureName[i].c_str(), (f32*) &i, 1);
+				services->setPixelShaderConstant(TextureName[i].c_str(), (int*) &i, 1);
 		}
 	}
 }

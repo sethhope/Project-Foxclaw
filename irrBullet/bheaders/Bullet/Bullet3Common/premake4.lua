@@ -4,11 +4,9 @@
 				
 	kind "StaticLib"
 		
-	targetdir "../../bin"
-	
 	includedirs {".."}
 
 	files {
-		"**.cpp",
-		"**.h"
+		"*.cpp",
+		"*.h"
 	}

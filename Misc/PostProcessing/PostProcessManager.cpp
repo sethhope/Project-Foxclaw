@@ -4,7 +4,7 @@
 
 CPostProcessManager::CPostProcessManager(IrrlichtDevice* device)
  : Device(device)
-{	
+{
 	// store driver flags
 	bool flagMipMaps = Device->getVideoDriver()->getTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
 	bool flag32Bit = Device->getVideoDriver()->getTextureCreationFlag(video::ETCF_ALWAYS_32_BIT);
@@ -13,7 +13,7 @@ CPostProcessManager::CPostProcessManager(IrrlichtDevice* device)
 	Device->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS);
 	Device->getVideoDriver()->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT);
 
-	// load the rtt and effect configuration 
+	// load the rtt and effect configuration
 	loadRTTConfig("Scripts/EffectsConfig/rtt.xml");
 	loadEffectConfig("Scripts/EffectsConfig/effect.xml");
 
@@ -23,7 +23,7 @@ CPostProcessManager::CPostProcessManager(IrrlichtDevice* device)
 	DepthMaterial->setVertexShaderFlag(ESC_WORLD);
 	DepthMaterial->setVertexShaderFlag(ESC_VIEW);
 	DepthMaterial->setVertexShaderFlag(ESC_PROJECTION);
-	
+
 	// restore driver flags
 	Device->getVideoDriver()->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, flagMipMaps);
 	Device->getVideoDriver()->setTextureCreationFlag(video::ETCF_ALWAYS_32_BIT, flag32Bit);
@@ -70,7 +70,7 @@ void CPostProcessManager::prepare(bool useDepth, const video::SColor& defaultDep
 void CPostProcessManager::render(E_POSTPROCESS_EFFECT effect)
 {
 	if (effect<EPPE_COUNT)
-	{		
+	{
 		// first swap the in and out buffers
 		SwapAuxBuffers();
 
@@ -79,8 +79,8 @@ void CPostProcessManager::render(E_POSTPROCESS_EFFECT effect)
 		{
 			// retrieve the post process
 			IPostProcess* postProcess = EffectChain[effect][i];
-			
-			// bind input buffer 
+
+			// bind input buffer
 			if( !postProcess->getRenderSource().empty())
 				postProcess->getMaterial().setTexture(0, RenderTargetMap[postProcess->getRenderSource()]);
 
@@ -94,7 +94,7 @@ void CPostProcessManager::render(E_POSTPROCESS_EFFECT effect)
 			postProcess->render();
 		}
 	}
-}    
+}
 void CPostProcessManager::update()
 {
 	// render the final pass
@@ -118,38 +118,38 @@ void CPostProcessManager::removeNodeFromDepthPass(scene::ISceneNode *node)
 {
 	// remove node from depth pass array
 	s32 index = DepthPassNodes.binary_search(node);
-	if(index != -1) 
+	if(index != -1)
 		DepthPassNodes.erase(index);
 }
 
 void CPostProcessManager::renderDepth(const video::SColor& defaultDepth)
-{	
+{
 	if(DepthPassNodes.size())
 	{
-		// set depth render target texture as render target 
+		// set depth render target texture as render target
 		Device->getVideoDriver()->setRenderTarget(RenderTargetMap["rttDepth"], true, true, defaultDepth);
 
 		// animate and render the camera to ensure correct depth and normal information
 		scene::ICameraSceneNode* camera = Device->getSceneManager()->getActiveCamera();
 		if (camera)
 		{
-			camera->OnRegisterSceneNode(); 
-			camera->OnAnimate(Device->getTimer()->getTime()); 
-			camera->render(); 
+			camera->OnRegisterSceneNode();
+			camera->OnAnimate(Device->getTimer()->getTime());
+			camera->render();
 		}
-			
+
 		// render all nodes that are stored in the depth pass array
 		for(u32 i=0; i<DepthPassNodes.size(); i++)
 		{
 			// get the scene node from the array
 			scene::ISceneNode* node = DepthPassNodes[i];
-			
+
 			// save the scene node material
 			video::E_MATERIAL_TYPE tempMaterial = node->getMaterial(0).MaterialType;
-			
+
 			// apply the depth material
 			node->setMaterialType(DepthMaterial->getMaterialType());
-			
+
 			// render the node
 			node->render();
 
@@ -160,11 +160,11 @@ void CPostProcessManager::renderDepth(const video::SColor& defaultDepth)
 }
 
 CEffectChain& CPostProcessManager::getEffectChain(E_POSTPROCESS_EFFECT effect)
-{ 
+{
 	// return the desired effect chain
-	if (effect < EPPE_COUNT) 
+	if (effect < EPPE_COUNT)
 		return EffectChain[effect];
-	else 
+	else
 		return EffectChain[EPPE_NO_EFFECT];
 }
 
@@ -177,9 +177,9 @@ void CPostProcessManager::loadRTTConfig(const char* filename)
 	const core::stringw renderTargetTag(L"RenderTarget");
 
     while(xmlReader && xmlReader->read())
-    {    
+    {
 		switch(xmlReader->getNodeType())
-		{    
+		{
 		case io::EXN_ELEMENT:
 			{
 				// we are in the setup section and we find a rendertarget to parse
@@ -191,7 +191,7 @@ void CPostProcessManager::loadRTTConfig(const char* filename)
 					u32 height = (u32) xmlReader->getAttributeValueAsInt("height");
 					f32 scale = (f32) xmlReader->getAttributeValueAsFloat("scale");
 					video::ECOLOR_FORMAT colorFormat = (video::ECOLOR_FORMAT) xmlReader->getAttributeValueAsInt("colorFormat");
-					
+
 					// set width and height of the rtt
 					if (scale > 0.0f)
 					{
@@ -204,14 +204,14 @@ void CPostProcessManager::loadRTTConfig(const char* filename)
 						height=Device->getVideoDriver()->getScreenSize().Height;
 					}
 					// add the rendertarget with its properties and store it in the render target map
-					video::ITexture* texture = Device->getVideoDriver()->addRenderTargetTexture(core::dimension2d<u32>(width, height), id, colorFormat);	
+					video::ITexture* texture = Device->getVideoDriver()->addRenderTargetTexture(core::dimension2d<u32>(width, height), id, colorFormat);
 					RenderTargetMap[id] = texture;
 				}
 			}
 			break;
 		}
 	}
-	delete xmlReader;    
+	delete xmlReader;
 }
 
 void CPostProcessManager::loadEffectConfig(const char* filename)
@@ -233,9 +233,9 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 	CShaderPostProcess* currentPostProcess = NULL;
 
     while(xmlReader && xmlReader->read())
-    {    
+    {
 		switch(xmlReader->getNodeType())
-		{    
+		{
 		case io::EXN_ELEMENT:
 			{
 				// we are in the setup section and we find a effect to parse
@@ -244,7 +244,7 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 					// get the E_POSTPROCESS_EFFECT parameter
 					s32 id = xmlReader->getAttributeValueAsInt("id");
 					core::stringw name = xmlReader->getAttributeValueSafe("name");
-					
+
 					if (id>=0 && id<EPPE_COUNT)
 					{
 						E_POSTPROCESS_EFFECT effect = (E_POSTPROCESS_EFFECT) xmlReader->getAttributeValueAsInt("id");
@@ -253,28 +253,28 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 					}
 					currentPostProcess = NULL;
 				}
-				
+
 				// we are in the shader post process section and have a valid currentEffect
 				if (shaderPostProcessTag.equals_ignore_case(xmlReader->getNodeName()) && currentEffectChain)
 				{
 					// get the postprocess name
 					core::stringw name = xmlReader->getAttributeValueSafe("name");
-					
+
 					// get vertex shader config
 					core::stringw vsFile = xmlReader->getAttributeValueSafe("vsFile");
 					core::stringw vsEntry = "main";
 					if (xmlReader->getAttributeValue("vsEntry"))
-						vsEntry = xmlReader->getAttributeValueSafe("vsEntry");	
+						vsEntry = xmlReader->getAttributeValueSafe("vsEntry");
 					video::E_VERTEX_SHADER_TYPE vsType = (video::E_VERTEX_SHADER_TYPE) xmlReader->getAttributeValueAsInt("vsType");
-					
+
 					// get pixel shader config
 					core::stringw psFile = xmlReader->getAttributeValueSafe("psFile");
 					core::stringw psEntry = "main";
 					if (xmlReader->getAttributeValue("psEntry"))
-						psEntry = xmlReader->getAttributeValueSafe("psEntry");	
+						psEntry = xmlReader->getAttributeValueSafe("psEntry");
 					video::E_PIXEL_SHADER_TYPE psType = (video::E_PIXEL_SHADER_TYPE) xmlReader->getAttributeValueAsInt("psType");
 					video::E_MATERIAL_TYPE baseMaterial = (video::E_MATERIAL_TYPE) xmlReader->getAttributeValueAsInt("baseMaterial");
-					
+
 					// get additional built in shader constants for vertexshader
 					bool vsUseElapsedTime = xmlReader->getAttributeValueAsInt("vsUseElapsedTime") != 0;
 					bool vsUseRandom = xmlReader->getAttributeValueAsInt("vsUseRandom") != 0;
@@ -285,7 +285,7 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 					bool vsUseWorld = xmlReader->getAttributeValueAsInt("vsUseWorld") != 0;
 					bool vsUseWorldView = xmlReader->getAttributeValueAsInt("vsUseWorldView") != 0;
 					bool vsUseWorldViewProj = xmlReader->getAttributeValueAsInt("vsUseWorldViewProj") != 0;
-					
+
 					// get additional built in shader constants for pixelshader
 					bool psUseElapsedTime = xmlReader->getAttributeValueAsInt("psUseElapsedTime") != 0;
 					bool psUseRandom = xmlReader->getAttributeValueAsInt("psUseRandom") != 0;
@@ -296,10 +296,10 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 					bool psUseWorld = xmlReader->getAttributeValueAsInt("psUseWorld") != 0;
 					bool psUseWorldView = xmlReader->getAttributeValueAsInt("psUseWorldView") != 0;
 					bool psUseWorldViewProj = xmlReader->getAttributeValueAsInt("psUseWorldViewProj") != 0;
-					
+
 					// create a new shader post process material
 					currentPostProcess = new CShaderPostProcess(Device, name, vsFile, vsEntry, vsType, psFile, psEntry, psType, baseMaterial);
-					
+
 					// set pixel shader flags
 					currentPostProcess->getShaderMaterial()->setPixelShaderFlag(ESC_TIME, psUseElapsedTime);
 					currentPostProcess->getShaderMaterial()->setPixelShaderFlag(ESC_RANDOM, psUseRandom);
@@ -317,14 +317,14 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 					currentPostProcess->getShaderMaterial()->setVertexShaderFlag(ESC_BUFFERWIDTH, vsUseBufferWidth);
 					currentPostProcess->getShaderMaterial()->setVertexShaderFlag(ESC_BUFFERHEIGHT, vsUseBufferHeight);
 					// set buffer size for DirectX vertex shaders
-					// (vertexshader performs 0.5 texel offset for correct texture sampling, 
+					// (vertexshader performs 0.5 texel offset for correct texture sampling,
 					// this is not necessary for OpenGL)
 					if(Device->getVideoDriver()->getDriverType() == video::EDT_DIRECT3D9)
 					{
 						currentPostProcess->getShaderMaterial()->setVertexShaderFlag(ESC_BUFFERWIDTH);
 						currentPostProcess->getShaderMaterial()->setVertexShaderFlag(ESC_BUFFERHEIGHT);
-					}					
-					
+					}
+
 					currentPostProcess->getShaderMaterial()->setVertexShaderFlag(ESC_PROJECTION, vsUseProjection);
 					currentPostProcess->getShaderMaterial()->setVertexShaderFlag(ESC_VIEW, vsUseView);
 					currentPostProcess->getShaderMaterial()->setVertexShaderFlag(ESC_WORLD, vsUseWorld);
@@ -334,9 +334,9 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 					// push back the post process into the effect chain
 					currentEffectChain->push_back(currentPostProcess);
 				}
-				
+
 				// read vertex shader constants from the xml-file
-				if (vsConstant.equals_ignore_case(xmlReader->getNodeName()) && 
+				if (vsConstant.equals_ignore_case(xmlReader->getNodeName()) &&
 					currentPostProcess)
 				{
 					// add the defined constants to the postprocess
@@ -346,7 +346,7 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 				}
 
 				// read pixel shader constants from the xml-file
-				if (psConstant.equals_ignore_case(xmlReader->getNodeName()) && 
+				if (psConstant.equals_ignore_case(xmlReader->getNodeName()) &&
 					currentPostProcess)
 				{
 					// add the defined constants to the postprocess
@@ -356,7 +356,7 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 				}
 
 				// read input texture properties from the xml-file
-				if (textureTag.equals_ignore_case(xmlReader->getNodeName()) && 
+				if (textureTag.equals_ignore_case(xmlReader->getNodeName()) &&
 					currentPostProcess)
 				{
 					// read texture properties
@@ -380,7 +380,7 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 						// set texture and clamp
 						if(!texPath.empty())
 							currentPostProcess->getMaterial().TextureLayer[index].Texture = Device->getVideoDriver()->getTexture(texPath);
-						
+
 						// set texture properties
 						currentPostProcess->getMaterial().TextureLayer[index].TextureWrapU = texClamp;
 						currentPostProcess->getMaterial().TextureLayer[index].TextureWrapV = texClamp;
@@ -388,7 +388,7 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 						currentPostProcess->getMaterial().TextureLayer[index].BilinearFilter = bilinearFilter;
 						currentPostProcess->getMaterial().TextureLayer[index].TrilinearFilter = trilinearFilter;
 						currentPostProcess->getMaterial().TextureLayer[index].AnisotropicFilter = anisotropicFilter;
-						
+
 						// set texture name (used for glsl)
 						if(!texName.empty())
 							currentPostProcess->getShaderMaterial()->setTextureName(index, texName);
@@ -396,7 +396,7 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 				}
 
 				// read render target for the postprocess from the xml-file
-				if (renderSourceTag.equals_ignore_case(xmlReader->getNodeName()) && 
+				if (renderSourceTag.equals_ignore_case(xmlReader->getNodeName()) &&
 					currentEffectChain && currentPostProcess)
 				{
 					// set render target of the postprocess
@@ -405,7 +405,7 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 				}
 
 				// read render target for the postprocess from the xml-file
-				if (renderTargetTag.equals_ignore_case(xmlReader->getNodeName()) && 
+				if (renderTargetTag.equals_ignore_case(xmlReader->getNodeName()) &&
 					currentEffectChain && currentPostProcess)
 				{
 					// set render target of the postprocess
@@ -416,5 +416,5 @@ void CPostProcessManager::loadEffectConfig(const char* filename)
 			}
 		}
 	}
-	delete xmlReader;    
+	delete xmlReader;
 }
