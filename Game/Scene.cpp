@@ -65,6 +65,7 @@ void SCENE::init(FEventReceiver receiver)
 	//set initial values
 	log->logData("Setting initial values");
 	lastID = 0;
+	lastTime = 0;
 	soundID = 0;
 	camera = new CAMERA(manager, log);
 	timeScale = 0.004;
@@ -104,11 +105,11 @@ void SCENE::update(FEventReceiver receiver)
 	log->debugData(EXTRA, "Updating script");
 	//run the update function within the main script
 	mainScript->update();
-	log->debugData(EXTRA, "Updating objects");
+	/*log->debugData(EXTRA, "Updating objects");
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
 		(*it)->update();
-	}
+	}*/
 	log->debugData(EXTRA, "updating sound");
 	//update the sound driver
 	sound->update();
@@ -139,7 +140,9 @@ void SCENE::render()
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
 	{
 		log->debugData(EXTRA, (*it)->getName());
+		(*it)->update();
 		(*it)->render();
+
 	}
 
 	if(debug)
@@ -465,6 +468,32 @@ SOFTMESH* SCENE::getSoftBody(u32 id)
 	log->logData("Couldn't find Softbody mesh", id);
 	return NULL;
 }
+u32 SCENE::addText(std::string text, core::dimension2d<f32> size, core::vector3df pos)
+{
+    TEXT3D* tmp = new TEXT3D(manager, log);
+    tmp->setText(text);
+    tmp->setSize(size.Width, size.Height);
+    tmp->setPosition(pos);
+    tmp->init();
+    tmp->setID(lastID);
+    lastID++;
+    tmp->setName(text);
+    objects.push_back(tmp);
+    tmp->update();
+    return lastID - 1;
+}
+TEXT3D* SCENE::getText(u32 id)
+{
+    for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if(((TEXT3D*)(*it))->getID()==id)
+		{
+			return ((TEXT3D*)(*it));
+		}
+	}
+	log->logData("Couldn't find Text", id);
+	return NULL;
+}
 OBJECT* SCENE::getObject(u32 id)
 {
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
@@ -610,7 +639,14 @@ f32 SCENE::getMetaData(std::string key)
 {
 	return metadata[key];
 }
-
+void SCENE::setMetaString(std::string key, std::string data)
+{
+    metaString[key] = data;
+}
+std::string SCENE::getMetaString(std::string key)
+{
+    return metaString[key];
+}
 void SCENE::load(std::string filename)
 {
 	log->debugData(MAJOR, "Loading level", filename);

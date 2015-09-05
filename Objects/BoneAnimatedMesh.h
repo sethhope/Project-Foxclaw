@@ -34,6 +34,7 @@ public:
     core::vector3df getBonePosition(std::string bone);
     core::vector3df getBoneRotation(std::string bone);
     void setNode(scene::ISceneNode* node);
+    std::map<std::string, scene::IAnimatedMeshSceneNode*> animations;
 private:
     LOGGER* log;
     u32 flbegin, flend;
@@ -43,7 +44,7 @@ private:
     scene::IAnimatedMeshSceneNode* anim;
     scene::ISceneManager* manager;
     std::string currentAnim;
-    std::map<std::string, scene::IAnimatedMeshSceneNode*> animations;
+
     std::map<std::string, OBJECT*> connectedObjects;
     std::map<std::string, core::vector3df> lastRot;
 };

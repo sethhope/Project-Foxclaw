@@ -42,26 +42,23 @@ void BONEANIMATEDMESH::onInit()
 
 void BONEANIMATEDMESH::onUpdate()
 {
-    for(std::map<std::string, OBJECT*>::iterator it = connectedObjects.begin(); it != connectedObjects.end(); it++)
-    {
-        core::vector3df deltaRot = lastRot[((std::string)(it->first))] - ((scene::IAnimatedMeshSceneNode*)thisNode)->getJointNode(((std::string)(it->first)).c_str())->getRotation();
-        lastRot[(std::string)(it->first)] = ((scene::IAnimatedMeshSceneNode*)thisNode)->getJointNode(((std::string)(it->first)).c_str())->getRotation();
-        ((OBJECT*)(it->second))->setRotation(((OBJECT*)(it->second))->getRotation() + deltaRot);
-    }
 }
 
 void BONEANIMATEDMESH::onRender()
 {
-    for(int i=0; i < ((scene::IAnimatedMeshSceneNode*)thisNode)->getJointCount();i++)
+    if(animations.size() > 0)
     {
-        const c8* name = ((scene::IAnimatedMeshSceneNode*)thisNode)->getJointNode(i)->getBoneName();
-        if(animations[currentAnim]->getJointNode(name) != NULL)
+        for(int i=0; i < ((scene::IAnimatedMeshSceneNode*)thisNode)->getJointCount();i++)
         {
-            //((scene::IAnimatedMeshSceneNode*)thisNode)->getJointNode(i)->setPosition(animations[currentAnim]->getJointNode(name)->getPosition());
-            ((scene::IAnimatedMeshSceneNode*)thisNode)->getJointNode(i)->setRotation(animations[currentAnim]->getJointNode(name)->getRotation());
-        }else
-        {
-            log->debugData(MAJOR, "Failed to find bone", name);
+            const c8* name = ((scene::IAnimatedMeshSceneNode*)thisNode)->getJointNode(i)->getBoneName();
+            if(animations[currentAnim]->getJointNode(name) != NULL)
+            {
+                //((scene::IAnimatedMeshSceneNode*)thisNode)->getJointNode(i)->setPosition(animations[currentAnim]->getJointNode(name)->getPosition());
+                ((scene::IAnimatedMeshSceneNode*)thisNode)->getJointNode(i)->setRotation(animations[currentAnim]->getJointNode(name)->getRotation());
+            }else
+            {
+                log->debugData(EXTRA, "Failed to find bone", name);
+            }
         }
     }
 }

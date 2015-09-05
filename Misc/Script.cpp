@@ -98,9 +98,12 @@ void SCRIPT::onInit()
         {"removeListItem", Scene_removeListItem},
         {"setMetaData", Scene_setMetaData},
         {"getMetaData", Scene_getMetaData},
+        {"setMetaString", Scene_setMetaString},
+        {"getMetaString", Scene_getMetaString},
         {"clearGUI", Scene_clearGUI},
         {"setGUIColor", Scene_setGUIColor},
         {"getGUIColor", Scene_getGUIColor},
+        {"setGUITextColor", Scene_setGUITextColor},
         {"setGUIFont", Scene_setGUIFont},
         {"getMouseControl", Scene_getMouseControl},
         {"giveMouseControl", Scene_giveMouseControl},
@@ -121,6 +124,8 @@ void SCRIPT::onInit()
         {"createPacket", Scene_createPacket},
         {"sendPacket", Scene_sendPacket},
         {"broadcastPacket", Scene_broadcastPacket},
+        {"disconnect",Scene_disconnect},
+        {"add3DText", Scene_add3DText},
         {NULL, NULL}
     };
     static luaL_Reg Mesh_metatable[] =
@@ -294,8 +299,15 @@ void SCRIPT::onInit()
         {"setText", GUI_setText},
         {"getID", GUI_getCaller},
         {"setTitle", GUI_setTitle},
+        {"setAutoscroll", GUI_setAutoscroll},
         {"removeElement", GUI_remove},
         {"setColor", GUI_setColor},
+        {"setWordWrap", GUI_setWordWrap},
+        {"setImage", GUI_setImage},
+        {"drawBorder", GUI_drawBorder},
+        {"drawBackground", GUI_drawBackground},
+        {"drawTitlebar", GUI_drawTitleBar},
+        {"bringCloseButtonToFront", GUI_bringCloseButtonToFront},
         {NULL, NULL}
     };
     static luaL_Reg NETPACK_table[] =
@@ -308,6 +320,8 @@ void SCRIPT::onInit()
     };
     lua_pushcfunction(L, System_run);
     lua_setglobal(L, "System_run");
+    lua_pushcfunction(L, System_getVersion);
+    lua_setglobal(L, "System_getVersion");
     luaW_register<SOFTMESH>(L, "SOFTMESH", Empty_table, Empty_table, Softmesh_new);
     luaW_register<GUI>(L, "GUI", Empty_table, GUI_table, GUI_new);
     luaW_register<TERRAIN>(L, "TERRAIN", Empty_table, Terrain_table, Terrain_new);

@@ -21,6 +21,7 @@
 #include "Objects/Terrain.h"
 #include "Objects/SoftMesh.h"
 #include "Objects/BoneAnimatedMesh.h"
+#include "Objects/3dText.h"
 #include "network.h"
 #include "EventReceiver.h"
 #include "Irrlicht.h"
@@ -57,6 +58,7 @@ namespace FCE
         u32 addBoneAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
         u32 addTerrain(core::vector3df pos, core::vector3df rot, core::vector3df scale);
         u32 addSoftMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
+        u32 addText(std::string text, core::dimension2d<f32> size, core::vector3df pos);
         void setCharacter(IKinematicCharacterController* character);
         void setDebug(bool debug);
         void setSkydome(std::string filename);
@@ -73,6 +75,7 @@ namespace FCE
         OBJECT* getObject(u32 id);
         TERRAIN* getTerrain(u32 id);
         SOFTMESH* getSoftBody(u32 id);
+        TEXT3D* getText(u32 id);
         IKinematicCharacterController* getCharacter();
         irrBulletWorld* getWorld();
         IrrlichtDevice* getDevice();
@@ -80,6 +83,8 @@ namespace FCE
         void save(std::string filename);
         void setMetaData(std::string key, f32 data);
         f32 getMetaData(std::string key);
+        void setMetaString(std::string key, std::string data);
+        std::string getMetaString(std::string key);
 
         f32 getTimeScale();
         void setTimeScale(f32 timeScale);
@@ -104,10 +109,12 @@ namespace FCE
         u32 soundID;
         u32 lastGUI;
         std::map<std::string, f32> metadata;
+        std::map<std::string, std::string> metaString;
         std::string skyFile;
         std::string skybox[6];
         u32 skyboxType;
         bool debug;
+        f32 lastTime;
 
         //Irrlicht Classes
         IrrlichtDevice* device;

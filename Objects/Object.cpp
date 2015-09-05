@@ -205,7 +205,7 @@ void OBJECT::useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderNa
             std::stringstream key;
             key<<"mTexture";
             key<<i;
-            shader->addConstant(FCE_FRAG, key.str(), i);
+            shader->addConstant(FCE_FRAG, key.str(), i*i);
         }
         for(std::map<std::string, f32>::iterator it = vsshaderConstants.begin(); it != vsshaderConstants.end(); it++)
         {

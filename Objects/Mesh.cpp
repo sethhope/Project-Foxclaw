@@ -21,11 +21,12 @@ u8 MESH::load(std::string filename)
     log->logData("Loading mesh", filename);
     this->filename = filename;
     mesh = manager->getMesh(filename.c_str());
-    scene::IMeshSceneNode* node = manager->addMeshSceneNode(mesh);
+    scene::IMeshSceneNode* node = manager->addOctreeSceneNode(mesh, 0, -1, 64);
     if(node)
     {
         log->debugData(MAJOR, "Loaded mesh");
         thisNode = node;
+        thisNode->setAutomaticCulling(scene::EAC_FRUSTUM_SPHERE);
         if(!thisNode)
         {
             log->debugData(MAJOR, "Failed to load thisNode");

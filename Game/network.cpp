@@ -70,7 +70,6 @@ void NETWORK::update()
             break;
         case ID_USER_DATA:
             {
-            log->debugData(MINOR, "Got data");
             lua_getglobal(script->L, "onReceive");
             RakNet::BitStream in(pack->data, pack->length, false);
             NETPACKET* tmp = new NETPACKET();
@@ -136,15 +135,17 @@ void NETWORK::sendPacket(NETPACKET* toSend, RakNet::SystemAddress address)
         log->debugData(MINOR, "Failed to send");
     else
         log->debugData(MINOR, "Success", worked);
+    delete toSend;
 }
 void NETWORK::broadcastPacket(NETPACKET* toSend)
 {
     log->debugData(MINOR, "broadcasting packet");
     RakNet::BitStream tmp;
     tmp.Write(toSend->pack);
-    u32 worked = peer->Send(&tmp, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), true);
+    u32 worked = peer->Send(&tmp, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
     if(worked==0)
         log->debugData(MINOR, "Failed to send");
     else
         log->debugData(MINOR, "Success", worked);
+    delete toSend;
 }

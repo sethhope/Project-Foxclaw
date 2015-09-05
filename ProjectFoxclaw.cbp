@@ -124,6 +124,8 @@
 		<Unit filename="Misc/Script.cpp" />
 		<Unit filename="Misc/Script.h" />
 		<Unit filename="Misc/util.h" />
+		<Unit filename="Objects/3dText.cpp" />
+		<Unit filename="Objects/3dText.h" />
 		<Unit filename="Objects/AnimatedMesh.cpp" />
 		<Unit filename="Objects/AnimatedMesh.h" />
 		<Unit filename="Objects/Bone.cpp" />

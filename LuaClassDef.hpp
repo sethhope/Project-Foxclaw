@@ -5,7 +5,7 @@
 #include "luawrapper.hpp"
 #include "Irrlicht.h"
 #include "Game/ShaderCallback.h"
-
+#include "version.h"
 #include "Objects/Object.h"
 #include "Objects/Node.h"
 #include "Objects/Mesh.h"
@@ -26,7 +26,7 @@ using namespace FCE;
 int System_run(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 2);
-    std::string filename = luaL_checkstring(L, 1);
+    std::string filename = (std::string)(s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 1)).c_str());
     lua_State* tmp = L;
     if(luaL_loadfile(tmp, filename.c_str()))
     {
@@ -34,7 +34,7 @@ int System_run(lua_State* L)
         s->getLog()->debugData(MINOR, "Error", lua_tostring(L, -1));
         return 0;
     }
-    if(lua_pcall(tmp, 0, 0xd, 0))
+    if(lua_pcall(tmp, 0, 0, 0))
     {
         s->getLog()->logData("Failed to run script", filename);
         s->getLog()->debugData(MINOR, "Error", lua_tostring(L, -1));
@@ -43,7 +43,11 @@ int System_run(lua_State* L)
     L = tmp;
     return 0;
 }
-
+int System_getVersion(lua_State* L)
+{
+    lua_pushstring(L, VERSION_FULLVERSION_STRING);
+    return 1;
+}
 SCENE* Scene_new(lua_State* L)
 {
     SCENE* s = new SCENE();
@@ -65,6 +69,18 @@ int Scene_Save(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
     s->save(luaL_checkstring(L, 2));
+    return 0;
+}
+int Scene_getMetaString(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    lua_pushstring(L, s->getMetaString(luaL_checkstring(L, 2)).c_str());
+    return 1;
+}
+int Scene_setMetaString(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->setMetaString(luaL_checkstring(L, 2), luaL_checkstring(L, 3));
     return 0;
 }
 int Scene_getConfigValue(lua_State* L)
@@ -739,10 +755,29 @@ int Scene_clearGUI(lua_State* L)
 int Scene_setGUIColor(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
-    for(u32 i = 0; i < gui::EGDC_COUNT; i++)
+    std::string a = luaL_checkstring(L, 2);
+    gui::EGUI_DEFAULT_COLOR i;
+    if(a == "activeBorder")
     {
-        s->getDevice()->getGUIEnvironment()->getSkin()->setColor((gui::EGUI_DEFAULT_COLOR)i, video::SColor(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5)));
+        i = gui::EGDC_ACTIVE_BORDER;
     }
+    if(a == "activeCaption")
+    {
+        i = gui::EGDC_ACTIVE_CAPTION;
+    }
+    if(a == "buttonText")
+    {
+        i = gui::EGDC_BUTTON_TEXT;
+    }
+    if(a == "grayText")
+    {
+        i = gui::EGDC_GRAY_TEXT;
+    }
+    if(a == "window")
+    {
+        i = gui::EGDC_WINDOW;
+    }
+    s->getDevice()->getGUIEnvironment()->getSkin()->setColor(i, video::SColor(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5)));
     return 0;
 }
 int Scene_getGUIColor(lua_State* L)
@@ -754,6 +789,15 @@ int Scene_getGUIColor(lua_State* L)
     lua_pushnumber(L, c.b);
     lua_pushnumber(L, c.a);
     return 4;
+}
+int Scene_setGUITextColor(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getDevice()->getGUIEnvironment()->getSkin()->setColor(gui::EGDC_ACTIVE_CAPTION, video::SColor(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5)));
+    s->getDevice()->getGUIEnvironment()->getSkin()->setColor(gui::EGDC_BUTTON_TEXT, video::SColor(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5)));
+    s->getDevice()->getGUIEnvironment()->getSkin()->setColor(gui::EGDC_TOOLTIP, video::SColor(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5)));
+
+    return 0;
 }
 int Scene_setGUIFont(lua_State* L)
 {
@@ -871,17 +915,34 @@ int Scene_setGravity(lua_State* L)
 int Scene_getGUIObject(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
+    u32 id = luaL_checknumber(L, 2);
     std::vector<GUI*> c = s->callers;
+    std::vector<GUI*> d = s->guiObjects;
+    bool found = false;
     for(std::vector<GUI*>::iterator it = c.begin(); it < c.end(); it++)
     {
-        if((*it)->guiCaller == luaL_checknumber(L, 2))
+        if((*it)->guiCaller == id)
         {
             luaW_push<GUI>(L, (*it));
-            return 1;
+            found = true;
         }
     }
-    s->getLog()->debugData(MINOR, "Failed to get GUI Object", luaL_checknumber(L, 2));
-    return 0;
+    if(!found)
+    {
+        for(std::vector<GUI*>::iterator it = d.begin(); it < d.end(); it++)
+        {
+            if((*it)->guiCaller == id)
+            {
+                luaW_push<GUI>(L, (*it));
+                found = true;
+            }
+        }
+        if(!found)
+        {
+            s->getLog()->logData("Parent ID not found", id);
+        }
+    }
+    return 1;
 }
 int Scene_setFog(lua_State* L)
 {
@@ -893,7 +954,9 @@ int Scene_setFog(lua_State* L)
 int Scene_addZip(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
-    s->getDevice()->getFileSystem()->addFileArchive(s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 2)).c_str(), true, true, io::EFAT_ZIP);
+    bool success = s->getDevice()->getFileSystem()->addFileArchive(s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 2)).c_str(), true, false, io::EFAT_ZIP);
+    if(success == false)
+        s->getLog()->logData("Failed to add archive", luaL_checkstring(L, 2));
     return 0;
 }
 int Scene_removeZip(lua_State* L)
@@ -965,6 +1028,20 @@ int Scene_broadcastPacket(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
     s->getNetwork()->broadcastPacket(luaW_check<NETPACKET>(L, 2));
+    return 0;
+}
+int Scene_disconnect(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    s->getNetwork()->disconnect();
+    return 0;
+}
+int Scene_add3DText(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    u32 id = s->addText(luaL_checkstring(L, 2), core::dimension2d<f32>(luaL_checknumber(L, 3), luaL_checknumber(L, 4)), core::vector3df(luaL_checknumber(L, 5), luaL_checknumber(L, 6), luaL_checknumber(L, 7)));
+    lua_pushnumber(L, id);
+    return 1;
 }
 OBJECT* Object_new(lua_State* L)
 {
@@ -1214,6 +1291,14 @@ int Object_setMaterialFlag(lua_State* L)
         {
             if(o->getOType() == "ANIMATEDMESH" || o->getOType() == "MESH")
                 ((scene::IAnimatedMeshSceneNode*)o->getIrrNode())->addShadowVolumeSceneNode();
+        }
+        if(type == "mip_maps")
+        {
+            o->getIrrNode()->setMaterialFlag(video::EMF_USE_MIP_MAPS, value);
+        }
+        if(type == "visible")
+        {
+            o->getIrrNode()->setVisible((bool)value);
         }
     }
     return 0;
@@ -2171,6 +2256,75 @@ int GUI_setColor(lua_State* L)
     GUI* g = luaW_check<GUI>(L, 1);
 
     g->skin->setColor(gui::EGDC_3D_FACE, video::SColor(255, luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4)));
+    return 0;
+}
+int GUI_setAutoscroll(lua_State* L)
+{
+    GUI* g = luaW_check<GUI>(L, 1);
+    bool tmp = false;
+    if(luaL_checknumber(L, 2) == 1)
+    {
+        tmp=true;
+    }
+    ((gui::IGUIListBox*)(g->element))->setAutoScrollEnabled(tmp);
+    return 0;
+}
+int GUI_setWordWrap(lua_State* L)
+{
+    GUI* g = luaW_check<GUI>(L, 1);
+    bool tmp = false;
+    if(luaL_checknumber(L, 2) == 1)
+    {
+        tmp=true;
+    }
+    ((gui::IGUIStaticText*)(g->element))->setWordWrap(tmp);
+    return 0;
+}
+int GUI_setImage(lua_State* L)
+{
+    GUI* g = luaW_check<GUI>(L, 1);
+    SCENE* s = luaW_check<SCENE>(L, 2);
+    ((gui::IGUIButton*)g->element)->setImage(s->getDevice()->getVideoDriver()->getTexture(luaL_checkstring(L, 3)));//, core::rect<s32>(luaL_checknumber(L, 4), luaL_checknumber(L, 5), luaL_checknumber(L, 6), luaL_checknumber(L, 7)));
+    return 0;
+}
+int GUI_drawBorder(lua_State* L)
+{
+    GUI* g = luaW_check<GUI>(L, 1);
+    bool draw = false;
+    if(luaL_checknumber(L, 2) == 1)
+    {
+        draw = true;
+    }
+    ((gui::IGUIButton*)g->element)->setDrawBorder(draw);
+    return 0;
+}
+int GUI_drawBackground(lua_State* L)
+{
+    GUI* g = luaW_check<GUI>(L, 1);
+    bool a = false;
+    if(luaL_checknumber(L, 2) == 1)
+    {
+        a = true;
+    }
+    ((gui::IGUIWindow*)g->element)->setDrawBackground(a);
+    return 0;
+}
+int GUI_drawTitleBar(lua_State* L)
+{
+    GUI* g = luaW_check<GUI>(L, 1);
+    bool a = false;
+    if(luaL_checknumber(L, 2) == 1)
+    {
+        a = true;
+    }
+    ((gui::IGUIWindow*)g->element)->setDrawTitlebar(a);
+    //((gui::IGUIWindow*)g->element)->getCloseButton()->setVisible(a);
+    return 0;
+}
+int GUI_bringCloseButtonToFront(lua_State* L)
+{
+    GUI* g = luaW_check<GUI>(L, 1);
+    ((gui::IGUIWindow*)g->element)->bringToFront(((gui::IGUIWindow*)g->element)->getCloseButton());
     return 0;
 }
 NETPACKET* PACKET_newPacket(lua_State* L)
