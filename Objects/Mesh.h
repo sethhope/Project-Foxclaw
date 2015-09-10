@@ -18,15 +18,16 @@ public:
     std::string getOType();
 
     u8 load(std::string filename);
+    u8 create(scene::IMesh* mesh);
     std::string getFilename();
-    scene::IAnimatedMesh* getMesh();
+    scene::IMesh* getMesh();
     //scene::IAnimatedMeshSceneNode* getNode();
 
 private:
     u32 id;
     LOGGER* log;
     std::string filename;
-    scene::IAnimatedMesh* mesh;
+    scene::IMesh* mesh;
     scene::ISceneManager* manager;
 };
 }

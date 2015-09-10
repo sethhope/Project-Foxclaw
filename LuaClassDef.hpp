@@ -15,6 +15,7 @@
 #include "Objects/AnimatedMesh.h"
 #include "Objects/Terrain.h"
 #include "Objects/SoftMesh.h"
+#include "Objects/CombinedMesh.h"
 #include "Game/GUI.h"
 #include "Misc/Logger.h"
 #include "Game/Scene.h"
@@ -182,6 +183,19 @@ int Scene_addMesh(lua_State* L)
     SCENE* s = luaW_check<SCENE>(L, 1);
     int mesh = s->addMesh(luaL_checkstring(L, 2), core::vector3df(luaL_checknumber(L,3),luaL_checknumber(L,4),luaL_checknumber(L,5)), core::vector3df(luaL_checknumber(L,6),luaL_checknumber(L,7),luaL_checknumber(L,8)),core::vector3df(luaL_checknumber(L,9),luaL_checknumber(L,10),luaL_checknumber(L,11)));
     lua_pushnumber(L,mesh);
+    return 1;
+}
+int Scene_addCMesh(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    COMBINEDMESH* cm = luaW_check<COMBINEDMESH>(L, 2);
+    scene::IMesh* cmesh = cm->getMesh();
+    int mesh = s->addMesh(cmesh, core::vector3df(luaL_checknumber(L,3),luaL_checknumber(L,4),luaL_checknumber(L,5)), core::vector3df(luaL_checknumber(L,6),luaL_checknumber(L,7),luaL_checknumber(L,8)),core::vector3df(luaL_checknumber(L,9),luaL_checknumber(L,10),luaL_checknumber(L,11)));
+    for(std::vector<u32>::iterator it = cm->meshIDs.begin(); it < cm->meshIDs.end(); it++)
+    {
+        s->removeObjectNoNode((*it));
+    }
+    lua_pushnumber(L, mesh);
     return 1;
 }
 int Scene_getMesh(lua_State* L)
@@ -777,7 +791,15 @@ int Scene_setGUIColor(lua_State* L)
     {
         i = gui::EGDC_WINDOW;
     }
-    s->getDevice()->getGUIEnvironment()->getSkin()->setColor(i, video::SColor(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5)));
+    if(a == "editable")
+    {
+        i = gui::EGDC_EDITABLE;
+    }
+    if(a == "editable_selected")
+    {
+        i = gui::EGDC_FOCUSED_EDITABLE;
+    }
+    s->getDevice()->getGUIEnvironment()->getSkin()->setColor(i, video::SColor(luaL_checknumber(L, 3), luaL_checknumber(L, 4), luaL_checknumber(L, 5), luaL_checknumber(L, 6)));
     return 0;
 }
 int Scene_getGUIColor(lua_State* L)
@@ -2325,6 +2347,20 @@ int GUI_bringCloseButtonToFront(lua_State* L)
 {
     GUI* g = luaW_check<GUI>(L, 1);
     ((gui::IGUIWindow*)g->element)->bringToFront(((gui::IGUIWindow*)g->element)->getCloseButton());
+    return 0;
+}
+
+COMBINEDMESH* CMESH_new(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    COMBINEDMESH* mesh = new COMBINEDMESH(s->getManager(), luaL_checknumber(L, 2), s->getLog());
+    return mesh;
+}
+int CMESH_add(lua_State* L)
+{
+    COMBINEDMESH* cm = luaW_check<COMBINEDMESH>(L, 1);
+    MESH* m = luaW_check<MESH>(L, 2);
+    cm->addMesh(m);
     return 0;
 }
 NETPACKET* PACKET_newPacket(lua_State* L)

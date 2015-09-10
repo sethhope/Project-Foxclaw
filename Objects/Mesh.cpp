@@ -38,6 +38,27 @@ u8 MESH::load(std::string filename)
     return 1;
 }
 
+u8 MESH::create(scene::IMesh* mesh)
+{
+    log->logData("Creating mesh");
+    this->mesh = mesh;
+    scene::IMeshSceneNode* node = manager->addMeshSceneNode(mesh);
+    if(node)
+    {
+        log->debugData(MAJOR, "Loaded mesh");
+        thisNode = node;
+        thisNode->setAutomaticCulling(scene::EAC_FRUSTUM_SPHERE);
+        if(!thisNode)
+        {
+            log->debugData(MAJOR, "Failed to load thisNode");
+            return 1;
+        }
+        return 0;
+    }
+    log->logData("Failed to create mesh");
+    return 1;
+}
+
 void MESH::onInit()
 {
 }
@@ -49,7 +70,7 @@ void MESH::onRender()
 {
 }
 
-scene::IAnimatedMesh* MESH::getMesh()
+scene::IMesh* MESH::getMesh()
 {
     return mesh;
 }

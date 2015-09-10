@@ -53,6 +53,7 @@ void SCRIPT::onInit()
         {"getBacklog", Scene_getBacklog},
         {"setDebug", Scene_setDebug},
         {"addMesh", Scene_addMesh},
+        {"addCMesh", Scene_addCMesh},
         {"getMesh", Scene_getMesh},
         {"addAnimatedMesh", Scene_addAnimatedMesh},
         {"getAnimatedMesh", Scene_getAnimatedMesh},
@@ -318,10 +319,16 @@ void SCRIPT::onInit()
         {"readString", PACKET_readString},
         {NULL, NULL}
     };
+    static luaL_Reg CMESH_table[] =
+    {
+        {"addMesh", CMESH_add},
+        {NULL, NULL}
+    };
     lua_pushcfunction(L, System_run);
     lua_setglobal(L, "System_run");
     lua_pushcfunction(L, System_getVersion);
     lua_setglobal(L, "System_getVersion");
+    luaW_register<COMBINEDMESH>(L, "CMESH", Empty_table, CMESH_table, CMESH_new);
     luaW_register<SOFTMESH>(L, "SOFTMESH", Empty_table, Empty_table, Softmesh_new);
     luaW_register<GUI>(L, "GUI", Empty_table, GUI_table, GUI_new);
     luaW_register<TERRAIN>(L, "TERRAIN", Empty_table, Terrain_table, Terrain_new);

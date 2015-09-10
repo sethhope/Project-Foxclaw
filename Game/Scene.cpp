@@ -68,7 +68,7 @@ void SCENE::init(FEventReceiver receiver)
 	lastTime = 0;
 	soundID = 0;
 	camera = new CAMERA(manager, log);
-	timeScale = 0.004;
+	timeScale = 1/30;
 	lastGUI = 1;
 	skyboxType = NONE;
 
@@ -101,7 +101,7 @@ void SCENE::update(FEventReceiver receiver)
 	deltaTime = device->getTimer()->getTime() - timeStamp;
 	timeStamp = device->getTimer()->getTime();
 	log->debugData(EXTRA, "Updating Physics");
-	world->stepSimulation(deltaTime/timeScale, 10);
+	world->stepSimulation(deltaTime*0.004, 20);
 	log->debugData(EXTRA, "Updating script");
 	//run the update function within the main script
 	mainScript->update();
@@ -251,7 +251,30 @@ u32 SCENE::addMesh(std::string filename, core::vector3df pos, core::vector3df ro
 	lastID++;
 	objects.push_back(tmp);
 	tmp->update();
-	postManager->addNodeToDepthPass(tmp->getIrrNode());
+	//postManager->addNodeToDepthPass(tmp->getIrrNode());
+	return lastID-1;
+}
+u32 SCENE::addMesh(scene::IMesh* mesh, core::vector3df pos, core::vector3df rot, core::vector3df scale)
+{
+	MESH* tmp = new MESH(manager, log);
+	tmp->setID(lastID);
+	u32 meshLoaded = tmp->create(mesh);
+	if(meshLoaded!=0)
+    {
+        return 0;
+    }
+	tmp->setName("CMESH");
+	tmp->getIrrNode()->setMaterialFlag(video::EMF_LIGHTING, true);
+	//tmp->getIrrNode()->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
+	tmp->getIrrNode()->setMaterialType(video::EMT_SOLID);
+	tmp->setPosition(pos);
+	tmp->setRotation(rot);
+	tmp->setScale(scale);
+	tmp->init();
+	lastID++;
+	objects.push_back(tmp);
+	tmp->update();
+	//postManager->addNodeToDepthPass(tmp->getIrrNode());
 	return lastID-1;
 }
 MESH* SCENE::editMesh(u32 id)
@@ -570,6 +593,21 @@ void SCENE::removeObject(u32 id)
 			postManager->removeNodeFromDepthPass((*it)->getIrrNode());
 			manager->addToDeletionQueue((*it)->getIrrNode());
 			(*it)->deconstruct();
+			(*it)->~OBJECT();
+			objects.erase(it);
+			return;
+		}
+	}
+}
+void SCENE::removeObjectNoNode(u32 id)
+{
+    for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if((*it)->getID()==id)
+		{
+			//postManager->removeNodeFromDepthPass((*it)->getIrrNode());
+			//manager->addToDeletionQueue((*it)->getIrrNode());
+			//(*it)->deconstruct();
 			(*it)->~OBJECT();
 			objects.erase(it);
 			return;

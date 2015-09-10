@@ -52,6 +52,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-g" />
 					<Add directory="include" />
 					<Add directory="../Project-Foxclaw" />
 					<Add directory="Game" />
@@ -112,6 +113,8 @@
 		<Unit filename="Game/network.h" />
 		<Unit filename="LuaClassDef.hpp" />
 		<Unit filename="Main.cpp" />
+		<Unit filename="Misc/CMeshCombiner.cpp" />
+		<Unit filename="Misc/CMeshCombiner.h" />
 		<Unit filename="Misc/Logger.cpp" />
 		<Unit filename="Misc/Logger.h" />
 		<Unit filename="Misc/PostProcessing/IPostProcess.h" />
@@ -136,6 +139,8 @@
 		<Unit filename="Objects/Camera.h" />
 		<Unit filename="Objects/Collider.cpp" />
 		<Unit filename="Objects/Collider.h" />
+		<Unit filename="Objects/CombinedMesh.cpp" />
+		<Unit filename="Objects/CombinedMesh.h" />
 		<Unit filename="Objects/EmptyObject.cpp" />
 		<Unit filename="Objects/EmptyObject.h" />
 		<Unit filename="Objects/Light.cpp" />

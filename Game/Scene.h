@@ -48,10 +48,11 @@ namespace FCE
         void render();
 
         void removeObject(u32 id);
-
+        void removeObjectNoNode(u32 id);
         u32 addParticleSystem(core::vector3df pos, core::vector3df dir, core::vector3df scale, std::string filename);
         u32 addSound(std::string filename, core::vector3df pos, bool loop);
         u32 addMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
+        u32 addMesh(scene::IMesh* mesh, core::vector3df pos, core::vector3df rot, core::vector3df scale);
         u32 addLight(core::vector3df pos, core::vector3df rot, core::vector3df scale, f32 dropoff, video::E_LIGHT_TYPE type);
         u32 addEmptyObject(core::vector3df pos, core::vector3df rot, core::vector3df scale);
         u32 addAnimatedMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
@@ -101,6 +102,7 @@ namespace FCE
         Config* config;
         bool exit;
         NETWORK* getNetwork(){return net;}
+        scene::ISceneManager* getManager(){return(manager);}
     private:
 
         //Standard variables

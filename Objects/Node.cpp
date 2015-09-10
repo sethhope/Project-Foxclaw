@@ -41,7 +41,7 @@ NODE::~NODE()
     }
     if(thisNode)
     {
-        thisNode->remove();
+        //thisNode->remove();
     }
 }
 
