@@ -35,7 +35,7 @@ namespace FCE
 			void addCollider(LOGGER* log, u16 type, scene::ISceneManager* manager, irrBulletWorld* world, f32 mass, scene::IMesh* colMesh);
 			void setMetaData(std::string key, f32 data);
 			f32 getMetaData(std::string key);
-			void useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderFile);
+			void useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderFile, u32 materialIndex);
 			void setID(u32 id);
 			u32 getID();
 			COLLIDER* getCollider();

@@ -22,8 +22,9 @@ public:
     lua_State* runInit();
     lua_State* run(std::string filename);
     lua_State* L;
-private:
     std::string filename;
+private:
+
     LOGGER* log;
 };
 }

@@ -55,6 +55,10 @@ void BONEANIMATEDMESH::onRender()
             {
                 //((scene::IAnimatedMeshSceneNode*)thisNode)->getJointNode(i)->setPosition(animations[currentAnim]->getJointNode(name)->getPosition());
                 ((scene::IAnimatedMeshSceneNode*)thisNode)->getJointNode(i)->setRotation(animations[currentAnim]->getJointNode(name)->getRotation());
+                if(connectedObjects[name])
+                {
+                    connectedObjects[name]->setRotation(animations[currentAnim]->getJointNode(name)->getRotation());
+                }
             }else
             {
                 log->debugData(EXTRA, "Failed to find bone", name);
@@ -110,7 +114,7 @@ int BONEANIMATEDMESH::addAnimation(std::string key, std::string filename)
     if(anim)
     {
         log->debugData(MAJOR, "Loaded Bone Animation");
-        tmp->setParent(thisNode);
+        //tmp->setParent(thisNode);
         tmp->setFrameLoop(flbegin, flend);
         animations[key]=tmp;
         return 0;

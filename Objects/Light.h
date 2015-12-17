@@ -3,6 +3,7 @@
 #include "Irrlicht.h"
 #include "Object.h"
 #include "Misc/Logger.h"
+#include "Misc/XEffects/XEffects.h"
 using namespace irr;
 using namespace core;
 namespace FCE
@@ -23,6 +24,7 @@ public:
     video::E_LIGHT_TYPE getType();
     f32 getDropoff();
     video::SColorf getColor();
+
 private:
     core::vector3df position;
     core::vector3df scale;
@@ -31,7 +33,6 @@ private:
     video::E_LIGHT_TYPE type;
     f32 dropoff;
     LOGGER* log;
-
 };
 }
 #endif

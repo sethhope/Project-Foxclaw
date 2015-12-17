@@ -26,7 +26,7 @@ u8 MESH::load(std::string filename)
     {
         log->debugData(MAJOR, "Loaded mesh");
         thisNode = node;
-        thisNode->setAutomaticCulling(scene::EAC_FRUSTUM_SPHERE);
+        //thisNode->setAutomaticCulling(scene::EAC_FRUSTUM_SPHERE);
         if(!thisNode)
         {
             log->debugData(MAJOR, "Failed to load thisNode");
@@ -47,7 +47,7 @@ u8 MESH::create(scene::IMesh* mesh)
     {
         log->debugData(MAJOR, "Loaded mesh");
         thisNode = node;
-        thisNode->setAutomaticCulling(scene::EAC_FRUSTUM_SPHERE);
+        //thisNode->setAutomaticCulling(scene::EAC_);
         if(!thisNode)
         {
             log->debugData(MAJOR, "Failed to load thisNode");

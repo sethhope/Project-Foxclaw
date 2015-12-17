@@ -48,11 +48,12 @@ int FRAMEWORK::init()
         dType = video::EDT_OPENGL;
     if(d == 3)
         dType = video::EDT_BURNINGSVIDEO;
-
+    if(d == 4)
+        dType = video::EDT_NULL;
     if(dType!=NULL)
     {
         log->logData("Trying driver", d);
-        log->logData("1=DX9, 2=OGL, 3=SOFTWARE");
+        log->logData("1=DX9, 2=OGL, 3=SOFTWARE, 4=NULL");
         SIrrlichtCreationParameters p;
         p.DriverType = dType;
         p.WindowSize = core::dimension2d<u32>(config->data["width"], config->data["height"]);

@@ -127,6 +127,7 @@ void SCRIPT::onInit()
         {"broadcastPacket", Scene_broadcastPacket},
         {"disconnect",Scene_disconnect},
         {"add3DText", Scene_add3DText},
+        {"rayCast", Scene_rayCast},
         {NULL, NULL}
     };
     static luaL_Reg Mesh_metatable[] =
@@ -279,6 +280,7 @@ void SCRIPT::onInit()
         {"addForce", Collider_addForce},
         {"addTorque", Collider_addTorque},
         {"setState", Collider_setState},
+        {"getVelocity", Collider_getVelocity},
         {NULL, NULL}
     };
     static luaL_Reg Terrain_table[] =

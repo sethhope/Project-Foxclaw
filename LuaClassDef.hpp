@@ -1065,6 +1065,36 @@ int Scene_add3DText(lua_State* L)
     lua_pushnumber(L, id);
     return 1;
 }
+int Scene_rayCast(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    f32 startX = luaL_checknumber(L, 2);
+    f32 startY = luaL_checknumber(L, 3);
+    f32 startZ = luaL_checknumber(L, 4);
+    f32 endX = luaL_checknumber(L, 5);
+    f32 endY = luaL_checknumber(L, 6);
+    f32 endZ = luaL_checknumber(L, 7);
+
+    btCollisionWorld::ClosestRayResultCallback rayCallback(btVector3(startX, startY, startZ), btVector3(endX, endY, endZ));
+
+    s->getWorld()->getPointer()->rayTest(btVector3(startX, startY, startZ), btVector3(endX, endY, endZ), rayCallback);
+    if(rayCallback.hasHit())
+    {
+        btVector3 e = rayCallback.m_hitPointWorld;
+        lua_pushnumber(L, e.getX());
+        lua_pushnumber(L, e.getY());
+        lua_pushnumber(L, e.getZ());
+        return 3;
+    }else
+    {
+        btVector3 e = btVector3(endX, endY, endZ);
+        lua_pushnumber(L, e.getX());
+        lua_pushnumber(L, e.getY());
+        lua_pushnumber(L, e.getZ());
+        return 3;
+    }
+    return 0;
+}
 OBJECT* Object_new(lua_State* L)
 {
     OBJECT* o = new OBJECT();
@@ -1231,7 +1261,7 @@ int Object_useShader(lua_State* L)
 {
     OBJECT* o = luaW_check<OBJECT>(L, 1);
     SCENE* s = luaW_check<SCENE>(L, 2);
-    o->useShader(s->getDevice(), s->getLog(), s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 3)).c_str());
+    o->useShader(s->getDevice(), s->getLog(), s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 3)).c_str(), 0);
     return 0;
 }
 int Object_setMaterialFlag(lua_State* L)
@@ -1413,7 +1443,15 @@ COLLIDER* Collider_new(lua_State* L)
 {
     return 0;
 }
-
+int Collider_getVelocity(lua_State* L)
+{
+    COLLIDER* c = luaW_check<COLLIDER>(L, 1);
+    core::vector3df velocity = c->body->getLinearVelocity();
+    lua_pushnumber(L, velocity.X);
+    lua_pushnumber(L, velocity.Y);
+    lua_pushnumber(L, velocity.Z);
+    return 3;
+}
 int Collider_setVelocity(lua_State* L)
 {
     COLLIDER* c = luaW_check<COLLIDER>(L, 1);

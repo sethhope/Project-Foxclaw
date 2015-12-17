@@ -49,21 +49,63 @@ void NETWORK::update()
             break;
         case ID_CONNECTION_REQUEST_ACCEPTED:
             log->debugData(MINOR, "Accepted connection request", pack->systemAddress.ToString());
+            lua_getglobal(script->L, "onConnected");
+            lua_pushstring(script->L, pack->systemAddress.ToString());
+            if(lua_pcall(script->L, 1, 0, 0)!=0)
+            {
+                log->debugData(MAJOR, "Failed to run onConnected function", lua_tostring(script->L, -1));
+                break;
+            }
             break;
         case ID_NEW_INCOMING_CONNECTION:
             log->debugData(MINOR, "New connection incoming", pack->systemAddress.ToString());
+            lua_getglobal(script->L, "onNewConnectionIncoming");
+            lua_pushstring(script->L, pack->systemAddress.ToString());
+            if(lua_pcall(script->L, 1, 0, 0)!=0)
+            {
+                log->debugData(MAJOR, "Failed to run onNewConnectionIncoming function", lua_tostring(script->L, -1));
+                break;
+            }
             break;
         case ID_NO_FREE_INCOMING_CONNECTIONS:
             log->debugData(MINOR, "Server full");
+            lua_getglobal(script->L, "onServerFull");
+            lua_pushstring(script->L, pack->systemAddress.ToString());
+            if(lua_pcall(script->L, 1, 0, 0)!=0)
+            {
+                log->debugData(MAJOR, "Failed to run onServerFull function", lua_tostring(script->L, -1));
+                break;
+            }
             break;
         case ID_CONNECTION_LOST:
             log->debugData(MINOR, "Lost connection");
+            lua_getglobal(script->L, "onConnectionLost");
+            lua_pushstring(script->L, pack->systemAddress.ToString());
+            if(lua_pcall(script->L, 1, 0, 0)!=0)
+            {
+                log->debugData(MAJOR, "Failed to run onConnectionLost function", lua_tostring(script->L, -1));
+                break;
+            }
             break;
         case ID_DISCONNECTION_NOTIFICATION:
             log->debugData(MINOR, "Disconnected", pack->systemAddress.ToString());
+            lua_getglobal(script->L, "onDisconnect");
+            lua_pushstring(script->L, pack->systemAddress.ToString());
+            if(lua_pcall(script->L, 1, 0, 0)!=0)
+            {
+                log->debugData(MAJOR, "Failed to run onDisconnect function", lua_tostring(script->L, -1));
+                break;
+            }
             break;
         case ID_CONNECTION_ATTEMPT_FAILED:
             log->debugData(MINOR, "Failed to connect to", connectedIP);
+            lua_getglobal(script->L, "onConnectFailed");
+            lua_pushstring(script->L, pack->systemAddress.ToString());
+            if(lua_pcall(script->L, 1, 0, 0)!=0)
+            {
+                log->debugData(MAJOR, "Failed to run onConnectFailed function", lua_tostring(script->L, -1));
+                break;
+            }
             break;
         case ID_ALREADY_CONNECTED:
             log->debugData(MINOR, "Already connected");

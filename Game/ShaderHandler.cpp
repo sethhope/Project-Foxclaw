@@ -11,7 +11,7 @@ ShaderHandler::~ShaderHandler()
 
 }
 
-void ShaderHandler::addShader(std::string xmlFile, video::E_MATERIAL_TYPE curMaterial)
+void ShaderHandler::addShader(std::string xmlFile, video::E_MATERIAL_TYPE curMaterial, u32 materialIndex)
 {
     io::IXMLReader* xml = device->getFileSystem()->createXMLReader(xmlFile.c_str());
     if(!xml)

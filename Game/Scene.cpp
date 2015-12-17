@@ -142,7 +142,6 @@ void SCENE::render()
 		log->debugData(EXTRA, (*it)->getName());
 		(*it)->update();
 		(*it)->render();
-
 	}
 
 	if(debug)
@@ -869,7 +868,8 @@ void SCENE::load(std::string filename)
 					if(hasShader)
                     {
                         core::stringc shaderFile1 = core::stringc(shaderFile);
-                        ((OBJECT*)tmpMesh)->useShader(device, getLog(), shaderFile1.c_str());
+                        //TODO: FIX SHADERS
+                        ((OBJECT*)tmpMesh)->useShader(device, getLog(), shaderFile1.c_str(), 0);
                         log->debugData(MAJOR, "Loading shaders for", tmpMesh->getID());
                     }
 					objects.push_back(tmpMesh);
@@ -971,7 +971,8 @@ void SCENE::load(std::string filename)
 					if(hasShader)
                     {
                         core::stringc shaderFile1 = core::stringc(shaderFile);
-                        ((OBJECT*)tmpMesh)->useShader(device, getLog(), shaderFile1.c_str());
+                        //TODO: FIX SHADERS
+                        ((OBJECT*)tmpMesh)->useShader(device, getLog(), shaderFile1.c_str(), 0);
                         log->debugData(MAJOR, "Loading shaders for", tmpMesh->getID());
                     }
 					objects.push_back(tmpMesh);
@@ -1085,6 +1086,7 @@ void SCENE::load(std::string filename)
 					u32 rateMin, rateMax;
 					u32 ageMin, ageMax;
 					f32 sizeMin, sizeMax;
+					video::SColor color1, color2;
 					int id;
 					int parentID;
 					std::vector<std::string> affectors;
@@ -1139,6 +1141,14 @@ void SCENE::load(std::string filename)
                                 {
                                     affectors.push_back(core::stringc(xml->getAttributeValue(0)).c_str());
                                 }
+                                if(core::stringw(L"color1").equals_ignore_case(xml->getNodeName()))
+                                {
+                                    color1 = video::SColor(xml->getAttributeValueAsFloat(0), xml->getAttributeValueAsFloat(1), xml->getAttributeValueAsFloat(2), xml->getAttributeValueAsFloat(3));
+                                }
+                                if(core::stringw(L"color2").equals_ignore_case(xml->getNodeName()))
+                                {
+                                    color2 = video::SColor(xml->getAttributeValueAsFloat(0), xml->getAttributeValueAsFloat(1), xml->getAttributeValueAsFloat(2), xml->getAttributeValueAsFloat(3));
+                                }
 							break;
 							case io::EXN_ELEMENT_END:
 								if(core::stringw(L"PARTICLE").equals_ignore_case(xml->getNodeName()))
@@ -1162,6 +1172,7 @@ void SCENE::load(std::string filename)
 					tmpPart->setSize(core::dimension2df(sizeMin, sizeMin), core::dimension2df(sizeMax,sizeMax));
 					tmpPart->setAge(ageMin, ageMax);
 					tmpPart->setRate(rateMin, rateMax);
+					tmpPart->setColors(color1, color2);
 					tmpPart->affectors = affectors;
 					tmpPart->addAffectorsFromVector();
 					tmpPart->update();
@@ -1265,6 +1276,10 @@ void SCENE::load(std::string filename)
 			break;
 		}
 	}
+	for(std::map<int, int>::iterator it = parentIDs.begin(); it != parentIDs.end(); it++)
+    {
+        getObject(it->first)->attachTo(getObject(it->second));
+    }
 }
 
 void SCENE::save(std::string filename)
@@ -1492,6 +1507,10 @@ void SCENE::save(std::string filename)
                 xml->writeElement(L"affector", true, L"type", core::stringw((*af).c_str()).c_str());
                 xml->writeLineBreak();
             }
+            xml->writeElement(L"color1", true, L"a", core::stringw(((PARTICLE*)(*it))->color1.getAlpha()).c_str(), L"r", core::stringw(((PARTICLE*)(*it))->color1.getRed()).c_str(), L"g", core::stringw(((PARTICLE*)(*it))->color1.getGreen()).c_str(), L"b", core::stringw(((PARTICLE*)(*it))->color1.getBlue()).c_str());
+			xml->writeLineBreak();
+			xml->writeElement(L"color2", true, L"a", core::stringw(((PARTICLE*)(*it))->color2.getAlpha()).c_str(), L"r", core::stringw(((PARTICLE*)(*it))->color2.getRed()).c_str(), L"g", core::stringw(((PARTICLE*)(*it))->color2.getGreen()).c_str(), L"b", core::stringw(((PARTICLE*)(*it))->color2.getBlue()).c_str());
+			xml->writeLineBreak();
 			xml->writeClosingTag(L"PARTICLE");
 			xml->writeLineBreak();
 			xml->writeLineBreak();

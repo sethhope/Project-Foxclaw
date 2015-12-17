@@ -56,15 +56,14 @@ void OBJECT::update()
 void OBJECT::render()
 {
 	onRender();
-	if(hasShader)
+	/*if(hasShader)
     {
         for(std::vector<u32>::iterator it = shader->materials.begin(); it < shader->materials.end(); it++)
         {
-
             thisNode->setMaterialType((video::E_MATERIAL_TYPE)(*it));
             thisNode->render();
         }
-    }
+    }*/
 	if(!children.empty())
 	{
 		for(std::vector<NODE*>::iterator it = children.begin(); it < children.end(); it++)
@@ -193,7 +192,7 @@ f32 OBJECT::getMetaData(std::string key)
 {
 	return metadata[key];
 }
-void OBJECT::useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderName)
+void OBJECT::useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderName, u32 materialIndex)
 {
     if(device->getVideoDriver()->getDriverType() == video::EDT_OPENGL)
     {
@@ -217,9 +216,11 @@ void OBJECT::useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderNa
             f32 pt = it->second;
             shader->addConstant(FCE_FRAG, it->first.c_str(), pt);
         }
-        shader->addShader(shaderName, thisNode->getMaterial(0).MaterialType);
-        thisNode->setMaterialFlag(video::EMF_LIGHTING, false);
-        thisNode->setMaterialType((video::E_MATERIAL_TYPE)shader->materials[0]);
+        shader->addShader(shaderName, thisNode->getMaterial(0).MaterialType, materialIndex);
+        thisNode->getMaterial(materialIndex).setFlag(video::EMF_LIGHTING, false);
+        thisNode->getMaterial(materialIndex).MaterialType = (video::E_MATERIAL_TYPE)shader->materials[0];
+        //thisNode->setMaterialFlag(video::EMF_LIGHTING, false);
+        //thisNode->setMaterialType((video::E_MATERIAL_TYPE)shader->materials[0]);
     }else
     {
         log->logData("Running DirectX");

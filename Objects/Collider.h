@@ -15,8 +15,6 @@
 #define COL_MESH_BHV 8
 #define MAX_TYPE 8
 
-
-//TODO: Apply force and torque integration
 using namespace irr;
 namespace FCE
 {

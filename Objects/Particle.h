@@ -37,9 +37,10 @@ public:
     core::dimension2df sizeMin, sizeMax;
     std::string getFilename();
     std::vector<std::string> affectors;
+    video::SColor color1, color2;
 private:
     std::string filename;
-    video::SColor color1, color2;
+
     core::vector3df dir;
     core::aabbox3d<f32> size;
 
