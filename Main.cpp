@@ -1,6 +1,5 @@
 #include "stdlib.h"
 #include "Game/Framework.h"
-
 using namespace FCE;
 
 int main()

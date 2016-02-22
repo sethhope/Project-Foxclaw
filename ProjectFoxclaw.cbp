@@ -92,6 +92,7 @@
 			<Add option="../libLinearMath.a" />
 			<Add option="../libBulletCollision.a" />
 			<Add library="..\..\RakNet-master\Lib\DLL\Lib\lib_DLL_vc9_Debug Win32_Win32.a" />
+			<Add library="..\libnoise.a" />
 		</Linker>
 		<Unit filename="Game/Config.cpp" />
 		<Unit filename="Game/Config.h" />

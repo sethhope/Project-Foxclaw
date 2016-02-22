@@ -204,7 +204,7 @@ void OBJECT::useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderNa
             std::stringstream key;
             key<<"mTexture";
             key<<i;
-            shader->addConstant(FCE_FRAG, key.str(), i*i);
+            shader->addConstant(FCE_FRAG, key.str(), i);
         }
         for(std::map<std::string, f32>::iterator it = vsshaderConstants.begin(); it != vsshaderConstants.end(); it++)
         {
@@ -217,6 +217,7 @@ void OBJECT::useShader(IrrlichtDevice* device, LOGGER* log, std::string shaderNa
             shader->addConstant(FCE_FRAG, it->first.c_str(), pt);
         }
         shader->addShader(shaderName, thisNode->getMaterial(0).MaterialType, materialIndex);
+
         thisNode->getMaterial(materialIndex).setFlag(video::EMF_LIGHTING, false);
         thisNode->getMaterial(materialIndex).MaterialType = (video::E_MATERIAL_TYPE)shader->materials[0];
         //thisNode->setMaterialFlag(video::EMF_LIGHTING, false);

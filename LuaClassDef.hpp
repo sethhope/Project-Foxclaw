@@ -21,6 +21,8 @@
 #include "Game/Scene.h"
 #include "Misc/util.h"
 #include "Misc/PostProcessing/PostProcessManager.h"
+#include "noise/noise.h"
+#include <thread>
 using namespace irr;
 using namespace FCE;
 
@@ -44,9 +46,110 @@ int System_run(lua_State* L)
     L = tmp;
     return 0;
 }
+void runScript(SCENE* s, std::string fname, lua_State* L)
+{
+    std::string filename = (std::string)(s->getDevice()->getFileSystem()->getAbsolutePath(fname.c_str()).c_str());
+    lua_State* tmp = L;
+    if(luaL_loadfile(tmp, filename.c_str()))
+    {
+        s->getLog()->logData("Failed to load script", filename);
+        s->getLog()->debugData(MINOR, "Error", lua_tostring(L, -1));
+        return;
+    }
+    if(lua_pcall(tmp, 0, 0, 0))
+    {
+        s->getLog()->logData("Failed to run script", filename);
+        s->getLog()->debugData(MINOR, "Error", lua_tostring(L, -1));
+        return;
+    }
+    L = tmp;
+}
+int System_runInThread(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 2);
+    s->getLog()->debugData(MINOR, "Launching in thread", luaL_checkstring(L, 1));
+    std::thread t(runScript, s, luaL_checkstring(L, 1), L);
+    return 0;
+}
 int System_getVersion(lua_State* L)
 {
     lua_pushstring(L, VERSION_FULLVERSION_STRING);
+    return 1;
+}
+int System_getPerlinNoise(lua_State* L)
+{
+    f32 n;
+    u32 octaves = luaL_checknumber(L, 1);
+    f32 persistance = luaL_checknumber(L, 2);
+    u32 seed = luaL_checknumber(L, 3);
+    f32 freq = luaL_checknumber(L, 4);
+    f32 x = luaL_checknumber(L, 5);
+    f32 y = luaL_checknumber(L, 6);
+    f32 z = luaL_checknumber(L, 7);
+    noise::module::Perlin mod;
+
+    mod.SetOctaveCount(octaves);
+    mod.SetPersistence(persistance);
+    mod.SetSeed(seed);
+    mod.SetFrequency(freq);
+    n = mod.GetValue(x, y, z);
+    lua_pushnumber(L, n);
+    return 1;
+}
+int System_getCellNoise(lua_State* L)
+{
+    f32 n;
+    u32 disp = luaL_checknumber(L, 1);
+    u32 seed = luaL_checknumber(L, 2);
+    f32 freq = luaL_checknumber(L, 3);
+    f32 x = luaL_checknumber(L, 4);
+    f32 y = luaL_checknumber(L, 5);
+    f32 z = luaL_checknumber(L, 6);
+    noise::module::Voronoi mod;
+
+    mod.SetDisplacement(disp);
+    mod.SetSeed(seed);
+    mod.SetFrequency(freq);
+    n = mod.GetValue(x, y, z);
+    lua_pushnumber(L, n);
+    return 1;
+}
+int System_getRidgedNoise(lua_State* L)
+{
+    f32 n;
+    u32 octaves = luaL_checknumber(L, 1);
+    u32 seed = luaL_checknumber(L, 2);
+    f32 freq = luaL_checknumber(L, 3);
+    f32 x = luaL_checknumber(L, 4);
+    f32 y = luaL_checknumber(L, 5);
+    f32 z = luaL_checknumber(L, 6);
+    noise::module::RidgedMulti mod;
+
+    mod.SetOctaveCount(octaves);
+    mod.SetSeed(seed);
+    mod.SetFrequency(freq);
+    n = mod.GetValue(x, y, z);
+    lua_pushnumber(L, n);
+    return 1;
+}
+int System_getBillowNoise(lua_State* L)
+{
+    f32 n;
+    u32 octaves = luaL_checknumber(L, 1);
+    f32 persistance = luaL_checknumber(L, 2);
+    u32 seed = luaL_checknumber(L, 3);
+    f32 freq = luaL_checknumber(L, 4);
+    f32 x = luaL_checknumber(L, 5);
+    f32 y = luaL_checknumber(L, 6);
+    f32 z = luaL_checknumber(L, 7);
+    noise::module::Billow mod;
+
+    mod.SetOctaveCount(octaves);
+    mod.SetPersistence(persistance);
+    mod.SetSeed(seed);
+    mod.SetFrequency(freq);
+    n = mod.GetValue(x, y, z);
+    lua_pushnumber(L, n);
     return 1;
 }
 SCENE* Scene_new(lua_State* L)
@@ -1095,6 +1198,25 @@ int Scene_rayCast(lua_State* L)
     }
     return 0;
 }
+int Scene_setMousePosition(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    f32 x = luaL_checknumber(L, 2);
+    f32 y = luaL_checknumber(L, 3);
+    s->getDevice()->getCursorControl()->setPosition(x, y);
+    return 0;
+}
+int Scene_setMouseVisibility(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    bool v = true;
+    if(luaL_checknumber(L, 2) == 0)
+    {
+        v = false;
+    }
+    s->getDevice()->getCursorControl()->setVisible(v);
+    return 0;
+}
 OBJECT* Object_new(lua_State* L)
 {
     OBJECT* o = new OBJECT();
@@ -1257,11 +1379,82 @@ int Object_setMaterial(lua_State* L)
     }
     return 0;
 }
+int Object_setMaterialType(lua_State* L)
+{
+    OBJECT* o = luaW_check<OBJECT>(L, 1);
+    std::string type = luaL_checkstring(L, 2);
+    u32 material = luaL_checknumber(L, 3);
+    if(o->getIrrNode()->getType() == scene::ESNT_CUBE || o->getIrrNode()->getType() == scene::ESNT_MESH || o->getIrrNode()->getType() == scene::ESNT_ANIMATED_MESH || o->getIrrNode()->getType() == scene::ESNT_BILLBOARD || o->getIrrNode()->getType() == scene::ESNT_WATER_SURFACE || o->getIrrNode()->getType() == scene::ESNT_SPHERE)
+    {
+        o->hasShader=false;
+        if(type == "solid")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_SOLID;
+        }
+        if(type == "solid_2_layer")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_SOLID_2_LAYER;
+        }
+        if(type == "lightmap")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_LIGHTMAP;
+        }
+        if(type == "lit_lightmap")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_LIGHTMAP_LIGHTING;
+        }
+        if(type == "normalmap_solid")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_NORMAL_MAP_SOLID;
+        }
+        if(type == "parallax_solid")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_PARALLAX_MAP_SOLID;
+        }
+        if(type == "sphere_map")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_SPHERE_MAP;
+        }
+        if(type == "detail_map")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_DETAIL_MAP;
+        }
+        if(type == "solid_spheremap")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_REFLECTION_2_LAYER;
+        }
+        if(type == "transparent_alpha")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
+        }
+        if(type == "transparent_alpha_fast")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL_REF;
+        }
+        if(type == "transparent_add")
+        {
+            o->getIrrNode()->getMaterial(material).MaterialType = video::EMT_TRANSPARENT_ADD_COLOR;
+        }
+    }
+    return 0;
+}
 int Object_useShader(lua_State* L)
 {
     OBJECT* o = luaW_check<OBJECT>(L, 1);
     SCENE* s = luaW_check<SCENE>(L, 2);
     o->useShader(s->getDevice(), s->getLog(), s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 3)).c_str(), 0);
+    return 0;
+}
+int Object_useShaderOnMaterial(lua_State* L)
+{
+    OBJECT* o = luaW_check<OBJECT>(L, 1);
+    SCENE* s = luaW_check<SCENE>(L, 2);
+    u32 i = 0;
+    if(luaL_checknumber(L, 4) != NULL)
+    {
+        i = luaL_checknumber(L, 4);
+    }
+    o->useShader(s->getDevice(), s->getLog(), s->getDevice()->getFileSystem()->getAbsolutePath(luaL_checkstring(L, 3)).c_str(), i);
     return 0;
 }
 int Object_setMaterialFlag(lua_State* L)
@@ -1355,6 +1548,13 @@ int Object_setMaterialFlag(lua_State* L)
     }
     return 0;
 }
+int Object_getMaterialCount(lua_State* L)
+{
+    OBJECT* o = luaW_check<OBJECT>(L, 1);
+    u32 materials = o->getIrrNode()->getMaterialCount();
+    lua_pushnumber(L, materials);
+    return 1;
+}
 int Object_setMaterialData(lua_State* L)
 {
     OBJECT* o = luaW_check<OBJECT>(L, 1);
@@ -1386,6 +1586,11 @@ int Object_setMaterialData(lua_State* L)
     {
         video::SColor curDiffuse = o->getIrrNode()->getMaterial(material).DiffuseColor;
         o->getIrrNode()->getMaterial(material).DiffuseColor = hueShift(curDiffuse, luaL_checknumber(L, 4));
+    }
+    if(key == "shininess")
+    {
+        f32 shine = luaL_checknumber(L, 4);
+        o->getIrrNode()->getMaterial(material).Shininess = shine;
     }
     return 0;
 }
@@ -2228,6 +2433,18 @@ int Terrain_setHeight(lua_State* L)
 {
     TERRAIN* t = luaW_check<TERRAIN>(L, 1);
     t->setHeight(luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4));
+    return 0;
+}
+int Terrain_setColor(lua_State* L)
+{
+    TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+    u32 x = luaL_checknumber(L, 2);
+    u32 y = luaL_checknumber(L, 3);
+    f32 r = luaL_checknumber(L, 4);
+    f32 g = luaL_checknumber(L, 5);
+    f32 b = luaL_checknumber(L, 6);
+    f32 a = luaL_checknumber(L, 7);
+    t->setColor(x, y, video::SColorf(r, g, b, a));
     return 0;
 }
 int Terrain_setHeightNoRebuild(lua_State* L)

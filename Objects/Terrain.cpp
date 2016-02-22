@@ -86,6 +86,7 @@ void TERRAIN::empty(u32 width, u32 height, u32 tilefactor)
         for(u32 y = 0; y < height; y++)
         {
             hMap->setHeight(x, y, 0);
+            hMap->setColor(x, y, video::SColorf(0, 0, 0, 1.0));
         }
     }
     makeMesh();
@@ -182,7 +183,8 @@ void TERRAIN::addstrip(u32 y0, u32 y1, u32 bufNum)
             video::S3DVertex& v = buf->Vertices[i++];
             v.Pos.set(x, 0.2 * z, y);
             v.Normal.set(hMap->getNormal(x, y, 0.2));
-            v.Color=video::SColor(255,255,255,255);
+            video::SColorf c = hMap->getColor(x, y);
+            v.Color = c.toSColor();
             v.TCoords.set(xx*tilefactor, yy*tilefactor);
         }
     }
@@ -224,6 +226,10 @@ void TERRAIN::setHeight(u32 x, u32 y, f32 height)
     mesh->clear();
     remakeMesh();
 }
+void TERRAIN::setColor(u32 x, u32 y, video::SColorf c)
+{
+    hMap->setColor(x, y, c);
+}
 void TERRAIN::setHeightNoRebuild(u32 x, u32 y, f32 height)
 {
     hMap->setHeight(x, y, height);
@@ -244,6 +250,7 @@ HEIGHTMAP::HEIGHTMAP(u32 height, u32 width)
     this->width = width;
     scalingFactor = sqrtf((f32)(width*width+height*height));
     data.set_used(width*height);
+    color.set_used(width*height);
 }
 
 HEIGHTMAP::~HEIGHTMAP()
@@ -255,13 +262,20 @@ f32 HEIGHTMAP::getData(u32 x, u32 y)
 {
     return data[y*width+x];
 }
-
+video::SColorf HEIGHTMAP::getColor(u32 x, u32 y)
+{
+    return color[y*width+x];
+}
 void HEIGHTMAP::setHeight(u32 x, u32 y, f32 height)
 {
     data[y*width+x]=height;
 
 }
+void HEIGHTMAP::setColor(u32 x, u32 y, video::SColorf c)
+{
+    color[y*width+x]=c;
 
+}
 core::vector3df HEIGHTMAP::getNormal(u32 x, u32 y, f32 scalingFactor)
 {
     f32 zc = getData(x, y);

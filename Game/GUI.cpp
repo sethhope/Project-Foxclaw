@@ -226,7 +226,9 @@ bool GUI::OnEvent(const SEvent& event)
             if(id == element->getID() && type == FLIST)
             {
                 lua_getglobal(s->L, "onChange");
-                if(lua_pcall(s->L, 0, 0, 0)!=0)
+                s32 sel = ((gui::IGUIListBox*)element)->getSelected();
+                lua_pushnumber(s->L, sel);
+                if(lua_pcall(s->L, 1, 0, 0)!=0)
                 {
                     log->logData("Failed to run onChange function", lua_tostring(s->L, -1));
                     return false;

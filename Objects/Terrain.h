@@ -14,6 +14,8 @@ public:
     ~HEIGHTMAP();
     f32 getData(u32 x, u32 y);
     void setHeight(u32 x, u32 y, f32 height);
+    void setColor(u32 x, u32 y, video::SColorf c);
+    video::SColorf getColor(u32 x, u32 y);
     u32 getWidth()
     {
         return width;
@@ -31,6 +33,7 @@ private:
     u32 width;
 
     core::array<f32> data;
+    core::array<video::SColorf> color;
 };
 
 class TERRAIN : public OBJECT
@@ -52,6 +55,7 @@ public:
     std::string getFilename();
     bool fromFile;
     void setHeight(u32 x, u32 y, f32 height);
+    void setColor(u32 x, u32 y, video::SColorf c);
     void setHeightNoRebuild(u32 x, u32 y, f32 height);
     void rebuild();
     scene::IAnimatedMesh* getMesh();

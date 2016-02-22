@@ -86,7 +86,7 @@ void ShaderHandler::addShader(std::string xmlFile, video::E_MATERIAL_TYPE curMat
                     video::IGPUProgrammingServices* gpu = device->getVideoDriver()->getGPUProgrammingServices();
                     u32 m;
                     const video::E_GPU_SHADING_LANGUAGE sLang = video::EGSL_DEFAULT;
-                    video::E_MATERIAL_TYPE currM = curMaterial;
+                    video::E_MATERIAL_TYPE currM = video::EMT_SOLID;
                     m = gpu->addHighLevelShaderMaterialFromFiles(vsFile, "vertexMain", video::EVST_VS_1_1, psFile, "pixelMain", video::EPST_PS_1_2, scb, currM, 0, sLang);
                     shaders.push_back(scb);
                     materials.push_back(m);

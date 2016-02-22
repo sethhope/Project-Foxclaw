@@ -128,6 +128,8 @@ void SCRIPT::onInit()
         {"disconnect",Scene_disconnect},
         {"add3DText", Scene_add3DText},
         {"rayCast", Scene_rayCast},
+        {"setMousePosition", Scene_setMousePosition},
+        {"setMouseVisibility", Scene_setMouseVisibility},
         {NULL, NULL}
     };
     static luaL_Reg Mesh_metatable[] =
@@ -256,15 +258,18 @@ void SCRIPT::onInit()
         {"getID", Object_getID},
         {"addScript", Object_addScript},
         {"setMaterial", Object_setMaterial},
+        {"setMaterialType", Object_setMaterialType},
         {"setMaterialFlag", Object_setMaterialFlag},
         {"setMaterialTexture", Object_setTexture},
         {"setMaterialData", Object_setMaterialData},
         {"useShader", Object_useShader},
+        {"useShaderOnMaterial", Object_useShaderOnMaterial},
         {"attachTo", Object_attachTo},
         {"setMetaData", Object_setMetaData},
         {"getMetaData", Object_getMetaData},
         {"getUpVector", Object_getUpVector},
         {"getChildren", Object_getChildren},
+        {"getMaterialCount", Object_getMaterialCount},
         {NULL, NULL}
     };
     static luaL_Reg Collider_table[] =
@@ -289,6 +294,7 @@ void SCRIPT::onInit()
         {"load", Terrain_load},
         {"getHeight", Terrain_getHeight},
         {"setHeight", Terrain_setHeight},
+        {"setColor", Terrain_setColor},
         {"setHeightNoRebuild", Terrain_setHeightNoRebuild},
         {"rebuild", Terrain_rebuild},
         {"getSizeX", Terrain_getSizeX},
@@ -328,8 +334,18 @@ void SCRIPT::onInit()
     };
     lua_pushcfunction(L, System_run);
     lua_setglobal(L, "System_run");
+    lua_pushcfunction(L, System_runInThread);
+    lua_setglobal(L, "System_runInThread");
     lua_pushcfunction(L, System_getVersion);
     lua_setglobal(L, "System_getVersion");
+    lua_pushcfunction(L, System_getPerlinNoise);
+    lua_setglobal(L, "System_getPerlinNoise");
+    lua_pushcfunction(L, System_getCellNoise);
+    lua_setglobal(L, "System_getCellNoise");
+    lua_pushcfunction(L, System_getBillowNoise);
+    lua_setglobal(L, "System_getBillowNoise");
+    lua_pushcfunction(L, System_getRidgedNoise);
+    lua_setglobal(L, "System_getRidgedNoise");
     luaW_register<COMBINEDMESH>(L, "CMESH", Empty_table, CMESH_table, CMESH_new);
     luaW_register<SOFTMESH>(L, "SOFTMESH", Empty_table, Empty_table, Softmesh_new);
     luaW_register<GUI>(L, "GUI", Empty_table, GUI_table, GUI_new);
