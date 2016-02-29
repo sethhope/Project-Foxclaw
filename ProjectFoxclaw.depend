@@ -41,7 +41,7 @@
 	"Config.h"
 	"Misc/PostProcessing/PostProcessManager.h"
 
-1429386281 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shadercallback.h
+1456756120 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shadercallback.h
 	"stdafx.h"
 	<map>
 	"irrlicht.h"
@@ -70,7 +70,7 @@
 1448568658 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\scene.cpp
 	"Scene.h"
 
-1448225821 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shadercallback.cpp
+1456536282 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shadercallback.cpp
 	"ShaderCallback.h"
 
 1426877383 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\logger.cpp
@@ -100,7 +100,7 @@
 1425618256 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\postprocessing\shaderpostprocess.cpp
 	"ShaderPostProcess.h"
 
-1456061322 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\script.cpp
+1456161578 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\misc\script.cpp
 	"Script.h"
 	"LuaClassDef.hpp"
 	"Game/Scene.h"
@@ -189,7 +189,7 @@
 1441575228 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\node.cpp
 	"NODE.h"
 
-1448568932 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\object.cpp
+1456535336 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\object.cpp
 	"Object.h"
 
 1437977120 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\objects\particle.cpp
@@ -1345,12 +1345,12 @@
 	"include/lua.h"
 	"include/lauxlib.h"
 
-1448568562 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shaderhandler.h
+1456502852 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shaderhandler.h
 	"ShaderCallback.h"
 	"Misc/Logger.h"
 	"stdafx.h"
 
-1456147476 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\luaclassdef.hpp
+1456161551 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\luaclassdef.hpp
 	"lua.hpp"
 	"luawrapper.hpp"
 	"Irrlicht.h"
@@ -1374,10 +1374,10 @@
 	"noise/noise.h"
 	<thread>
 
-1456156703 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shaderhandler.cpp
+1456536092 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\shaderhandler.cpp
 	"ShaderHandler.h"
 
-1456161753 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\version.h
+1456756120 c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\version.h
 
 1436377505 source:c:\users\seth\desktop\game dev\foxclawirrlicht\project-foxclaw\game\config.cpp
 	"Config.h"

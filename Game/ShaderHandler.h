@@ -14,13 +14,13 @@ namespace FCE
             ~ShaderHandler();
             void addShader(std::string xmlFile, video::E_MATERIAL_TYPE curMaterial, u32 materialIndex);
             void addConstant(u32 shader, std::string key, f32 data);
-            std::vector<ShaderCallback*> shaders;
-            std::vector<u32> materials;
             IrrlichtDevice* getDevice(){return device;};
+            u32 m;
         protected:
         private:
             IrrlichtDevice* device;
             LOGGER* log;
+
             std::map<std::string, f32> fsConstants;
             std::map<std::string, f32> vsConstants;
     };
