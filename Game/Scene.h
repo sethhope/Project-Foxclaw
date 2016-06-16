@@ -103,6 +103,7 @@ namespace FCE
         bool exit;
         NETWORK* getNetwork(){return net;}
         scene::ISceneManager* getManager(){return(manager);}
+        scene::ISceneNode* getSkydome(){return skydome;}
     private:
 
         //Standard variables
