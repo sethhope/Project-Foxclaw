@@ -12,11 +12,11 @@ class CShaderMaterial;
 
 // available effects
 //
-// if you want to create a new effect 
+// if you want to create a new effect
 // 1) add another EPPE_* constant
 // 2) define its behaviour in the effect.xml configuration file
 // 3) define additional render target textures in the rtt.xml configuration file
-// 4) put the used shader programs into the media/shaders/hlsl and media/shaders/glsl subfolders 
+// 4) put the used shader programs into the media/shaders/hlsl and media/shaders/glsl subfolders
 enum E_POSTPROCESS_EFFECT
 {
 	EPPE_NO_EFFECT = 0,
@@ -90,13 +90,22 @@ protected:
 
 	// the effect chains that store the post process passes (defined in effect.xml)
 	CEffectChain EffectChain[EPPE_COUNT];
-	
+
 	// list of nodes for depth pass
 	core::array<scene::ISceneNode*> DepthPassNodes;
 
 	// material for depth pass
 	CShaderMaterial* DepthMaterial;
-	
+
+	// Additional passes material
+	core::map<core::stringw, CShaderMaterial*> passesMat;
+
+	// nodes for additional passes
+	core::map<core::stringw, core::array<scene::ISceneNode*>> passNodes;
+
+	// Renders additional passes
+	void renderPasses();
+
 	// performs depth and normal generation pass
 	void renderDepth(const video::SColor& defaultDepth);
 
@@ -108,7 +117,7 @@ protected:
 
 	// loads the effect.xml and fills the EffectChain
 	void loadEffectConfig(const char* filename);
-	
+
 public:
 	// prepares the postprocessing by setting the aux0 buffer as the scene render target
 	// use this function before calling smgr->drawAll()
@@ -120,7 +129,7 @@ public:
 	// renders the aux buffer to the framebuffer
 	// call this function after applying all desired effects and before calling gui->drawAll()
 	void update();
-	
+
 	// removes all nodes from depth pass
 	void clearDepthPass();
 

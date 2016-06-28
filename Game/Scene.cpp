@@ -516,6 +516,30 @@ TEXT3D* SCENE::getText(u32 id)
 	log->logData("Couldn't find Text", id);
 	return NULL;
 }
+u32 SCENE::addBillboard(std::string filename, core::vector3df pos)
+{
+    BILLBOARD* tmp = new BILLBOARD(manager, log);
+    tmp->init();
+    tmp->setTexture(device, filename);
+    tmp->setPosition(pos);
+    tmp->setID(lastID);
+    lastID++;
+    objects.push_back(tmp);
+    tmp->update();
+    return lastID - 1;
+}
+BILLBOARD* SCENE::getBillboard(u32 id)
+{
+    for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)
+	{
+		if(((BILLBOARD*)(*it))->getID()==id)
+		{
+			return ((BILLBOARD*)(*it));
+		}
+	}
+	log->logData("Couldn't find Billboard", id);
+	return NULL;
+}
 OBJECT* SCENE::getObject(u32 id)
 {
 	for(std::vector<OBJECT*>::iterator it = objects.begin(); it < objects.end(); it++)

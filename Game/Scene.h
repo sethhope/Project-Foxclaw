@@ -22,6 +22,7 @@
 #include "Objects/SoftMesh.h"
 #include "Objects/BoneAnimatedMesh.h"
 #include "Objects/3dText.h"
+#include "Objects/Billboard.h"
 #include "network.h"
 #include "EventReceiver.h"
 #include "Irrlicht.h"
@@ -60,6 +61,7 @@ namespace FCE
         u32 addTerrain(core::vector3df pos, core::vector3df rot, core::vector3df scale);
         u32 addSoftMesh(std::string filename, core::vector3df pos, core::vector3df rot, core::vector3df scale);
         u32 addText(std::string text, core::dimension2d<f32> size, core::vector3df pos);
+        u32 addBillboard(std::string filename, core::vector3df pos);
         void setCharacter(IKinematicCharacterController* character);
         void setDebug(bool debug);
         void setSkydome(std::string filename);
@@ -77,6 +79,7 @@ namespace FCE
         TERRAIN* getTerrain(u32 id);
         SOFTMESH* getSoftBody(u32 id);
         TEXT3D* getText(u32 id);
+        BILLBOARD* getBillboard(u32 id);
         IKinematicCharacterController* getCharacter();
         irrBulletWorld* getWorld();
         IrrlichtDevice* getDevice();

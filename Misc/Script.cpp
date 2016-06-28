@@ -67,6 +67,8 @@ void SCRIPT::onInit()
         {"getEmpty", Scene_getEmpty},
         {"addLight", Scene_addLight},
         {"getLight", Scene_getLight},
+        {"addBillboard", Scene_addBillboard},
+        {"getBillboard", Scene_getBillboard},
         {"addTerrain", Scene_addTerrain},
         {"getTerrain", Scene_getTerrain},
         {"addCamera", Scene_addCamera},
@@ -139,6 +141,8 @@ void SCRIPT::onInit()
         {"setScale", Mesh_setScale},
         {"addCollider", Mesh_addCollider},
         {"toObject", Mesh_toObject},
+        {"makeStatic", Mesh_makeStatic},
+        {"makeDynamic", Mesh_makeDynamic},
         {NULL, NULL}
     };
     static luaL_Reg AnimatedMesh_metatable[] =
@@ -270,6 +274,7 @@ void SCRIPT::onInit()
         {"getUpVector", Object_getUpVector},
         {"getChildren", Object_getChildren},
         {"getMaterialCount", Object_getMaterialCount},
+        {"addShadow", Object_addShadow},
         {NULL, NULL}
     };
     static luaL_Reg Collider_table[] =
@@ -301,6 +306,14 @@ void SCRIPT::onInit()
         {"getSizeY", Terrain_getSizeY},
         {"addCollider", Terrain_addCollider},
         {"getID", Terrain_getID},
+        {"makeStatic", Terrain_makeStatic},
+        {"makeDynamic", Terrain_makeDynamic},
+        {NULL, NULL}
+    };
+    static luaL_Reg Billboard_table[] =
+    {
+        {"setTexture", BILLBOARD_setTexture},
+        {"setSize", BILLBOARD_setSize},
         {NULL, NULL}
     };
     static luaL_Reg GUI_table[] =
@@ -330,6 +343,8 @@ void SCRIPT::onInit()
     static luaL_Reg CMESH_table[] =
     {
         {"addMesh", CMESH_add},
+        {"makeStatic", Terrain_makeStatic},
+        {"makeDynamic", Terrain_makeDynamic},
         {NULL, NULL}
     };
     lua_pushcfunction(L, System_run);
@@ -349,6 +364,7 @@ void SCRIPT::onInit()
     luaW_register<COMBINEDMESH>(L, "CMESH", Empty_table, CMESH_table, CMESH_new);
     luaW_register<SOFTMESH>(L, "SOFTMESH", Empty_table, Empty_table, Softmesh_new);
     luaW_register<GUI>(L, "GUI", Empty_table, GUI_table, GUI_new);
+    luaW_register<BILLBOARD>(L, "BILLBOARD", Empty_table, Billboard_table, BILLBOARD_new);
     luaW_register<TERRAIN>(L, "TERRAIN", Empty_table, Terrain_table, Terrain_new);
     luaW_register<LIGHT>(L, "LIGHT", Empty_table, Light_metatable, Light_new);
     luaW_register<COLLIDER>(L, "COLLIDER", Empty_table, Collider_table, Collider_new);

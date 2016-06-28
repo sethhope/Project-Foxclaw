@@ -132,6 +132,8 @@
 		<Unit filename="Objects/3dText.h" />
 		<Unit filename="Objects/AnimatedMesh.cpp" />
 		<Unit filename="Objects/AnimatedMesh.h" />
+		<Unit filename="Objects/Billboard.cpp" />
+		<Unit filename="Objects/Billboard.h" />
 		<Unit filename="Objects/Bone.cpp" />
 		<Unit filename="Objects/Bone.h" />
 		<Unit filename="Objects/BoneAnimatedMesh.cpp" />

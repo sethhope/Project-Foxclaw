@@ -411,6 +411,19 @@ int Scene_getLight(lua_State* L)
     luaW_push<LIGHT>(L, s->editLight(luaL_checknumber(L, 2)));
     return 1;
 }
+int Scene_addBillboard(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    int id = s->addBillboard(luaL_checkstring(L, 2), core::vector3df(luaL_checknumber(L,3),luaL_checknumber(L,4),luaL_checknumber(L,5)));
+    lua_pushnumber(L, id);
+    return 1;
+}
+int Scene_getBillboard(lua_State* L)
+{
+    SCENE* s = luaW_check<SCENE>(L, 1);
+    luaW_push<BILLBOARD>(L, s->getBillboard(luaL_checknumber(L, 2)));
+    return 1;
+}
 int Scene_addCamera(lua_State* L)
 {
     SCENE* s = luaW_check<SCENE>(L, 1);
@@ -1438,6 +1451,15 @@ int Object_setMaterialType(lua_State* L)
     }
     return 0;
 }
+int Object_addShadow(lua_State* L)
+{
+    OBJECT* o = luaW_check<OBJECT>(L, 1);
+    if(o->getIrrNode()->getType() == scene::ESNT_ANIMATED_MESH)
+    {
+        ((scene::IAnimatedMeshSceneNode*)(o->getIrrNode()))->addShadowVolumeSceneNode();
+    }
+    return 0;
+}
 int Object_useShader(lua_State* L)
 {
     OBJECT* o = luaW_check<OBJECT>(L, 1);
@@ -1809,6 +1831,18 @@ int Mesh_toObject(lua_State* L)
     return 1;
 }
 
+int Mesh_makeStatic(lua_State* L)
+{
+    MESH* m = luaW_check<MESH>(L, 1);
+    m->getMesh()->setHardwareMappingHint(scene::EHM_STATIC);
+    return 0;
+}
+int Mesh_makeDynamic(lua_State* L)
+{
+    MESH* m = luaW_check<MESH>(L, 1);
+    m->getMesh()->setHardwareMappingHint(scene::EHM_DYNAMIC);
+    return 0;
+}
 ANIMATEDMESH* AnimatedMesh_new(lua_State* L)
 {
     return 0;
@@ -2499,7 +2533,18 @@ int Terrain_addCollider(lua_State* L)
     }
     return 0;
 }
-
+int Terrain_makeStatic(lua_State* L)
+{
+    TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+    t->getMesh()->setHardwareMappingHint(scene::EHM_STATIC);
+    return 0;
+}
+int Terrain_makeDynamic(lua_State* L)
+{
+    TERRAIN* t = luaW_check<TERRAIN>(L, 1);
+    t->getMesh()->setHardwareMappingHint(scene::EHM_DYNAMIC);
+    return 0;
+}
 GUI* GUI_new(lua_State* L)
 {
     return 0;
@@ -2616,6 +2661,24 @@ int CMESH_add(lua_State* L)
     COMBINEDMESH* cm = luaW_check<COMBINEDMESH>(L, 1);
     MESH* m = luaW_check<MESH>(L, 2);
     cm->addMesh(m);
+    return 0;
+}
+
+BILLBOARD* BILLBOARD_new(lua_State* L)
+{
+    return 0;
+}
+int BILLBOARD_setTexture(lua_State* L)
+{
+    BILLBOARD* b = luaW_check<BILLBOARD>(L, 1);
+    SCENE* s = luaW_check<SCENE>(L, 2);
+    b->setTexture(s->getDevice(), luaL_checkstring(L, 3));
+    return 0;
+}
+int BILLBOARD_setSize(lua_State* L)
+{
+    BILLBOARD* b = luaW_check<BILLBOARD>(L, 1);
+    b->setSize(luaL_checknumber(L, 2), luaL_checknumber(L, 3));
     return 0;
 }
 NETPACKET* PACKET_newPacket(lua_State* L)
